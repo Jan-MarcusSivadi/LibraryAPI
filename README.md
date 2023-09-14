@@ -1,6 +1,3 @@
-# Description
-Repository for Backend &amp; Frontend
-
 ## Project setup
 ### Step 1
 Clone the repository into your local directory.
