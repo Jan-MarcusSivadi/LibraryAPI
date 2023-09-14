@@ -4,7 +4,9 @@
   "description": "Clone the repository into your local directory.\r Inside the project's root directory, open up a terminal and enter `npm start` to start up the project\r ### Step 2\r In order to run the program, you need to install necessary dependencies. Run `npm install` command. You might have to wait around 10 seconds to 3 minutes depending on your system\r ### Step 3\r Once the necessary dependencies have been successfully installed, you can run the project with \"npm start\" command\r ### Result\r Done. You should see your default browser start up on http://localhost:5000. In case it does not, enter it manually into browser's address bar",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm start --prefix ./server",
+    "install:all": "npm install --prefix ./server"
   },
   "repository": {
     "type": "git",
@@ -16,9 +18,5 @@
   "bugs": {
     "url": "https://github.com/Jan-MarcusSivadi/LibraryProject_TARpe21/issues"
   },
-  "homepage": "https://github.com/Jan-MarcusSivadi/LibraryProject_TARpe21#readme",
-  "dependencies": {
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2"
-  }
+  "homepage": "https://github.com/Jan-MarcusSivadi/LibraryProject_TARpe21#readme"
 }
