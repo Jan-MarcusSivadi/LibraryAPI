@@ -7,4 +7,4 @@ In order to run the program, you need to install necessary dependencies. Run `np
 ### Step 3
 Once the necessary dependencies have been successfully installed, you can run the project with `npm start` command (to stop the server, press `Ctrl+C` or `Cmd+C`on MacOS)
 ### Step 4
-Now go to http://localhost:5000, you should see "Hello world!" text
+Now go to http://localhost:5000, you should see "Hello world" text
