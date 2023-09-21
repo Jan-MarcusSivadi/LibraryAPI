@@ -7,9 +7,9 @@ In order to run the program, you need to install necessary dependencies. Run `np
 ### Step 3
 In order to run the program, you need to install necessary dependencies. Run `npm run install:all` command. You might have to wait some time depending on your system
 ### Step 4 (optional)
-You may add an .env file that has text inside: PORT={yourPort}
+You may add an .env file that has text inside: PORT=5000
 ### Step 5
-Now go to http://localhost:{yourPort}, you should see "Hello world!!" text
+Now go to http://localhost:5000, you should see "Hello world!!" text
 test
 
 # Next Steps for Backend
