@@ -1,6 +1,11 @@
 const path = require('path')
+const swaggerUI = require('swagger-ui-express')
+
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env.example') });
 const port = process.env.PORT || 3000
+const swaggerDocument = require('./docs/swagger.json')
+
+app.use ('/docs', swaggerIO.serve. swaggerUi.setup(swaggerDocument))
 
 const express = require('express');
 const app = express();
