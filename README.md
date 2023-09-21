@@ -9,8 +9,9 @@ In order to run the program, you need to install necessary dependencies. Run `np
 ### Step 4 (optional)
 You may add an .env file that has text inside: PORT=5000
 ### Step 5
-Now go to http://localhost:5000, you should see "Hello world!!" text
-test
+If you did step 4 - Now go to http://localhost:5000, you should see "Hello world!!" text
+test; If you skipped step 4 - Now go to http://localhost:3000, you should see "Hello world!!" text
+test;
 
 # Next Steps for Backend
 ## Implement API routes for books, orders and users
