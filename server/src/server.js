@@ -18,4 +18,13 @@ app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
+app.get('/books', async (req, res) => {
+  res.send([
+    { id: 0, name: "Book 1" },
+    { id: 1, name: "Book 2" },
+    { id: 2, name: "Book 3" },
+    { id: 3, name: "Book 4" },
+  ])
+})
+
 app.listen(port, () => console.log(`listening on port ${port}`));
