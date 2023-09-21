@@ -12,7 +12,6 @@ test
 
 # Next Steps for Backend
 ## Implement API routes for books, orders and users
-GET /api/books
-GET /api/orders
-GET /api/orderitems
-GET /api/users
+* `/api/books`
+* `/api/orderitem`
+* `/api/users`
