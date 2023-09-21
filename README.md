@@ -9,3 +9,10 @@ Once the necessary dependencies have been successfully installed, you can run th
 ### Step 4
 Now go to http://localhost:5000, you should see "Hello world!!" text
 test
+
+# Next Steps for Backend
+## Implement API routes for books, orders and users
+GET /api/books
+GET /api/orders
+GET /api/orderitems
+GET /api/users
