@@ -9,8 +9,7 @@
         "/users": {
             "get": {
                 "tags": [
-                    "users",
-                    "list"
+                    "users"
                 ],
                 "responses": {
                     "200": {
@@ -39,8 +38,7 @@
         "/books": {
             "get": {
                 "tags": [
-                    "books",
-                    "list"
+                    "books"
                 ],
                 "responses": {
                     "200": {
@@ -54,18 +52,18 @@
                                 },
                                 "examples": {
                                     "List of books": {
-                                        "value": "\"[{id:0,name:\\\"Book1\\\"},{id:1,name:\\\"Book2\\\"},{id:2,name:\\\"Book3\\\"},{id:3,name:\\\"Book4\\\"}]\""
+                                        "value": "[\n    { id: 0, name: \"Book 1\" },\n    { id: 1, name: \"Book 2\" },\n    { id: 2, name: \"Book 3\" },\n    { id: 3, name: \"Book 4\" }\n]"
                                     }
                                 }
                             }
-                        }
+                        },
+                        "description": "Returns list of books"
                     }
                 },
                 "operationId": "/books",
                 "summary": "Get list of books",
-                "description": "/books route returns list of books"
+                "description": "Returns a list of books"
             }
         }
     }
-
 }
