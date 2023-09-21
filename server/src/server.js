@@ -18,4 +18,10 @@ app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
+app.get('/users', (req, res) => {
+  res.send([
+    {id:1,firstname:"Jeff",lastname:"Bezos",email:"jeffbezos@amazon.com",password:"markzuckerbergsux",username:"bigbezos420",phonenr:"+1 11748794 "},
+    {id:2,firstname:"Mark",lastname:"Zuckerberg",email:"markzuckerberg@facebook.com",password:"jeffbezossux",username:"markzuckofficial",phonenr:"+1 82543794 "}])
+})
+
 app.listen(port, () => console.log(`listening on port ${port}`));
