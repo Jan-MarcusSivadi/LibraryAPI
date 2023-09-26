@@ -18,6 +18,17 @@ app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
+app.get('/books/:id', async (req, res) => {
+  const { id } = req.params
+
+  // if (!id) {
+  //   res.status(400).send({ message: "Error!" })
+  // }
+
+  console.log(req.params)
+  res.send(books.getById(id))
+})
+
 app.get('/books', async (req, res) => {
   res.send(books.getAll())
 })

@@ -1,5 +1,14 @@
-const json = require('./books.json')
+const json = JSON.stringify(require('./books.json'))
+const data = JSON.parse(json)
 
-const getAll = () => json
+const getAll = () => data
 
-module.exports = { getAll }
+const getById = (id) => {
+    const book = data.find(item => item.id == id)
+    return {
+        "id": book.id,
+        "name": book.name
+    }
+}
+
+module.exports = { getAll, getById }
