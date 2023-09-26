@@ -4,7 +4,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env.example') }
 const port = process.env.PORT || 3000
 const swaggerUI = require('swagger-ui-express')
 const swaggerDocument = require('./docs/swagger.json')
-
+const books = require('./books/data')
 
 const express = require('express');
 const app = express();
@@ -19,12 +19,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/books', async (req, res) => {
-  res.send([
-    { id: 0, name: "Book 1" },
-    { id: 1, name: "Book 2" },
-    { id: 2, name: "Book 3" },
-    { id: 3, name: "Book 4" },
-  ])
+  res.send(books.getAll())
 })
 
 app.listen(port, () => console.log(`listening on port ${port}`));

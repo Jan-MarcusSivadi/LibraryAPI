@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/server.js"
+    "start": "nodemon ./src/server.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +14,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "libraryproject_tarpe21": "file:..",
+    "nodemon": "^3.0.1",
     "swagger-ui-express": "^5.0.0"
   }
 }
