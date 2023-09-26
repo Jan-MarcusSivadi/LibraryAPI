@@ -24,7 +24,7 @@ app.get('/users', (req, res) => {
   })
 
 app.get('/users/:id', (req, res) => {
-  res.send(games[req.params.id])
+  res.send(users.getById(req.params.id))  
 })
 
 app.listen(port, () => console.log(`listening on port http://localhost:${port}`));

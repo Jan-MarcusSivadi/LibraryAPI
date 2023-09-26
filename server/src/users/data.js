@@ -8,3 +8,7 @@ let data = [
 exports.getAll = () => {
     return data
 }
+
+exports.getById = (id) => {
+    return data[id - 1]
+}
