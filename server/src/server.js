@@ -3,7 +3,8 @@ const path = require('path')
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env.example') });
 const port = process.env.PORT || 3000
 const swaggerUI = require('swagger-ui-express')
-const swaggerDocument = require('./docs/swagger.json')
+const yamljs = require('yamljs')
+const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml')
 const axios = require('axios');
 
 
