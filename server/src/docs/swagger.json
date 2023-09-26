@@ -36,34 +36,191 @@
           }
       },
       "/books": {
-          "get": {
-              "tags": [
-                  "books"
-              ],
-              "responses": {
-                  "200": {
-                      "content": {
-                          "application/json": {
-                              "schema": {
-                                  "type": "array",
-                                  "items": {
-                                      "type": "string"
-                                  }
-                              },
-                              "examples": {
-                                  "List of books": {
-                                      "value": "[\n    { id: 0, name: \"Book 1\" },\n    { id: 1, name: \"Book 2\" },\n    { id: 2, name: \"Book 3\" },\n    { id: 3, name: \"Book 4\" }\n]"
-                                  }
-                              }
-                          }
-                      },
-                      "description": "Returns list of books"
-                  }
-              },
-              "operationId": "/books",
-              "summary": "Get list of books",
-              "description": "Returns a list of books"
-          }
+        "get": {
+            "tags": [
+                "books"
+            ],
+            "responses": {
+                "200": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "examples": {
+                                "List of books": {
+                                    "value": [
+                                        {
+                                            "id": 1513,
+                                            "name": "Romeo and Juliet"
+                                        },
+                                        {
+                                            "id": 2701,
+                                            "name": "Moby Dick; Or, The Whale"
+                                        },
+                                        {
+                                            "id": 2641,
+                                            "name": "A Room with a View"
+                                        },
+                                        {
+                                            "id": 145,
+                                            "name": "Middlemarch"
+                                        },
+                                        {
+                                            "id": 67979,
+                                            "name": "The Blue Castle: a novel"
+                                        },
+                                        {
+                                            "id": 16389,
+                                            "name": "The Enchanted April"
+                                        },
+                                        {
+                                            "id": 37106,
+                                            "name": "Little Women; Or, Meg, Jo, Beth, and Amy"
+                                        },
+                                        {
+                                            "id": 394,
+                                            "name": "Cranford"
+                                        },
+                                        {
+                                            "id": 6761,
+                                            "name": "The Adventures of Ferdinand Count Fathom — Complete"
+                                        },
+                                        {
+                                            "id": 2160,
+                                            "name": "The Expedition of Humphry Clinker"
+                                        },
+                                        {
+                                            "id": 4085,
+                                            "name": "The Adventures of Roderick Random"
+                                        },
+                                        {
+                                            "id": 1342,
+                                            "name": "Pride and Prejudice"
+                                        },
+                                        {
+                                            "id": 6593,
+                                            "name": "History of Tom Jones, a Foundling"
+                                        },
+                                        {
+                                            "id": 1259,
+                                            "name": "Twenty years after"
+                                        },
+                                        {
+                                            "id": 5197,
+                                            "name": "My Life — Volume 1"
+                                        },
+                                        {
+                                            "id": 100,
+                                            "name": "The Complete Works of William Shakespeare"
+                                        },
+                                        {
+                                            "id": 84,
+                                            "name": "Frankenstein; Or, The Modern Prometheus"
+                                        },
+                                        {
+                                            "id": 11,
+                                            "name": "Alice's Adventures in Wonderland"
+                                        },
+                                        {
+                                            "id": 1399,
+                                            "name": "Anna Karenina"
+                                        },
+                                        {
+                                            "id": 345,
+                                            "name": "Dracula"
+                                        },
+                                        {
+                                            "id": 174,
+                                            "name": "The Picture of Dorian Gray"
+                                        },
+                                        {
+                                            "id": 25344,
+                                            "name": "The Scarlet Letter"
+                                        },
+                                        {
+                                            "id": 1661,
+                                            "name": "The Adventures of Sherlock Holmes"
+                                        },
+                                        {
+                                            "id": 1184,
+                                            "name": "The Count of Monte Cristo"
+                                        },
+                                        {
+                                            "id": 98,
+                                            "name": "A Tale of Two Cities"
+                                        },
+                                        {
+                                            "id": 5200,
+                                            "name": "Metamorphosis"
+                                        },
+                                        {
+                                            "id": 3600,
+                                            "name": "Essays of Michel de Montaigne — Complete"
+                                        },
+                                        {
+                                            "id": 16328,
+                                            "name": "Beowulf: An Anglo-Saxon Epic Poem"
+                                        },
+                                        {
+                                            "id": 64317,
+                                            "name": "The Great Gatsby"
+                                        },
+                                        {
+                                            "id": 6130,
+                                            "name": "The Iliad"
+                                        },
+                                        {
+                                            "id": 2680,
+                                            "name": "Meditations"
+                                        },
+                                        {
+                                            "id": 28054,
+                                            "name": "The Brothers Karamazov"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "description": "Returns list of books"
+                }
+            },
+            "operationId": "/books",
+            "summary": "Get list of books",
+            "description": "Returns a list of books"
+        },
+        "post": {
+            "tags": [
+                "books"
+            ],
+            "responses": {
+                "201": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "examples": {
+                                "Create new Book": {
+                                    "value": {
+                                        "id": 24,
+                                        "createdAt": "2023/09/26"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "description": "Returns created book id, createdAt"
+                }
+            },
+            "operationId": "/books/create",
+            "summary": "Add new Book",
+            "description": "Returns created book id, createdAt"
+        }
       }
   }
 }

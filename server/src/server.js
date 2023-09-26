@@ -4,6 +4,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env.example') }
 const port = process.env.PORT || 3000
 const swaggerUI = require('swagger-ui-express')
 const swaggerDocument = require('./docs/swagger.json')
+const axios = require('axios');
 
 
 const express = require('express');
@@ -19,12 +20,39 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/books', async (req, res) => {
-  res.send([
-    { id: 0, name: "Book 1" },
-    { id: 1, name: "Book 2" },
-    { id: 2, name: "Book 3" },
-    { id: 3, name: "Book 4" },
-  ])
+  // Optionally the request above could also be done as
+  const data = await axios.get('http://gutendex.com/books')//'https://openlibrary.org/random')
+    .then(function (response) {
+      return response.data
+    })
+    .catch(function (error) {
+      console.log(error);
+    })
+    .finally(function () {
+      // always executed
+    });
+
+  console.log(data)
+  console.log(data.results.length)
+    
+  // const book = {
+  //   key: data.key,
+  //   title: data.title,
+  //   full_title: data.full_title,
+  //   subtitle: data.subtitle,
+  //   description: data.description?.value,
+  //   notes: data.notes,
+  //   pages: data.number_of_pages,
+  //   authors: data.authors,
+  //   created: data.created
+  // }
+  // console.log('BOOK: ',book);
+
+  const books = data.results.map(book => {
+    return { id: book.id, name: book.title }
+  })
+
+  res.send(books)
 })
 
 app.listen(port, () => console.log(`listening on port ${port}`));
