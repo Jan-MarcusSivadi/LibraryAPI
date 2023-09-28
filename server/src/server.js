@@ -19,7 +19,7 @@ app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
-// GET books/:id
+// GET books/:id 
 app.get('/books/:id', async (req, res) => {
   const { id } = req.params
 
