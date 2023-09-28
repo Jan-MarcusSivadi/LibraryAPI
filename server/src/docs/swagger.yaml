@@ -37,9 +37,9 @@ paths:
                             schema:
                                 type: array
                                 items:
-                                    type: string
+                                    $ref: '#/components/schemas/book'
                             examples:
-                                List of books:
+                                All Books:
                                     value:
                                         -
                                             id: 1513
@@ -137,9 +137,9 @@ paths:
                                         -
                                             id: 28054
                                             name: The Brothers Karamazov
-                    description: Returns list of books
-            summary: Get list of books
-            description: Returns a list of books
+                    description: Returns array of books
+            summary: Get all Books
+            description: Returns array of books
         post:
             tags:
                 - books
@@ -155,29 +155,25 @@ paths:
                                         id: 24
                                         createdAt: 2023/09/26
                     description: 'Returns created book id, createdAt'
-            operationId: /books/create
             summary: Add new Book
             description: 'Returns created book id, createdAt'
     '/users/{id}':
         get:
             tags:
-                - users
+                - details
             responses:
                 '200':
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/user'
+                                type: array
+                                items:
+                                    type: string
                             examples:
                                 Full details of book:
-                                    value:
-                                        id: 44
-                                        firstname: some text
-                                        lastname: some text
-                                        email: some text
-                                        password: some text
-                                        username: some text
-                                        phonenr: some text
+                                    value: >-
+                                        id:1,firstname:"Jeff",lastname:"Bezos",email:"jeffbezos@amazon.com",password:"markzuckerbergsux",username:"bigbezos420",phonenr:"+1
+                                        11748794"}
                     description: Returns full details of given id user
                 '404':
                     content:
@@ -205,12 +201,14 @@ paths:
                 '200':
                     content:
                         application/json:
+                            schema:
+                                $ref: '#/components/schemas/book'
                             examples:
-                                Book:
+                                Single Book:
                                     value:
                                         id: 1513
                                         name: Romeo and Juliet
-                    description: Returns book by id
+                    description: Returns Book by id
                 '404':
                     content:
                         application/json:
@@ -221,8 +219,33 @@ paths:
                                     value:
                                         error: book not found.
                     description: Returns error
-            summary: Get one book
-            description: Returns book by id
+            summary: Get one Book
+            description: Returns Book by id
+        put:
+            tags:
+                - books
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/book'
+                            examples:
+                                New Book:
+                                    value: "{\r\n    \"id\": 1513,\r\n    \"name\": \"Romeo and Juliet 2\"\r\n},"
+                    description: Returns updated Book
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Error:
+                                    value:
+                                        error: Invalid fields provided.
+                    description: Returns error
+            summary: Update Book by id
+            description: Returns updated Book
         parameters:
             -
                 name: id
@@ -241,31 +264,16 @@ components:
                     type: string
             example:
                 error: Error message.
-        user:
-            title: Root Type for user
+        book:
+            title: Root Type for book
             description: ''
             type: object
             properties:
                 id:
                     format: int32
                     type: integer
-                firstname:
-                    type: string
-                lastname:
-                    type: string
-                email:
-                    type: string
-                password:
-                    type: string
-                username:
-                    type: string
-                phonenr:
+                name:
                     type: string
             example:
-                id: 1
-                firstname: Jeff
-                lastname: Bezos
-                email: jeffbezos@amazon.com
-                password: markzuckerbergsux
-                username: bigbezos420
-                phonenr: +1 11748794
+                id: 1513
+                name: Romeo and Juliet

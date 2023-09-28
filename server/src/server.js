@@ -6,6 +6,7 @@ const swaggerUI = require('swagger-ui-express')
 const yamljs = require('yamljs')
 const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml');
 let users = require("./users/data")
+const books = require('./books/data')
 
 const express = require('express');
 const app = express();
@@ -27,6 +28,27 @@ app.get('/users/:id', (req, res) => {
   const getUser = users.getById(req.params.id)
   if (getUser === undefined) return res.status(404).send({error: "Not found"})
   res.send(getUser)  
+})
+
+// GET books/:id 
+app.get('/books/:id', async (req, res) => {
+  const { id } = req.params
+
+  const book = books.getById(id)
+  
+  if (!book) {
+    res.status(404).send({ "error": "book not found." })
+    return
+  }
+
+  res.send({
+    "id": book.id,
+    "name": book.name
+  })
+})
+
+app.get('/books', async (req, res) => {
+  res.send(books.getAll())
 })
 
 app.listen(port, () => console.log(`listening on port http://localhost:${port}`));
