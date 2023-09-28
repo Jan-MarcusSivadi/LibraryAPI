@@ -37,9 +37,9 @@ paths:
                             schema:
                                 type: array
                                 items:
-                                    type: string
+                                    $ref: '#/components/schemas/book'
                             examples:
-                                List of books:
+                                All Books:
                                     value:
                                         -
                                             id: 1513
@@ -137,10 +137,9 @@ paths:
                                         -
                                             id: 28054
                                             name: The Brothers Karamazov
-                    description: Returns list of books
-            operationId: /books
-            summary: Get list of books
-            description: Returns a list of books
+                    description: Returns array of books
+            summary: Get all Books
+            description: Returns array of books
         post:
             tags:
                 - books
@@ -156,7 +155,6 @@ paths:
                                         id: 24
                                         createdAt: 2023/09/26
                     description: 'Returns created book id, createdAt'
-            operationId: /books/create
             summary: Add new Book
             description: 'Returns created book id, createdAt'
     '/users/{id}':
@@ -195,6 +193,66 @@ paths:
                 name: id
                 in: path
                 required: true
+    '/books/{id}':
+        get:
+            tags:
+                - books
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/book'
+                            examples:
+                                Single Book:
+                                    value:
+                                        id: 1513
+                                        name: Romeo and Juliet
+                    description: Returns Book by id
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Not found.:
+                                    value:
+                                        error: book not found.
+                    description: Returns error
+            summary: Get one Book
+            description: Returns Book by id
+        put:
+            tags:
+                - books
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/book'
+                            examples:
+                                New Book:
+                                    value: "{\r\n    \"id\": 1513,\r\n    \"name\": \"Romeo and Juliet 2\"\r\n},"
+                    description: Returns updated Book
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Error:
+                                    value:
+                                        error: Invalid fields provided.
+                    description: Returns error
+            summary: Update Book by id
+            description: Returns updated Book
+        parameters:
+            -
+                name: id
+                schema:
+                    type: integer
+                in: path
+                required: true
 components:
     schemas:
         error:
@@ -206,3 +264,16 @@ components:
                     type: string
             example:
                 error: Error message.
+        book:
+            title: Root Type for book
+            description: ''
+            type: object
+            properties:
+                id:
+                    format: int32
+                    type: integer
+                name:
+                    type: string
+            example:
+                id: 1513
+                name: Romeo and Juliet
