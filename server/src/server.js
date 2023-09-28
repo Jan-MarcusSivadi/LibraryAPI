@@ -4,9 +4,9 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env.example') }
 const port = process.env.PORT || 3000
 const swaggerUI = require('swagger-ui-express')
 const yamljs = require('yamljs')
-const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml')
-const axios = require('axios');
-
+const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml');
+let users = require("./users/data")
+const books = require('./books/data')
 
 const express = require('express');
 const app = express();
@@ -18,6 +18,16 @@ app.use(express.json());
 // GET http://localhost:5000/
 app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+})
+
+app.get('/users', (req, res) => {
+  res.send(users.getAll())
+})
+
+app.get('/users/:id', (req, res) => {
+  const getUser = users.getById(req.params.id)
+  if (getUser === undefined) return res.status(404).send({ error: "Not found" })
+  res.send(getUser)
 })
 
 app.get('/books', async (req, res) => {
@@ -35,7 +45,7 @@ app.get('/books', async (req, res) => {
 
   console.log(data)
   console.log(data.results.length)
-    
+
   // const book = {
   //   key: data.key,
   //   title: data.title,
@@ -56,4 +66,25 @@ app.get('/books', async (req, res) => {
   res.send(books)
 })
 
-app.listen(port, () => console.log(`listening on port ${port}`));
+// GET books/:id 
+app.get('/books/:id', async (req, res) => {
+  const { id } = req.params
+
+  const book = books.getById(id)
+
+  if (!book) {
+    res.status(404).send({ "error": "book not found." })
+    return
+  }
+
+  res.send({
+    "id": book.id,
+    "name": book.name
+  })
+})
+
+app.get('/books', async (req, res) => {
+  res.send(books.getAll())
+})
+
+app.listen(port, () => console.log(`listening on port http://localhost:${port}`));
