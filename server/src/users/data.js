@@ -8,3 +8,8 @@ let data = [
 exports.getAll = () => {
     return data
 }
+
+exports.getById = (id) => {
+    return getUser = data.find((user) => user.id == parseInt(id))
+}
+
