@@ -35,7 +35,7 @@ app.get('/books/:id', async (req, res) => {
   const { id } = req.params
 
   const book = books.getById(id)
-  
+
   if (!book) {
     res.status(404).send({ "error": "book not found." })
     return

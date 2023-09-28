@@ -9,4 +9,8 @@ const getById = (id) => {
     return book
 }
 
-module.exports = { getAll, getById }
+const create = (book) => {
+    return { ...book }
+}
+
+module.exports = { getAll, getById, create }
