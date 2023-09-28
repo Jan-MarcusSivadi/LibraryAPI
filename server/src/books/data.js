@@ -9,8 +9,11 @@ const getById = (id) => {
     return book
 }
 
-const create = (book) => {
-    return { ...book }
+const create = (newBook) => {
+    const newId = Math.max(...data.map(book => book.id)) + 1
+    newBook.id = newId
+    data.push(newBook)
+    return newBook
 }
 
 module.exports = { getAll, getById, create }
