@@ -24,7 +24,9 @@ app.get('/users', (req, res) => {
   })
 
 app.get('/users/:id', (req, res) => {
-  res.send(users.getById(req.params.id))  
+  const getUser = users.getById(req.params.id)
+  if (getUser === undefined) return res.status(404).send({error: "Not found"})
+  res.send(getUser)  
 })
 
 app.listen(port, () => console.log(`listening on port http://localhost:${port}`));

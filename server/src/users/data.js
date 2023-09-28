@@ -10,5 +10,6 @@ exports.getAll = () => {
 }
 
 exports.getById = (id) => {
-    return data[id - 1]
+    return getUser = data.find((user) => user.id == parseInt(id))
 }
+

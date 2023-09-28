@@ -138,7 +138,6 @@ paths:
                                             id: 28054
                                             name: The Brothers Karamazov
                     description: Returns list of books
-            operationId: /books
             summary: Get list of books
             description: Returns a list of books
         post:
@@ -162,20 +161,23 @@ paths:
     '/users/{id}':
         get:
             tags:
-                - details
+                - users
             responses:
                 '200':
                     content:
                         application/json:
                             schema:
-                                type: array
-                                items:
-                                    type: string
+                                $ref: '#/components/schemas/user'
                             examples:
                                 Full details of book:
-                                    value: >-
-                                        id:1,firstname:"Jeff",lastname:"Bezos",email:"jeffbezos@amazon.com",password:"markzuckerbergsux",username:"bigbezos420",phonenr:"+1
-                                        11748794"}
+                                    value:
+                                        id: 44
+                                        firstname: some text
+                                        lastname: some text
+                                        email: some text
+                                        password: some text
+                                        username: some text
+                                        phonenr: some text
                     description: Returns full details of given id user
                 '404':
                     content:
@@ -195,6 +197,39 @@ paths:
                 name: id
                 in: path
                 required: true
+    '/books/{id}':
+        get:
+            tags:
+                - books
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            examples:
+                                Book:
+                                    value:
+                                        id: 1513
+                                        name: Romeo and Juliet
+                    description: Returns book by id
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Not found.:
+                                    value:
+                                        error: book not found.
+                    description: Returns error
+            summary: Get one book
+            description: Returns book by id
+        parameters:
+            -
+                name: id
+                schema:
+                    type: integer
+                in: path
+                required: true
 components:
     schemas:
         error:
@@ -206,3 +241,31 @@ components:
                     type: string
             example:
                 error: Error message.
+        user:
+            title: Root Type for user
+            description: ''
+            type: object
+            properties:
+                id:
+                    format: int32
+                    type: integer
+                firstname:
+                    type: string
+                lastname:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+                username:
+                    type: string
+                phonenr:
+                    type: string
+            example:
+                id: 1
+                firstname: Jeff
+                lastname: Bezos
+                email: jeffbezos@amazon.com
+                password: markzuckerbergsux
+                username: bigbezos420
+                phonenr: +1 11748794
