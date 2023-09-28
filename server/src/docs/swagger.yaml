@@ -160,7 +160,7 @@ paths:
     '/users/{id}':
         get:
             tags:
-                - details
+                - users
             responses:
                 '200':
                     content:
