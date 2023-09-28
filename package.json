@@ -18,9 +18,5 @@
   "bugs": {
     "url": "https://github.com/Jan-MarcusSivadi/LibraryProject_TARpe21/issues"
   },
-  "homepage": "https://github.com/Jan-MarcusSivadi/LibraryProject_TARpe21#readme",
-  "dependencies": {
-    "nodemon": "^3.0.1",
-    "yamljs": "^0.3.0"
-  }
+  "homepage": "https://github.com/Jan-MarcusSivadi/LibraryProject_TARpe21#readme"
 }
