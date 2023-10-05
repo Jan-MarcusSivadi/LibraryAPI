@@ -44,7 +44,7 @@ app.post('/users', (req, res) => {
     phonenr:req.body.phonenr
   })
   res.status(201)
-    .location(`${getBaseurl(req)}/games/${createdUser.id}`)
+    .location(`${getBaseurl(req)}/users/${createdUser.id}`)
     .send(createdUser)
 })
 
