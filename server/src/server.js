@@ -30,10 +30,7 @@ app.get('/books/:id', async (req, res) => {
     return
   }
 
-  res.send({
-    "id": book.id,
-    "name": book.name
-  })
+  res.send(book)
 })
 
 app.get('/books', async (req, res) => {
