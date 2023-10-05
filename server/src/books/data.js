@@ -1,5 +1,5 @@
 const json = JSON.stringify(require('./books.json'))
-const data = JSON.parse(json)
+var data = JSON.parse(json)
 
 const getAll = () => data
 
@@ -16,4 +16,13 @@ const create = (newBook) => {
     return newBook
 }
 
-module.exports = { getAll, getById, create }
+const deleteOne = (id) => {
+    var toBeDeleted = getById(id);
+    if (!toBeDeleted) {
+        return
+    }
+    data = data.filter((e) => e.id !== toBeDeleted.id)
+    return toBeDeleted
+}
+
+module.exports = { getAll, getById, create, deleteOne }

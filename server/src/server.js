@@ -34,24 +34,7 @@ app.get('/users/:id', (req, res) => {
   res.send(getUser)
 })
 
-app.get('/books', async (req, res) => {
-  res.send(books.getAll())
-})
-
-// GET books/:id 
-app.get('/books/:id', async (req, res) => {
-  const { id } = req.params
-
-  const book = books.getById(id)
-
-  if (!book) {
-    res.status(404).send({ "error": "book not found." })
-    return
-  }
-
-  res.send(book)
-})
-
+// CREATE
 app.post('/books', async (req, res) => {
   if (!req.body.name) {
     res.status(400).send({ error: "One or all required parameters are missing." })
@@ -64,6 +47,35 @@ app.post('/books', async (req, res) => {
   res.status(201)
     .location(`${getBaseUrl(req)}/books/${createdBook.id}`)
     .send(createdBook)
+})
+// READ
+app.get('/books', async (req, res) => {
+  res.send(books.getAll())
+})
+app.get('/books/:id', async (req, res) => {
+  const { id } = req.params
+
+  const book = books.getById(id)
+
+  if (!book) {
+    return res.status(404).send({ error: "book not found." })
+  }
+
+  res.send(book)
+})
+// UPDATE
+
+// DELETE
+app.delete('/books/:id', async (req, res) => {
+  const { id } = req.params
+  
+  const book = books.deleteOne(id);
+
+  if (!book) {
+    return res.status(404).send({ error: "book not found." })
+  }
+
+  res.status(204).send()
 })
 
 app.listen(port, () => console.log(`listening on port http://localhost:${port}`));
