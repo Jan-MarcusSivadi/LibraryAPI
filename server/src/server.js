@@ -20,16 +20,19 @@ app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
+// READ
 app.get('/users', (req, res) => {
   res.send(users.getAll())
   })
 
+// READ
 app.get('/users/:id', (req, res) => {
   const getUser = users.getById(req.params.id)
   if (getUser === undefined) return res.status(404).send({error: "Not found"})
   res.send(getUser)  
 })
 
+// CREATE
 app.post('/users', (req, res) => {
   if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.username || !req.body.phonenr)
   {
@@ -48,6 +51,16 @@ app.post('/users', (req, res) => {
     .send(createdUser)
 })
 
+// UPDATE
+
+// DELETE
+
+app.delete('/users/:id', (req, res) => {
+  if(users.delete(req.params.id) === undefined) {
+    return res.status(404).send({error: "User not found"})
+  }
+  res.status(204).send()
+})
 
 // GET books/:id 
 app.get('/books/:id', async (req, res) => {
