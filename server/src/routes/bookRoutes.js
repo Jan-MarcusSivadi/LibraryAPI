@@ -6,6 +6,6 @@ module.exports = (app) => {
         .post(booksController.create)       // CREATE
     app.route('/books/:id')
         .get(booksController.getById)       // READ
-        // .put(b)                          // UPDATE
+        .put(booksController.updateById)    // UPDATE
         .delete(booksController.deleteOne)  // DELETE
 }
