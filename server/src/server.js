@@ -1,12 +1,23 @@
 const path = require('path')
 
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env.example') });
-const port = process.env.PORT || 3000
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+const port = process.env.PORT
 const swaggerUI = require('swagger-ui-express')
 const yamljs = require('yamljs')
 const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml');
-const books = require('./books/data')
 const users = require('./users/data')
+const {Sequelize} = require("sequelize")
+const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USER, process.env.DB_PASS, {
+  host: process.env.DB_HOST,
+  dialect:"mariadb"
+})
+try {
+  sequelize.authenticate().then(() => {
+  console.log('Connection has been established successfully.')
+});
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}
 
 const express = require('express');
 const app = express();
@@ -15,19 +26,20 @@ app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use('/pub', express.static(path.join(__dirname, 'public')))
 app.use(express.json());
 
-const getBaseUrl = (req) => {
-  return req.host
-}
+require('../src/routes/bookRoutes')(app)
+// app.use('/books', bookRoutes)
 
 // GET http://localhost:5000/
 app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
+// READ
 app.get('/users', (req, res) => {
   res.send(users.getAll())
 })
 
+// READ
 app.get('/users/:id', (req, res) => {
   const getUser = users.getById(req.params.id)
   if (getUser === undefined) return res.status(404).send({ error: "Not found" })
@@ -35,47 +47,35 @@ app.get('/users/:id', (req, res) => {
 })
 
 // CREATE
-app.post('/books', async (req, res) => {
-  if (!req.body.name) {
-    res.status(400).send({ error: "One or all required parameters are missing." })
+app.post('/users', (req, res) => {
+  if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.username || !req.body.phonenr)
+  {
+    return res.status(400).send({error: "One or all required parameters are missing"})
   }
-
-  const createdBook = books.create({
-    name: req.body.name
+  const createdUser = users.create({
+    firstname:req.body.firstname,
+    lastname:req.body.lastname,
+    email:req.body.email,
+    password:req.body.password,
+    username:req.body.username,
+    phonenr:req.body.phonenr
   })
-
   res.status(201)
-    .location(`${getBaseUrl(req)}/books/${createdBook.id}`)
-    .send(createdBook)
+    .location(`${getBaseurl(req)}/users/${createdUser.id}`)
+    .send(createdUser)
 })
-// READ
-app.get('/books', async (req, res) => {
-  res.send(books.getAll())
-})
-app.get('/books/:id', async (req, res) => {
-  const { id } = req.params
-
-  const book = books.getById(id)
-
-  if (!book) {
-    return res.status(404).send({ error: "book not found." })
-  }
-
-  res.send(book)
-})
-// UPDATE
 
 // DELETE
-app.delete('/books/:id', async (req, res) => {
-  const { id } = req.params
-  
-  const book = books.deleteOne(id);
 
-  if (!book) {
-    return res.status(404).send({ error: "book not found." })
+app.delete('/users/:id', (req, res) => {
+  if(users.delete(req.params.id) === undefined) {
+    return res.status(404).send({error: "User not found"})
   }
-
   res.status(204).send()
 })
+
+function getBaseurl(request) {
+  return (request.connection && request.connection.encrypted ? "https" : "http") + "://" + request.headers.host
+}
 
 app.listen(port, () => console.log(`listening on port http://localhost:${port}`));
