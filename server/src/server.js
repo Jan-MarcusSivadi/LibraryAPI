@@ -44,5 +44,26 @@ app.get('/users/:id', (req, res) => {
   res.send(getUser)
 })
 
+app.post('/users', (req, res) => {
+  if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.username || !req.body.phonenr)
+  {
+    return res.status(400).send({error: "One or all required parameters are missing"})
+  }
+  const createdUser = users.create({
+    firstname:req.body.firstname,
+    lastname:req.body.lastname,
+    email:req.body.email,
+    password:req.body.password,
+    username:req.body.username,
+    phonenr:req.body.phonenr
+  })
+  res.status(201)
+    .location(`${getBaseurl(req)}/users/${createdUser.id}`)
+    .send(createdUser)
+})
+
+function getBaseurl(request) {
+  return (request.connection && request.connection.encrypted ? "https" : "http") + "://" + request.headers.host
+}
 
 app.listen(port, () => console.log(`listening on port http://localhost:${port}`));
