@@ -1,130 +1,57 @@
 [
     {
       "id": 1,
-      "name": "Romeo and Juliet"
+      "title": "Romeo and Juliet",
+      "author": "William Shakespeare",
+      "description": "Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer and more reliable.",
+      "releasedate": "1597",
+      "booklength": 480,
+      "language": "English",
+      "price": 5.99,
+      "pdf": "?"
     },
     {
       "id": 2,
-      "name": "Moby Dick; Or, The Whale"
+      "title": "Moby Dick; Or, The Whale",
+      "author": "Herman Melville",
+      "description": "Moby-Dick; or, The Whale is an 1851 novel by American writer Herman Melville. The book is the sailor Ishmael's narrative of the maniacal quest of Ahab, captain of the whaling ship Pequod, for vengeance against Moby Dick, the giant white sperm whale that bit off his leg on the ship's previous voyage.",
+      "releasedate": "1851",
+      "booklength": 378,
+      "language": "English",
+      "price": 4.99,
+      "pdf": "?"
     },
     {
       "id": 3,
-      "name": "A Room with a View"
+      "title": "A Room with a View",
+      "author": "E. M. Forster",
+      "description": "Romeo and Juliet",
+      "releasedate": "1908",
+      "booklength": 321,
+      "language": "English",
+      "price": 3.99,
+      "pdf": "?"
     },
     {
       "id": 4,
-      "name": "Middlemarch"
+      "title": "Middlemarch",
+      "author": "?",
+      "description": "?",
+      "releasedate": "?",
+      "booklength": "?",
+      "language": "?",
+      "price": "?",
+      "pdf": "?"
     },
     {
       "id": 5,
-      "name": "The Blue Castle: a novel"
-    },
-    {
-      "id": 6,
-      "name": "The Enchanted April"
-    },
-    {
-      "id": 7,
-      "name": "Little Women; Or, Meg, Jo, Beth, and Amy"
-    },
-    {
-      "id": 8,
-      "name": "Cranford"
-    },
-    {
-      "id": 9,
-      "name": "The Adventures of Ferdinand Count Fathom — Complete"
-    },
-    {
-      "id": 10,
-      "name": "The Expedition of Humphry Clinker"
-    },
-    {
-      "id": 11,
-      "name": "The Adventures of Roderick Random"
-    },
-    {
-      "id": 12,
-      "name": "Pride and Prejudice"
-    },
-    {
-      "id": 13,
-      "name": "History of Tom Jones, a Foundling"
-    },
-    {
-      "id": 14,
-      "name": "Twenty years after"
-    },
-    {
-      "id": 15,
-      "name": "My Life — Volume 1"
-    },
-    {
-      "id": 16,
-      "name": "The Complete Works of William Shakespeare"
-    },
-    {
-      "id": 17,
-      "name": "Frankenstein; Or, The Modern Prometheus"
-    },
-    {
-      "id": 18,
-      "name": "Alice's Adventures in Wonderland"
-    },
-    {
-      "id": 19,
-      "name": "Anna Karenina"
-    },
-    {
-      "id": 20,
-      "name": "Dracula"
-    },
-    {
-      "id": 21,
-      "name": "The Picture of Dorian Gray"
-    },
-    {
-      "id": 22,
-      "name": "The Scarlet Letter"
-    },
-    {
-      "id": 23,
-      "name": "The Adventures of Sherlock Holmes"
-    },
-    {
-      "id": 24,
-      "name": "The Count of Monte Cristo"
-    },
-    {
-      "id": 25,
-      "name": "A Tale of Two Cities"
-    },
-    {
-      "id": 26,
-      "name": "Metamorphosis"
-    },
-    {
-      "id": 27,
-      "name": "Essays of Michel de Montaigne — Complete"
-    },
-    {
-      "id": 28,
-      "name": "Beowulf: An Anglo-Saxon Epic Poem"
-    },
-    {
-      "id": 29,
-      "name": "The Great Gatsby"
-    },
-    {
-      "id": 30,
-      "name": "The Iliad"
-    },
-    {
-      "id": 31,
-      "name": "Meditations"
-    },
-    {
-      "id": 32,
-      "name": "The Brothers Karamazov"
+      "title": "The Blue Castle: a novel",
+      "author": "?",
+      "description": "?",
+      "releasedate": "?",
+      "booklength": "?",
+      "language": "?",
+      "price": "?",
+      "pdf": "?"
     }
   ]
