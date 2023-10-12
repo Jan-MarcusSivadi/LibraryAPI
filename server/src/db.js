@@ -15,9 +15,10 @@ try {
   console.error('Unable to connect to the database:', error);
 }
 const db = {}
-db.Sequelize = Sequelize
+db.sequelize = Sequelize
 db.connection = sequelize
 db.users = require("./models/User")(sequelize, Sequelize)
+db.books = require("./models/Book")(sequelize, Sequelize)
 
 sync = async ()=>{
     //await sequelize.sync({force:true}) // Erase all and recreate
