@@ -31,6 +31,34 @@ exports.getById = async (req, res) => {
     res.send(book)
 }
 // UPDATE
+exports.updateById = async (req, res) => {
+    const { id } = req.params
+
+    if (!req.body.title) {
+        res.status(400).send({ error: "One or all required parameters are missing." })
+    }
+
+    const book = await Book.findByPk(id)
+
+    if (!book) {
+        return res.status(404).send({ error: "book not found." })
+    }
+
+    const updatedBook = await Book.update(
+        { title: req.body.title },
+        { where: { id: book.id } }
+    )
+
+    if (updatedBook < 1) {
+        return res.status(404).send({ error: "could not update book" })
+    }
+
+    if (!updatedBook) {
+        return res.status(404).send({ error: "book not found." })
+    }
+
+    res.status(200).send("book updated successfully.")
+}
 
 // DELETE
 exports.deleteOne = async (req, res) => {
