@@ -1,15 +1,15 @@
 const utils = require('../utils/utils')
-const { db } = require('../db')
-const Book = db.books
+const books = require('../books/data')
 
 // CREATE
 exports.create = async (req, res) => {
-    if (!req.body.title) {
+    if (!req.body.name) {
         res.status(400).send({ error: "One or all required parameters are missing." })
     }
 
-    const createdBook = await Book.create({ title: req.body.title })
-    console.log(`${req.body.title}'s auto-generated ID:", ${createdBook.id}`);
+    const createdBook = books.create({
+        name: req.body.name
+    })
 
     res.status(201)
         .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
@@ -17,12 +17,12 @@ exports.create = async (req, res) => {
 }
 // READ
 exports.getAll = async (req, res) => {
-    const result = await Book.findAll({ attributes: ["id", "title"] })
-    res.send(JSON.stringify(result))
+    res.send(books.getAll())
 }
 exports.getById = async (req, res) => {
     const { id } = req.params
-    const book = await Book.findByPk(id)
+
+    const book = books.getById(id)
 
     if (!book) {
         return res.status(404).send({ error: "book not found." })
@@ -31,44 +31,12 @@ exports.getById = async (req, res) => {
     res.send(book)
 }
 // UPDATE
-exports.updateById = async (req, res) => {
-    const { id } = req.params
-
-    if (!req.body.title) {
-        res.status(400).send({ error: "One or all required parameters are missing." })
-    }
-
-    const book = await Book.findByPk(id)
-
-    if (!book) {
-        return res.status(404).send({ error: "book not found." })
-    }
-
-    const updatedBook = await Book.update(
-        { title: req.body.title },
-        { where: { id: book.id } }
-    )
-
-    if (updatedBook < 1) {
-        return res.status(404).send({ error: "could not update book" })
-    }
-
-    if (!updatedBook) {
-        return res.status(404).send({ error: "book not found." })
-    }
-
-    res.status(200).send("book updated successfully.")
-}
 
 // DELETE
 exports.deleteOne = async (req, res) => {
     const { id } = req.params
 
-    const book = await Book.destroy({
-        where: {
-            id: id
-        }
-    });
+    const book = books.deleteOne(id);
 
     if (!book) {
         return res.status(404).send({ error: "book not found." })
