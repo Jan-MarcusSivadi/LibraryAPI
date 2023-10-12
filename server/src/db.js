@@ -17,11 +17,11 @@ try {
 const db = {}
 db.Sequelize = Sequelize
 db.connection = sequelize
-db.games = require("./models/User")(sequelize, Sequelize)
+db.users = require("./models/User")(sequelize, Sequelize)
 
 sync = async ()=>{
-    await sequelize.sync({force:true}) // Erase all and recreate
-    //await sequelize.sync({alter:true}) // Alter existing to match the database
+    //await sequelize.sync({force:true}) // Erase all and recreate
+    await sequelize.sync({alter:true}) // Alter existing to match the database
 }
 
 module.exports = { db, sync }
