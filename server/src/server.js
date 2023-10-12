@@ -5,9 +5,6 @@ const port = process.env.PORT
 const swaggerUI = require('swagger-ui-express')
 const yamljs = require('yamljs')
 const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml');
-let users = require("./users/data")
-const books = require('./books/data')
-
 
 const express = require('express');
 const app = express();
@@ -15,6 +12,9 @@ const app = express();
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use('/pub', express.static(path.join(__dirname, 'public')))
 app.use(express.json());
+
+require('../src/routes/bookRoutes')(app)
+// app.use('/books', bookRoutes)
 
 // GET http://localhost:5000/
 app.get('/', async (req, res) => {
@@ -24,13 +24,13 @@ app.get('/', async (req, res) => {
 // READ
 app.get('/users', (req, res) => {
   res.send(users.getAll())
-  })
+})
 
 // READ
 app.get('/users/:id', (req, res) => {
   const getUser = users.getById(req.params.id)
-  if (getUser === undefined) return res.status(404).send({error: "Not found"})
-  res.send(getUser)  
+  if (getUser === undefined) return res.status(404).send({ error: "Not found" })
+  res.send(getUser)
 })
 
 // CREATE
@@ -52,8 +52,6 @@ app.post('/users', (req, res) => {
     .send(createdUser)
 })
 
-// UPDATE
-
 // DELETE
 
 app.delete('/users/:id', (req, res) => {
@@ -61,27 +59,6 @@ app.delete('/users/:id', (req, res) => {
     return res.status(404).send({error: "User not found"})
   }
   res.status(204).send()
-})
-
-// GET books/:id 
-app.get('/books/:id', async (req, res) => {
-  const { id } = req.params
-
-  const book = books.getById(id)
-  
-  if (!book) {
-    res.status(404).send({ "error": "book not found." })
-    return
-  }
-
-  res.send({
-    "id": book.id,
-    "name": book.name
-  })
-})
-
-app.get('/books', async (req, res) => {
-  res.send(books.getAll())
 })
 
 function getBaseurl(request) {

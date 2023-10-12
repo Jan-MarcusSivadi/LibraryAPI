@@ -37,7 +37,7 @@ paths:
                             schema:
                                 type: array
                                 items:
-                                    type: string
+                                    $ref: '#/components/schemas/book'
                             examples:
                                 List of books:
                                     value:
@@ -196,7 +196,11 @@ paths:
             tags:
                 - users
             responses:
-                '204': {}
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
             description: Deletes user from database
         parameters:
             -
@@ -211,6 +215,8 @@ paths:
                 '200':
                     content:
                         application/json:
+                            schema:
+                                $ref: '#/components/schemas/book'
                             examples:
                                 Book:
                                     value:
@@ -229,6 +235,24 @@ paths:
                     description: Returns error
             summary: Get one book
             description: Returns book by id
+        delete:
+            tags:
+                - books
+            responses:
+                '204':
+                    description: No content
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Book not found.:
+                                    value:
+                                        error: book not found.
+                    description: Book not found
+            summary: Delete book by id
+            description: Deletes book using its id
         parameters:
             -
                 name: id
@@ -275,3 +299,42 @@ components:
                 password: markzuckerbergsux
                 username: bigbezos420
                 phonenr: +1 11748794
+        book:
+            title: Root Type for book
+            description: book entity
+            type: object
+            properties:
+                id:
+                    format: int32
+                    type: integer
+                title:
+                    type: string
+                author:
+                    type: string
+                description:
+                    type: string
+                releasedate:
+                    type: string
+                booklength:
+                    format: int32
+                    type: integer
+                language:
+                    type: string
+                price:
+                    format: double
+                    type: number
+                pdf:
+                    type: string
+            example:
+                id: 1
+                title: Romeo and Juliet
+                author: William Shakespeare
+                description: >-
+                    Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published
+                    in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially
+                    longer and more reliable.
+                releasedate: '1597'
+                booklength: 480
+                language: English
+                price: 5.99
+                pdf: '?'
