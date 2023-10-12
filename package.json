@@ -20,7 +20,10 @@
   },
   "homepage": "https://github.com/Jan-MarcusSivadi/LibraryProject_TARpe21#readme",
   "dependencies": {
+    "dotenv": "^16.3.1",
+    "mariadb": "^3.2.1",
     "nodemon": "^3.0.1",
+    "sequelize": "^6.33.0",
     "yamljs": "^0.3.0"
   }
 }

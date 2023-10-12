@@ -20,3 +20,9 @@ exports.create = (newUser) => {
     return newUser
 }
 
+exports.delete = (id) => {
+    var toBeDeleted = this.getById(id)
+    if(toBeDeleted === undefined) return
+    data = data.filter((e) => toBeDeleted.id != e.id)
+    return toBeDeleted
+}
