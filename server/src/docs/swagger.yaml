@@ -192,6 +192,26 @@ paths:
             operationId: id
             summary: Get details of a user
             description: Returns details of user
+        put:
+            requestBody: {}
+            tags:
+                - users
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                    description: Updates details
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+            summary: Update details of a user
+            description: Updates details of user
         delete:
             tags:
                 - users
