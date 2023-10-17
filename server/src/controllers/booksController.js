@@ -90,7 +90,8 @@ exports.deleteOne = async (req, res) => {
         });
 
         if (!book) {
-            return res.status(404).send({ error: "book not found." })
+            res.status(404).send({ error: "book not found." })
+            return
         }
 
         res.status(204).send()
