@@ -1,7 +1,7 @@
 const path = require('path')
 
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
-const port = process.env.PORT
+const port = process.env.PORT || 3000
 const swaggerUI = require('swagger-ui-express')
 const yamljs = require('yamljs')
 const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml');
@@ -22,11 +22,6 @@ require('../src/routes/bookRoutes')(app)
 app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
-
-
-function getBaseurl(request) {
-  return (request.connection && request.connection.encrypted ? "https" : "http") + "://" + request.headers.host
-}
 
 app.listen(port, () => {
   require("./db").sync()
