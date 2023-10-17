@@ -106,6 +106,19 @@ paths:
             summary: Get list of books
             description: Returns an array of Books
         post:
+            requestBody:
+                description: |-
+                    {
+                      "title": "Romeo and Juliet",
+                      "author": "William Shakespeare",
+                      "description": "Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer and more reliable.",
+                      "releasedate": "1597",
+                      "booklength": 480,
+                      "language": "English",
+                      "price": 5.99,
+                      "pdf": "?"
+                    }
+                required: true
             tags:
                 - books
             responses:
@@ -245,10 +258,28 @@ paths:
             summary: Get one book
             description: Returns book by id
         put:
+            requestBody:
+                description: |-
+                    {
+                      "title": "Romeo and Juliet2",
+                      "author": "William Shakespeare2",
+                      "description": "A play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer.",
+                      "releasedate": "1597",
+                      "booklength": 480,
+                      "language": "English",
+                      "price": 6.95,
+                      "pdf": "?"
+                    },
+                required: true
             tags:
                 - books
             responses:
                 '200':
+                    content:
+                        text/xml:
+                            examples:
+                                Success:
+                                    value: '"book updated successfully."'
                     description: OK
             summary: Update book
             description: Updates book by id
