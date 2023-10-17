@@ -13,7 +13,7 @@ exports.getById = (id) => {
     return getUser = data.find((user) => user.id == parseInt(id))
 }
 
-exports.create = (newUser) => {
+exports.createNew = (newUser) => {
     const newId = Math.max(...data.map((i) => i.id)) + 1
     newUser.id = newId
     data.push(newUser)
