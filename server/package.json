@@ -19,6 +19,7 @@
     "nodemon": "^3.0.1",
     "sequelize": "^6.33.0",
     "swagger-ui-express": "^5.0.0",
+    "tedious": "^16.4.1",
     "yamljs": "^0.3.0"
   },
   "nodemonConfig": {
