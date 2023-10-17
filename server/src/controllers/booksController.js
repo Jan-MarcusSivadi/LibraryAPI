@@ -34,10 +34,11 @@ exports.getById = async (req, res) => {
         const book = await Book.findByPk(id)
 
         if (!book) {
-            return res.status(404).send({ error: "book not found." })
+            res.status(404).send({ error: "book not found." })
+            return
         }
 
-        res.status(200).send(book)
+        res.send(book)
     } catch (error) {
         console.error(error)
     }
