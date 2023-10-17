@@ -8,6 +8,30 @@ module.exports = (dbConnection, Sequelize) => {
         title: {
             type: Sequelize.STRING,
             allowNull: false
+        },
+        author: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        description: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        releasedate: {
+            type: Sequelize.DATE,
+            allowNull: false
+        },
+        booklength: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        },
+        language: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        price: {
+            type: Sequelize.FLOAT,
+            allowNull: false
         }
     })
     return Book
