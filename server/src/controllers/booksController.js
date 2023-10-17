@@ -22,7 +22,7 @@ exports.create = async (req, res) => {
 // READ
 exports.getAll = async (req, res) => {
     try {
-        const result = await Book.findAll({ attributes: ["id", "title"] })
+        const result = await Book.findAll({ attributes: ["id", "title", "description", "author", "releasedate", "language", "booklength", "price"] })
         res.send(JSON.stringify(result))
     } catch (error) {
         console.error(error)
