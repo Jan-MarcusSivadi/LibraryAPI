@@ -5,12 +5,38 @@ const Book = db.books
 // CREATE
 exports.create = async (req, res) => {
     try {
-        if (!req.body.title) {
-            return res.status(400).send({ error: "One or all required parameters are missing." })
+        /* 
+            title: NOT NULL
+            author: NOT NULL
+            description: NULL
+            releasedate: NOT NULL
+            booklength: NOT NULL
+            language: NULL
+            price: NOT NULL
+        */
+        const { title, author, description, releasedate, booklength, language, price } = req.body
+        if (
+            !title ||
+            !author ||
+            !releasedate ||
+            !booklength ||
+            !price
+        ) {
+            res.status(400).send({ error: "One or all required parameters are missing." })
+            return
+        }
+        const bookData = {
+            title: title,
+            author: author,
+            description: description,
+            releasedate: releasedate,
+            booklength: booklength,
+            language: language,
+            price: price
         }
 
-        const createdBook = await Book.create({ title: req.body.title })
-        console.log(`${req.body.title}'s auto-generated ID:", ${createdBook.id}`);
+        const createdBook = await Book.create(bookData)
+        console.log(`${req.body.title}'s auto-generated ID: ${createdBook.id}`);
 
         res.status(201)
             .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
