@@ -1,46 +1,102 @@
 const utils = require('../utils/utils')
 const { db } = require('../db')
 const Book = db.books
+const path = require('path')
+const fs = require('fs')
+const zlib = require('node:zlib');
 
 // CREATE
 exports.create = async (req, res) => {
     try {
         /* 
-            title: NOT NULL
-            author: NOT NULL
-            description: NULL
-            releasedate: NOT NULL
-            booklength: NOT NULL
-            language: NULL
-            price: NOT NULL
+        title: NOT NULL
+        author: NOT NULL
+        description: NULL
+        releasedate: NOT NULL
+        booklength: NOT NULL
+        language: NULL
+        price: NOT NULL
+        pdf: NOT NULL
         */
-        const { title, author, description, releasedate, booklength, language, price } = req.body
-        if (
-            !title ||
-            !author ||
-            !releasedate ||
-            !booklength ||
-            !price
-        ) {
-            res.status(400).send({ error: "One or all required parameters are missing." })
-            return
-        }
-        const bookData = {
-            title: title,
-            author: author,
-            description: description,
-            releasedate: releasedate,
-            booklength: booklength,
-            language: language,
-            price: price
-        }
+        var data = [];
+        var files = [];
 
-        const createdBook = await Book.create(bookData)
-        console.log(`${req.body.title}'s auto-generated ID: ${createdBook.id}`);
+        if (req.busboy) {
+            req.busboy.on('file', async (name, file, info) => {
+                const saveTo = path.join(__dirname + '/../files', `${info.filename}`);
+                // const writeStream = fs.createWriteStream(saveTo)
+                // file.pipe(writeStream)
 
-        res.status(201)
-            .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
-            .send(createdBook)
+                const buffer = await utils.stream2buffer(file)
+                // const bufferContent = buffer.toString()
+
+                const newFile = {
+                    name: name,
+                    buffer: buffer,
+                    info: info
+                }
+
+                if (files.find(f => f.name === newFile.name) == undefined) {
+                    files.push(newFile)
+                }
+            });
+            req.busboy.on('field', (name, value, info) => {
+                data.push({
+                    name: name,
+                    value: value
+                })
+            });
+            req.busboy.on('close', () => {
+                // console.log(data)
+                // console.log(files)
+                // res.writeHead(200, { 'Connection': 'close' });
+                // res.end(`That's all folks!`);
+
+                const formData = utils.toObject(data)
+
+                const { title, author, description, releasedate, booklength, language, price } = formData
+                const pdfRaw = files.find(f => f.name == 'pdf').buffer
+                console.log(pdfRaw)
+                if (
+                    !title ||
+                    !author ||
+                    !releasedate ||
+                    !booklength ||
+                    !price ||
+                    !pdfRaw
+                ) {
+                    res.status(400).send({ error: "One or all required parameters are missing." })
+                    return
+                }
+                const pdfZipped = zlib.gzipSync(JSON.stringify(pdfRaw)).toString('utf-8');
+                console.log('zipped',pdfZipped)
+                const pdfUnzipped = zlib.gunzipSync(pdfZipped)
+                console.log('unzipped',pdfUnzipped)
+                const bufferContent = pdfUnzipped
+                const buf = new Buffer(JSON.stringify(bufferContent), 'utf-8');
+                console.log('final!',buf)
+                const bookData = {
+                    title: title,
+                    author: author,
+                    description: description,
+                    releasedate: releasedate,
+                    booklength: booklength,
+                    language: language,
+                    price: price,
+                    pdf: pdfZipped
+                }
+                console.log(bookData)
+
+                // const createdBook = await Book.create(bookData)
+                // console.log(`${req.body.title}'s auto-generated ID: ${createdBook.id}`);
+
+                // res.status(201)
+                //     .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
+                //     .send(createdBook)
+
+            });
+            req.pipe(req.busboy);
+        }
     } catch (error) {
         console.error(error)
     }

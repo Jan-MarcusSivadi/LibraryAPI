@@ -32,6 +32,10 @@ module.exports = (dbConnection, Sequelize) => {
         price: {
             type: Sequelize.FLOAT,
             allowNull: false
+        },
+        pdf: {
+            type: Sequelize.BLOB('long'),
+            allowNull: true
         }
     })
     return Book

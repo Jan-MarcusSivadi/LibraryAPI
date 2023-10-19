@@ -9,6 +9,19 @@ const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml');
 const express = require('express');
 const app = express();
 
+const busboy = require('connect-busboy');
+// Default options, immediately start reading from the request stream and
+// parsing
+app.use(busboy({
+  highWaterMark: 2 * 1024 * 1024,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  immediate: true
+}))
+// const bb = require('busboy');
+// app.use(bb)
+// app.use(express.urlencoded({ extended: true, limit: 10000, parameterLimit: 10 }))
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use('/pub', express.static(path.join(__dirname, 'public')))
 app.use(express.json());
