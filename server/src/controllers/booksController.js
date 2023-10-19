@@ -4,75 +4,136 @@ const Book = db.books
 
 // CREATE
 exports.create = async (req, res) => {
-    if (!req.body.title) {
-        res.status(400).send({ error: "One or all required parameters are missing." })
+    try {
+        /* 
+            title: NOT NULL
+            author: NOT NULL
+            description: NULL
+            releasedate: NOT NULL
+            booklength: NOT NULL
+            language: NULL
+            price: NOT NULL
+        */
+        const { title, author, description, releasedate, booklength, language, price } = req.body
+        if (
+            !title ||
+            !author ||
+            !releasedate ||
+            !booklength ||
+            !price
+        ) {
+            res.status(400).send({ error: "One or all required parameters are missing." })
+            return
+        }
+        const bookData = {
+            title: title,
+            author: author,
+            description: description,
+            releasedate: releasedate,
+            booklength: booklength,
+            language: language,
+            price: price
+        }
+
+        const createdBook = await Book.create(bookData)
+        console.log(`${req.body.title}'s auto-generated ID: ${createdBook.id}`);
+
+        res.status(201)
+            .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
+            .send(createdBook)
+    } catch (error) {
+        console.error(error)
     }
-
-    const createdBook = await Book.create({ title: req.body.title })
-    console.log(`${req.body.title}'s auto-generated ID:", ${createdBook.id}`);
-
-    res.status(201)
-        .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
-        .send(createdBook)
 }
 // READ
 exports.getAll = async (req, res) => {
-    const result = await Book.findAll({ attributes: ["id", "title"] })
-    res.send(JSON.stringify(result))
+    try {
+        const result = await Book.findAll({ attributes: ["id", "title", "description", "author", "releasedate", "language", "booklength", "price"] })
+        res.send(JSON.stringify(result))
+    } catch (error) {
+        console.error(error)
+    }
 }
 exports.getById = async (req, res) => {
-    const { id } = req.params
-    const book = await Book.findByPk(id)
+    try {
+        const { id } = req.params
+        const book = await Book.findByPk(id)
 
-    if (!book) {
-        return res.status(404).send({ error: "book not found." })
+        if (!book) {
+            res.status(404).send({ error: "book not found." })
+            return
+        }
+
+        res.send(book)
+    } catch (error) {
+        console.error(error)
     }
-
-    res.send(book)
 }
 // UPDATE
 exports.updateById = async (req, res) => {
-    const { id } = req.params
+    try {
+        const { title, author, description, releasedate, booklength, language, price } = req.body
+        const { id } = req.params
 
-    if (!req.body.title) {
-        res.status(400).send({ error: "One or all required parameters are missing." })
+        if (!title && !author && !description && !releasedate && !booklength && !language && !price) {
+            res.status(400).send({ error: "At least one field is required." })
+            return
+        }
+
+        const book = await Book.findByPk(id)
+
+        if (!book) {
+            res.status(404).send({ error: "book not found." })
+            return
+        }
+
+        const updatedBook = await Book.update(
+            {
+                title: title,
+                author: author,
+                description: description,
+                releasedate: releasedate,
+                booklength: booklength,
+                language: language,
+                price: price
+            },
+            { where: { id: book.id } }
+        )
+
+        if (updatedBook < 1) {
+            res.status(404).send({ error: "could not update book" })
+            return
+        }
+
+        if (!updatedBook) {
+            res.status(404).send({ error: "book not found." })
+            return
+        }
+
+        res.status(200).send("book updated successfully.")
+    } catch (error) {
+        console.error(error)
     }
-
-    const book = await Book.findByPk(id)
-
-    if (!book) {
-        return res.status(404).send({ error: "book not found." })
-    }
-
-    const updatedBook = await Book.update(
-        { title: req.body.title },
-        { where: { id: book.id } }
-    )
-
-    if (updatedBook < 1) {
-        return res.status(404).send({ error: "could not update book" })
-    }
-
-    if (!updatedBook) {
-        return res.status(404).send({ error: "book not found." })
-    }
-
-    res.status(200).send("book updated successfully.")
 }
 
 // DELETE
 exports.deleteOne = async (req, res) => {
-    const { id } = req.params
+    try {
+        const { id } = req.params
 
-    const book = await Book.destroy({
-        where: {
-            id: id
+        const book = await Book.destroy({
+            where: {
+                id: id
+            }
+        });
+
+        if (!book) {
+            res.status(404).send({ error: "book not found." })
+            return
         }
-    });
 
-    if (!book) {
-        return res.status(404).send({ error: "book not found." })
+        res.status(204).send()
+    } catch (error) {
+        console.error(error)
     }
-
-    res.status(204).send()
 }
