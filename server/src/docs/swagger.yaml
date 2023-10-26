@@ -564,7 +564,71 @@ paths:
                         OrderItems)
             summary: Get list of orders
             description: Returns an array of Orders
-    '/orders/{id}': {}
+    '/orders/{id}':
+        get:
+            tags:
+                - orders
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/order'
+                            examples:
+                                example order:
+                                    value:
+                                        id: 2
+                                        ordernr: ORDER-545300
+                                        rentaldate: '2023-10-24'
+                                        returndate: '2023-10-29'
+                                        UserId: 6
+                                        createdAt: '2023-10-24T20:26:46.000Z'
+                                        updatedAt: '2023-10-26T08:48:54.000Z'
+                                        User:
+                                            id: 6
+                                            firstname: Jan-Marcus
+                                            lastname: Sivadi
+                                            email: jmarcus.sivadi@gmail.com
+                                            password: password123?
+                                            username: JMS
+                                            phonenr: +372 58803477
+                                            createdAt: '2023-10-26T08:48:44.000Z'
+                                            updatedAt: '2023-10-26T08:48:44.000Z'
+                                        OrderItems:
+                                            -
+                                                id: 4
+                                                OrderId: 2
+                                                BookId: 6
+                                                createdAt: '2023-10-24T20:26:46.000Z'
+                                                updatedAt: '2023-10-24T20:26:46.000Z'
+                                                Book:
+                                                    id: 6
+                                                    title: Title this
+                                                    author: William Shakespeare2
+                                                    description: >-
+                                                        Romeo and Juliet, play by William Shakespeare, written
+                                                        about 1594–96 and first published in an unauthorized
+                                                        quarto in 1597. An authorized quarto appeared in 1599,
+                                                        substantially longer and more reliable.
+                                                    releasedate: '1597-01-01T00:00:00.000Z'
+                                                    booklength: 480
+                                                    language: English
+                                                    price: 11.99
+                                                    createdAt: '2023-10-24T19:33:51.000Z'
+                                                    updatedAt: '2023-10-24T19:33:51.000Z'
+                    description: 'Returns order by id (id, ordernr, rentaldate, returndate, UserId, User, OrderItems)'
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Not found.:
+                                    value:
+                                        error: book not found.
+                    description: Returns error
+            summary: Get one order
+            description: Returns order by id
 components:
     schemas:
         error:
