@@ -57,13 +57,13 @@ exports.getById = async (req, res) => {
   }
   // DELETE
   exports.deleteById = async (req, res) => {
-    const deletedAmount = await users.destroy({
+    const deletedAmount = await Order.destroy({
         where: { id: req.params.id }
     })
 
     if (deletedAmount == 0) {
-        return res.status(404).send({ error: "User not found." })
+        return res.status(404).send({ error: "Order not found." })
     }
-    res.status(204).send() 
+    res.status(204).send()
 }
   
