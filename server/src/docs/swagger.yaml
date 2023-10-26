@@ -143,7 +143,7 @@ paths:
                       "price": 5.99,
                       "pdf": "?"
                     }
-                required: false
+                required: true
             tags:
                 - books
             responses:
@@ -151,7 +151,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                type: string
+                                $ref: '#/components/schemas/book'
                             examples:
                                 Create new Book:
                                     value:
@@ -182,28 +182,8 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/user'
-                            examples:
-                                Full details of book:
-                                    value:
-                                        id: 44
-                                        firstname: some text
-                                        lastname: some text
-                                        email: some text
-                                        password: some text
-                                        username: some text
-                                        phonenr: some text
-                    description: Returns full details of given id user
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                'User /w+ was not found ':
-                                    value:
-                                        error: User \w+ was not found in game array.
-                    description: User was not found
+                                type: string
+                    description: Returns user
             operationId: id
             summary: Get details of a user
             description: Returns details of user
@@ -306,6 +286,24 @@ paths:
                                 Success:
                                     value: '"book updated successfully."'
                     description: OK
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                field is required:
+                                    value: '{ error: "At least one field is required." }'
+                    description: some fields are missing
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Not found:
+                                    value: '{ error: "book not found." }'
+                    description: book not found
             summary: Update book
             description: Updates book by id
         delete:
@@ -564,7 +562,161 @@ paths:
                         OrderItems)
             summary: Get list of orders
             description: Returns an array of Orders
-    '/orders/{id}': {}
+        post:
+            requestBody:
+                description: |-
+                    {
+                        "bookIds": [7,8,9,10],
+                        "userId": 1
+                    }
+                required: true
+            tags:
+                - orders
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/order'
+                            examples:
+                                Create new Order:
+                                    value:
+                                        id: 2
+                                        ordernr: ORDER-545300
+                                        rentaldate: '2023-10-24'
+                                        returndate: '2023-10-29'
+                                        UserId: 6
+                                        createdAt: '2023-10-24T20:26:46.000Z'
+                                        updatedAt: '2023-10-26T08:48:54.000Z'
+                    description: 'Returns created Order (id, ordernr, rentaldate, returndate, UserId)'
+            summary: Add new Order
+            description: Returns created Order
+    '/orders/{id}':
+        get:
+            tags:
+                - orders
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/order'
+                            examples:
+                                example order:
+                                    value:
+                                        id: 2
+                                        ordernr: ORDER-545300
+                                        rentaldate: '2023-10-24'
+                                        returndate: '2023-10-29'
+                                        UserId: 6
+                                        createdAt: '2023-10-24T20:26:46.000Z'
+                                        updatedAt: '2023-10-26T08:48:54.000Z'
+                                        User:
+                                            id: 6
+                                            firstname: Jan-Marcus
+                                            lastname: Sivadi
+                                            email: jmarcus.sivadi@gmail.com
+                                            password: password123?
+                                            username: JMS
+                                            phonenr: +372 58803477
+                                            createdAt: '2023-10-26T08:48:44.000Z'
+                                            updatedAt: '2023-10-26T08:48:44.000Z'
+                                        OrderItems:
+                                            -
+                                                id: 4
+                                                OrderId: 2
+                                                BookId: 6
+                                                createdAt: '2023-10-24T20:26:46.000Z'
+                                                updatedAt: '2023-10-24T20:26:46.000Z'
+                                                Book:
+                                                    id: 6
+                                                    title: Title this
+                                                    author: William Shakespeare2
+                                                    description: >-
+                                                        Romeo and Juliet, play by William Shakespeare, written
+                                                        about 1594–96 and first published in an unauthorized
+                                                        quarto in 1597. An authorized quarto appeared in 1599,
+                                                        substantially longer and more reliable.
+                                                    releasedate: '1597-01-01T00:00:00.000Z'
+                                                    booklength: 480
+                                                    language: English
+                                                    price: 11.99
+                                                    createdAt: '2023-10-24T19:33:51.000Z'
+                                                    updatedAt: '2023-10-24T19:33:51.000Z'
+                    description: 'Returns order by id (id, ordernr, rentaldate, returndate, UserId, User, OrderItems)'
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Not found.:
+                                    value:
+                                        error: order not found.
+                    description: Returns error
+            summary: Get one order
+            description: Returns order by id
+        put:
+            requestBody:
+                description: |-
+                    {
+                        "ordernr": "ORDER-1234",
+                        "rentaldate": "1987-05-02",
+                        "returndate": "1987-05-12"
+                        "UserId": 4
+                    }
+                required: true
+            tags:
+                - orders
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            examples:
+                                update success:
+                                    value: '"order updated successfully."'
+                    description: OK
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                field is required:
+                                    value: '{ error: "At least one field is required." }'
+                    description: some fields are missing
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                order not found:
+                                    value: '{ error: "order not found." }'
+                                user not found:
+                                    value: '{ error: "user not found." }'
+                                could not update order:
+                                    value: '{ error: "could not update order" }'
+                    description: not found.
+            summary: Update order
+            description: Updates order by id
+        delete:
+            tags:
+                - orders
+            responses:
+                '204':
+                    description: No content
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                order does not exist:
+                                    value: '{ error: "Order not found." }'
+                    description: Order not found
+            summary: Delete order by id
+            description: Deletes order using its id
 components:
     schemas:
         error:
