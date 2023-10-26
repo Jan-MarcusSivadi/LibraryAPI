@@ -18,15 +18,44 @@ paths:
                                     type: string
                             examples:
                                 List of users:
-                                    value: |-
-                                        [
-                                            {id:1,firstname:"Jeff",lastname:"Bezos",email:"jeffbezos@amazon.com",password:"markzuckerbergsux",username:"bigbezos420",phonenr:"+1 11748794 "},
-                                            {id:2,firstname:"Mark",lastname:"Zuckerberg",email:"markzuckerberg@facebook.com",password:"jeffbezossux",username:"markzuckofficial",phonenr:"+1 82543794 "}
-                                        ]
+                                    value:
+                                        -
+                                            id: 1
+                                            firstname: Jeff
+                                            lastname: Bezos
+                                            email: jeffbezos@amazon.com
+                                            password: markzuckerbergsux
+                                            username: bigbezos420
+                                            phonenr: '+1 11748794 '
+                                        -
+                                            id: 2
+                                            firstname: Mark
+                                            lastname: Zuckerberg
+                                            email: markzuckerberg@facebook.com
+                                            password: jeffbezossux
+                                            username: markzuckofficial
+                                            phonenr: '+1 82543794 '
                     description: Returns list of users
             summary: Get list of users
             description: Returns list of all users
         post:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            User:
+                                value:
+                                    id: 1
+                                    firstname: Jeff
+                                    lastname: Bezos
+                                    email: jeffbezos@amazon.com
+                                    password: markzuckerbergsux
+                                    username: bigbezos420
+                                    phonenr: +1 11748794
+                required: true
             tags:
                 - users
             responses:
@@ -140,8 +169,7 @@ paths:
                       "releasedate": "1597",
                       "booklength": 480,
                       "language": "English",
-                      "price": 5.99,
-                      "pdf": "?"
+                      "price": 5.99
                     }
                 required: true
             tags:
@@ -199,16 +227,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/error'
-                            examples:
-                                Updated:
-                                    value:
-                                        id: 1
-                                        firstname: Updated name
-                                        lastname: Bezos
-                                        email: jeffbezos@amazon.com
-                                        password: markzuckerbergsux
-                                        username: bigbezos420
-                                        phonenr: +1 11748794
                     description: User not found
             operationId: id
             summary: Get details of a user
@@ -218,14 +236,22 @@ paths:
             tags:
                 - users
             responses:
-                '200':
+                '202':
                     content:
                         application/json:
                             schema:
-                                type: array
-                                items:
-                                    type: string
-                    description: Updates details
+                                type: string
+                            examples:
+                                Update:
+                                    value:
+                                        id: 1
+                                        firstname: updated
+                                        lastname: Bezos
+                                        email: jeffbezos@amazon.com
+                                        password: markzuckerbergsux
+                                        username: bigbezos420
+                                        phonenr: '+1 11748794 '
+                    description: Update user details
                 '404':
                     content:
                         application/json:
@@ -250,10 +276,16 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/error'
                     description: User not found
+            summary: Delete user
             description: Deletes user from database
         parameters:
             -
+                examples:
+                    '1':
+                        value: '1'
                 name: id
+                schema:
+                    type: integer
                 in: path
                 required: true
     '/books/{id}':
@@ -294,6 +326,7 @@ paths:
                                     value:
                                         error: book not found.
                     description: Returns error
+            operationId: '1'
             summary: Get one book
             description: Returns book by id
         put:
@@ -338,6 +371,7 @@ paths:
                                 Not found:
                                     value: '{ error: "book not found." }'
                     description: book not found
+            operationId: '1'
             summary: Update book
             description: Updates book by id
         delete:
@@ -356,6 +390,7 @@ paths:
                                     value:
                                         error: book not found.
                     description: Book not found
+            operationId: '1'
             summary: Delete book by id
             description: Deletes book using its id
         parameters:
@@ -601,13 +636,20 @@ paths:
                 description: |-
                     {
                         "bookIds": [7,8,9,10],
-                        "userId": 1
+                        "userId": 6
                     }
                 required: true
             tags:
                 - orders
             responses:
                 '201':
+                    headers:
+                        Location:
+                            schema:
+                                type: string
+                            examples:
+                                Location of order:
+                                    value: 'http://localhost:3000/orders/2'
                     content:
                         application/json:
                             schema:
@@ -623,6 +665,48 @@ paths:
                                         createdAt: '2023-10-24T20:26:46.000Z'
                                         updatedAt: '2023-10-26T08:48:54.000Z'
                     description: 'Returns created Order (id, ordernr, rentaldate, returndate, UserId)'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                One or all required parameters are missing:
+                                    value: '{ error: "One or all required parameters are missing" }'
+                    description: One or all required parameters are missing
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                User not found.:
+                                    value: '{ error: "User not found." }'
+                                Some books could not be not found.:
+                                    value: '{ error: "Some books could not be not found." }'
+                                Book not found.:
+                                    value: '{ error: "Book not found." }'
+                                Some order items could not be deleted:
+                                    value: '{ error: "Some order items could not be created" }'
+                    description: Not found
+                '409':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Order already exists:
+                                    value: '{ error: "Order already exists for user" })'
+                    description: Order already exists
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Could not create order:
+                                    value: '{ error: "Could not create order" }'
+                    description: Could not create order
             summary: Add new Order
             description: Returns created Order
     '/orders/{id}':
@@ -688,6 +772,7 @@ paths:
                                     value:
                                         error: order not found.
                     description: Returns error
+            operationId: '2'
             summary: Get one order
             description: Returns order by id
         put:
@@ -732,6 +817,7 @@ paths:
                                 could not update order:
                                     value: '{ error: "could not update order" }'
                     description: Order does not exist
+            operationId: '2'
             summary: Update order
             description: Updates order by id
         delete:
@@ -749,6 +835,7 @@ paths:
                                 order does not exist:
                                     value: '{ error: "Order not found." }'
                     description: Order not found
+            operationId: '2'
             summary: Delete order by id
             description: Deletes order using its id
 components:

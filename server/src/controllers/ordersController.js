@@ -1,3 +1,4 @@
+const generateUid = require('generate-unique-id');
 const utils = require('../utils/utils')
 const { db } = require("../db")
 const User = db.users
@@ -27,18 +28,168 @@ const getParsedOrder = async (oneOrder) => {
     return currentOrder
 }
 
+const createOrderItems = async (bookIds, createdOrderId) => {
+    return new Promise(async (resolve, reject) => {
+        // var createdOrderItems = []
+        const books = await Book.findAll({
+            where: {
+                id: [...bookIds]
+            }
+        })
+        if (!books) {
+            return reject(404)
+        }
+
+        const itemsToCreate = bookIds.map(bookId => {
+            return { OrderId: createdOrderId, BookId: bookId }
+        })
+        // console.log(itemsToCreate)
+
+        try {
+            OrderItem.bulkCreate([...itemsToCreate]).then(() => { // Notice: There are no arguments here, as of right now you'll have to...
+                resolve(200)
+                return OrderItem.findAll();
+            }).then(items => {
+                // console.log(items) // ... in order to get the array of user objects
+                if (items.length < 1) {
+                    reject(500)
+                }
+            })
+        } catch (error) {
+            reject(500)
+        }
+    })
+}
+
+const deleteOrderItems = async (bookIds, createdOrderId) => {
+    return new Promise(async (resolve, reject) => {
+        var deletedOrderItems = []
+        for (var i = 0; i < bookIds.length - 1; i++) {
+            const book = await Book.findByPk(bookIds[i])
+            if (!book) {
+                return reject(404)
+            }
+            deletedOrderItems.push({ BookId: book.id })
+
+            if (i === bookIds.length - 1) {
+                deletedOrderItems.forEach(async (orderItem) => {
+                    const deletedOrderItem = await OrderItem.destroy({
+                        where: {
+                            OrderId: createdOrderId,
+                            BookId: orderItem.BookId
+                        }
+                    });
+                    // const createdOrderItem = await OrderItem.deleteById(orderItem.BookId)
+                    if (!deletedOrderItem) {
+                        return reject(500)
+                    }
+                })
+                resolve(200)
+            }
+        }
+    })
+}
 
 //CREATE
 exports.createNew = async (req, res) => {
-    if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.username || !req.body.phonenr) {
-        return res.status(400).send({ error: "One or all required parameters are missing" })
+    try {
+        const { bookIds, userId } = req.body
+
+        if (!bookIds || !userId) {
+            res.status(400).send({ error: "One or all required parameters are missing" })
+            return
+        }
+
+        const user = await User.findByPk(userId)
+        if (!user) {
+            res.status(404).send({ error: "User not found." })
+            return
+        }
+
+        const books = await Book.findAll({
+            where: {
+                id: bookIds
+            }
+        })
+        // console.log(books)
+        if (!books || books.length !== bookIds.length) {
+            res.status(404).send({ error: "Some books could not be not found." })
+            return
+        }
+
+        const allOrders = await Order.findAll({ where: { UserId: userId }, include: [OrderItem] })
+        if (allOrders && allOrders.length > 0) {
+            // CRITERIA: no orderitem can have already ordered books per user
+            const orderItems = await OrderItem.findAll({ where: { BookId: books.map(b => b.dataValues.id) } })
+            const existingOrder = orderItems.length > 0
+            console.log(existingOrder)
+
+            if (existingOrder) {
+                res.status(409).send({ error: "Order already exists for user" })
+                return
+            }
+        }
+
+        // generated uid
+        const uid = generateUid({
+            length: 6,
+            useLetters: false
+        })
+        const ordernr = `ORDER-${uid}`;
+
+        // rental time will be 5-30 days
+        const offsetInDays = 5
+        const dateNow = new Date()
+        const rentalDate = utils.formatDate(dateNow)
+        const returnDate = utils.formatDate(utils.getDateByOffset(dateNow, offsetInDays))
+        console.log('rentaldate', rentalDate);
+        console.log('returndate', returnDate);
+
+        const createdOrder = await Order.create(
+            {
+                ordernr: ordernr,
+                rentaldate: rentalDate,
+                returndate: returnDate,
+                UserId: userId
+            },
+            { fields: ["ordernr", "rentaldate", "returndate", "UserId"] }
+        )
+        if (!createdOrder) {
+            res.status(500).send({ error: "Could not create order" })
+            return
+        }
+
+        const createOrderItems_resultCode = await createOrderItems(bookIds, createdOrder.id)
+        console.log('resultCode', createOrderItems_resultCode)
+
+        if (createOrderItems_resultCode === 404) {
+            res.status(createOrderItems_resultCode).send({ error: "Book not found." })
+            return
+        }
+        
+        if (createOrderItems_resultCode === 500) {
+            // delete created order items
+            const deleteOrderItems_resultCode = await deleteOrderItems(bookIds, createdOrder.id)
+            if (deleteOrderItems_resultCode === 404) {
+                console.log({ status: deleteOrderItems_resultCode, error: "Book not found." })
+            }
+            if (deleteOrderItems_resultCode === 500) {
+                console.log({ status: deleteOrderItems_resultCode, error: `Some order items could not be deleted` })
+            }
+            // delete created order
+            const deleted = await Order.destroy({
+                where: { id: createdOrder.id }
+            })
+            res.status(createOrderItems_resultCode).send({ error: `Some order items could not be created` })
+            return
+        }
+
+        res.status(201)
+            .location(`${utils.getBaseUrl(req)}/orders/${createdOrder.id}`)
+            .json(createdOrder)
+    } catch (error) {
+        console.error(error)
     }
-    const createdUser = await users.create(req.body, {
-        fields: ["firstname", "lastname", "email", "password", "username", "phonenr"]
-    })
-    res.status(201)
-        .location(`${utils.getBaseUrl(req)}/users/${createdUser.id}`)
-        .json(createdUser)
 }
 // READ
 exports.getAll = async (req, res) => {
