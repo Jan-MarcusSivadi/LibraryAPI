@@ -33,11 +33,11 @@ exports.createNew = async (req, res) => {
 exports.getAll = async (req, res) => {
     var allOrders = await Order.findAll({ include: [User, OrderItem] })
     const parsedOrders = await getParsedOrders(allOrders)
-    
+
     res.json(parsedOrders)
 }
 exports.getById = async (req, res) => {
-    const foundUser = await  users.findByPk(req.params.id)
+    const foundUser = await users.findByPk(req.params.id)
     console.log("id", req.params.id)
     console.log("foundUser:", foundUser)
     if (foundUser === null) {
@@ -45,18 +45,54 @@ exports.getById = async (req, res) => {
     }
     res.send(foundUser)
 }
-  // UPDATE
-  exports.editById = async (req, res) => {
-    const updatedUser = await users.update({ ...req.body }, {
-        where: { id: req.params.id},
-        fields: ["firstname", "lastname", "email", "password", "username", "phonenr"]
-    })
-      if (updatedUser[0] == 0) {
-        return res.status(404).send({error: "User not found"})
-      }
-  }
-  // DELETE
-  exports.deleteById = async (req, res) => {
+// UPDATE
+exports.updateById = async (req, res) => {
+    const { ordernr, rentaldate, returndate, UserId } = req.body
+    const { id } = req.params
+
+    const order = await Order.findByPk(id)
+
+    if (!order) {
+        res.status(404).send({ error: "order not found." })
+        return
+    }
+
+    const user = await User.findByPk(UserId)
+
+    if (!user) {
+        res.status(404).send({ error: "user not found." })
+        return
+    }
+
+    if (!ordernr && !rentaldate && !returndate && !UserId) {
+        res.status(400).send({ error: "At least one field is required." })
+        return
+    }
+
+    const updatedOrder = await Order.update(
+        {
+            ordernr: ordernr,
+            rentaldate: rentaldate,
+            returndate: returndate,
+            UserId: UserId
+        },
+        { where: { id: req.params.id } }
+    )
+
+    if (updatedOrder < 1) {
+        res.status(404).send({ error: "could not update order" })
+        return
+    }
+
+    if (!updatedOrder) {
+        res.status(404).send({ error: "order not found." })
+        return
+    }
+
+    res.status(200).send("order updated successfully.")
+}
+// DELETE
+exports.deleteById = async (req, res) => {
     const deletedAmount = await Order.destroy({
         where: { id: req.params.id }
     })
@@ -66,4 +102,3 @@ exports.getById = async (req, res) => {
     }
     res.status(204).send()
 }
-  
