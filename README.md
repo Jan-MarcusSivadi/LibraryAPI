@@ -16,7 +16,10 @@ Create a new `.env` file that has the following text inside (don't forget to rep
 * DB_PASS=`{yourdatabase_password}`
 * DB_HOST=`{yourdatabase_host}`
 
-### Step 4 - Result
+### Step 4 - Start server
+Run command `npm start` from your terminal to start the api server.
+
+### Step 5 - Result
 If you added a PORT (5000 for example) variable into the `.env` file
  - Go to http://localhost:5000, you should see "Hello world!!" text;
 
