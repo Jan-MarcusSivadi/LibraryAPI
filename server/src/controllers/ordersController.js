@@ -8,9 +8,11 @@ const Order = db.orders
 const getParsedOrders = async (allOrders) => {
     return Promise.all(allOrders.map(async order => {
         const currentOrder = order.dataValues
-        currentOrder.OrderItems = await Promise.all(currentOrder.OrderItems.map(async item => {
-            return { ...item.dataValues, Book: await Book.findByPk(item.dataValues.BookId) }
-        }))
+        if (currentOrder.OrderItems) {
+            currentOrder.OrderItems = await Promise.all(currentOrder.OrderItems.map(async item => {
+                return { ...item.dataValues, Book: await Book.findByPk(item.dataValues.BookId) }
+            }))
+        }
         return currentOrder
     }))
 }
