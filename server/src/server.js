@@ -13,9 +13,10 @@ app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use('/pub', express.static(path.join(__dirname, 'public')))
 app.use(express.json());
 
-require('../src/routes/userRoutes')(app)
 
+require('../src/routes/userRoutes')(app)
 require('../src/routes/bookRoutes')(app)
+require("../src/routes/orderRoutes")(app)
 // app.use('/books', bookRoutes)
 
 // GET http://localhost:5000/

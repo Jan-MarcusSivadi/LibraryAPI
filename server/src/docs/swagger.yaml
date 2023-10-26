@@ -26,6 +26,31 @@ paths:
                     description: Returns list of users
             summary: Get list of users
             description: Returns list of all users
+        post:
+            tags:
+                - users
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                User created:
+                                    value:
+                                        id: 1
+                                        firstname: Jeff
+                                        lastname: Bezos
+                                        email: jeffbezos@amazon.com
+                                        password: markzuckerbergsux
+                                        username: bigbezos420
+                                        phonenr: +1 11748794
+                    description: User created
+            summary: Add new user
+            description: |
+                Returns created user
     /books:
         get:
             tags:
@@ -118,7 +143,7 @@ paths:
                       "price": 5.99,
                       "pdf": "?"
                     }
-                required: true
+                required: false
             tags:
                 - books
             responses:
@@ -308,6 +333,238 @@ paths:
                     type: integer
                 in: path
                 required: true
+    /orders:
+        get:
+            tags:
+                - orders
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/order'
+                            examples:
+                                all orders:
+                                    value:
+                                        -
+                                            id: 1
+                                            ordernr: ORDER-213337
+                                            rentaldate: '2023-10-24'
+                                            returndate: '2023-10-29'
+                                            UserId: 1
+                                            createdAt: '2023-10-24T20:26:35.000Z'
+                                            updatedAt: '2023-10-24T20:26:35.000Z'
+                                            User:
+                                                id: 1
+                                                firstname: Jeff1
+                                                lastname: Bezos
+                                                email: jeffbezos@amazon.com
+                                                password: markzuckerbergsux
+                                                username: bigbezos420
+                                                phonenr: +1 11748794
+                                                createdAt: '2023-10-24T11:13:56.000Z'
+                                                updatedAt: '2023-10-24T11:13:56.000Z'
+                                            OrderItems:
+                                                -
+                                                    id: 1
+                                                    OrderId: 1
+                                                    BookId: 1
+                                                    createdAt: '2023-10-24T20:26:35.000Z'
+                                                    updatedAt: '2023-10-24T20:26:35.000Z'
+                                                    Book:
+                                                        id: 1
+                                                        title: Among Us 1
+                                                        author: William Shakespeare2
+                                                        description: >-
+                                                            Romeo and Juliet, play by William Shakespeare,
+                                                            written about 1594–96 and first published in an
+                                                            unauthorized quarto in 1597. An authorized quarto
+                                                            appeared in 1599, substantially longer and more
+                                                            reliable.
+                                                        releasedate: '1597-01-01T00:00:00.000Z'
+                                                        booklength: 480
+                                                        language: English
+                                                        price: 5.99
+                                                        createdAt: '2023-10-24T18:34:49.000Z'
+                                                        updatedAt: '2023-10-24T18:34:49.000Z'
+                                                -
+                                                    id: 2
+                                                    OrderId: 1
+                                                    BookId: 2
+                                                    createdAt: '2023-10-24T20:26:35.000Z'
+                                                    updatedAt: '2023-10-24T20:26:35.000Z'
+                                                    Book:
+                                                        id: 2
+                                                        title: Among Us 2
+                                                        author: William Shakespeare2
+                                                        description: >-
+                                                            Romeo and Juliet, play by William Shakespeare,
+                                                            written about 1594–96 and first published in an
+                                                            unauthorized quarto in 1597. An authorized quarto
+                                                            appeared in 1599, substantially longer and more
+                                                            reliable.
+                                                        releasedate: '1597-01-01T00:00:00.000Z'
+                                                        booklength: 480
+                                                        language: English
+                                                        price: 5.99
+                                                        createdAt: '2023-10-24T18:34:51.000Z'
+                                                        updatedAt: '2023-10-24T18:34:51.000Z'
+                                                -
+                                                    id: 3
+                                                    OrderId: 1
+                                                    BookId: 3
+                                                    createdAt: '2023-10-24T20:26:35.000Z'
+                                                    updatedAt: '2023-10-24T20:26:35.000Z'
+                                                    Book:
+                                                        id: 3
+                                                        title: Among Us 3
+                                                        author: William Shakespeare2
+                                                        description: >-
+                                                            Romeo and Juliet, play by William Shakespeare,
+                                                            written about 1594–96 and first published in an
+                                                            unauthorized quarto in 1597. An authorized quarto
+                                                            appeared in 1599, substantially longer and more
+                                                            reliable.
+                                                        releasedate: '1597-01-01T00:00:00.000Z'
+                                                        booklength: 480
+                                                        language: English
+                                                        price: 5.99
+                                                        createdAt: '2023-10-24T18:34:55.000Z'
+                                                        updatedAt: '2023-10-24T18:34:55.000Z'
+                                        -
+                                            id: 2
+                                            ordernr: ORDER-545299
+                                            rentaldate: '2023-10-24'
+                                            returndate: '2023-10-29'
+                                            UserId: 1
+                                            createdAt: '2023-10-24T20:26:46.000Z'
+                                            updatedAt: '2023-10-24T20:26:46.000Z'
+                                            User:
+                                                id: 1
+                                                firstname: Jeff1
+                                                lastname: Bezos
+                                                email: jeffbezos@amazon.com
+                                                password: markzuckerbergsux
+                                                username: bigbezos420
+                                                phonenr: +1 11748794
+                                                createdAt: '2023-10-24T11:13:56.000Z'
+                                                updatedAt: '2023-10-24T11:13:56.000Z'
+                                            OrderItems:
+                                                -
+                                                    id: 4
+                                                    OrderId: 2
+                                                    BookId: 6
+                                                    createdAt: '2023-10-24T20:26:46.000Z'
+                                                    updatedAt: '2023-10-24T20:26:46.000Z'
+                                                    Book:
+                                                        id: 6
+                                                        title: Title this
+                                                        author: William Shakespeare2
+                                                        description: >-
+                                                            Romeo and Juliet, play by William Shakespeare,
+                                                            written about 1594–96 and first published in an
+                                                            unauthorized quarto in 1597. An authorized quarto
+                                                            appeared in 1599, substantially longer and more
+                                                            reliable.
+                                                        releasedate: '1597-01-01T00:00:00.000Z'
+                                                        booklength: 480
+                                                        language: English
+                                                        price: 11.99
+                                                        createdAt: '2023-10-24T19:33:51.000Z'
+                                                        updatedAt: '2023-10-24T19:33:51.000Z'
+                                        -
+                                            id: 3
+                                            ordernr: ORDER-002970
+                                            rentaldate: '2023-10-26'
+                                            returndate: '2023-10-31'
+                                            UserId: 5
+                                            createdAt: '2023-10-26T05:10:09.000Z'
+                                            updatedAt: '2023-10-26T05:10:09.000Z'
+                                            User:
+                                                id: 5
+                                                firstname: TestUser123
+                                                lastname: Bezos
+                                                email: jeffbezos@amazon.com
+                                                password: markzuckerbergsux
+                                                username: bigbezos420
+                                                phonenr: +1 11748794
+                                                createdAt: '2023-10-26T05:08:56.000Z'
+                                                updatedAt: '2023-10-26T05:08:56.000Z'
+                                            OrderItems:
+                                                -
+                                                    id: 5
+                                                    OrderId: 3
+                                                    BookId: 1
+                                                    createdAt: '2023-10-26T05:10:09.000Z'
+                                                    updatedAt: '2023-10-26T05:10:09.000Z'
+                                                    Book:
+                                                        id: 1
+                                                        title: Among Us 1
+                                                        author: William Shakespeare2
+                                                        description: >-
+                                                            Romeo and Juliet, play by William Shakespeare,
+                                                            written about 1594–96 and first published in an
+                                                            unauthorized quarto in 1597. An authorized quarto
+                                                            appeared in 1599, substantially longer and more
+                                                            reliable.
+                                                        releasedate: '1597-01-01T00:00:00.000Z'
+                                                        booklength: 480
+                                                        language: English
+                                                        price: 5.99
+                                                        createdAt: '2023-10-24T18:34:49.000Z'
+                                                        updatedAt: '2023-10-24T18:34:49.000Z'
+                                                -
+                                                    id: 6
+                                                    OrderId: 3
+                                                    BookId: 2
+                                                    createdAt: '2023-10-26T05:10:09.000Z'
+                                                    updatedAt: '2023-10-26T05:10:09.000Z'
+                                                    Book:
+                                                        id: 2
+                                                        title: Among Us 2
+                                                        author: William Shakespeare2
+                                                        description: >-
+                                                            Romeo and Juliet, play by William Shakespeare,
+                                                            written about 1594–96 and first published in an
+                                                            unauthorized quarto in 1597. An authorized quarto
+                                                            appeared in 1599, substantially longer and more
+                                                            reliable.
+                                                        releasedate: '1597-01-01T00:00:00.000Z'
+                                                        booklength: 480
+                                                        language: English
+                                                        price: 5.99
+                                                        createdAt: '2023-10-24T18:34:51.000Z'
+                                                        updatedAt: '2023-10-24T18:34:51.000Z'
+                                                -
+                                                    id: 7
+                                                    OrderId: 3
+                                                    BookId: 3
+                                                    createdAt: '2023-10-26T05:10:09.000Z'
+                                                    updatedAt: '2023-10-26T05:10:09.000Z'
+                                                    Book:
+                                                        id: 3
+                                                        title: Among Us 3
+                                                        author: William Shakespeare2
+                                                        description: >-
+                                                            Romeo and Juliet, play by William Shakespeare,
+                                                            written about 1594–96 and first published in an
+                                                            unauthorized quarto in 1597. An authorized quarto
+                                                            appeared in 1599, substantially longer and more
+                                                            reliable.
+                                                        releasedate: '1597-01-01T00:00:00.000Z'
+                                                        booklength: 480
+                                                        language: English
+                                                        price: 5.99
+                                                        createdAt: '2023-10-24T18:34:55.000Z'
+                                                        updatedAt: '2023-10-24T18:34:55.000Z'
+                    description: >-
+                        Returns an array of Orders (id, ordernr, rentaldate, returndate, userId, User,
+                        OrderItems)
+            summary: Get list of orders
+            description: Returns an array of Orders
+    '/orders/{id}': {}
 components:
     schemas:
         error:
@@ -386,3 +643,180 @@ components:
                 language: English
                 price: 5.99
                 pdf: '?'
+        order:
+            title: Root Type for order
+            description: ''
+            type: object
+            properties:
+                id:
+                    format: int32
+                    type: integer
+                ordernr:
+                    type: string
+                rentaldate:
+                    format: date
+                    type: string
+                returndate:
+                    format: date
+                    type: string
+                UserId:
+                    format: int32
+                    type: integer
+                createdAt:
+                    format: date-time
+                    type: string
+                updatedAt:
+                    format: date-time
+                    type: string
+                User:
+                    type: object
+                    properties:
+                        id:
+                            format: int32
+                            type: integer
+                        firstname:
+                            type: string
+                        lastname:
+                            type: string
+                        email:
+                            type: string
+                        password:
+                            type: string
+                        username:
+                            type: string
+                        phonenr:
+                            type: string
+                        createdAt:
+                            format: date-time
+                            type: string
+                        updatedAt:
+                            format: date-time
+                            type: string
+                OrderItems:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            id:
+                                format: int32
+                                type: integer
+                            OrderId:
+                                format: int32
+                                type: integer
+                            BookId:
+                                format: int32
+                                type: integer
+                            createdAt:
+                                format: date-time
+                                type: string
+                            updatedAt:
+                                format: date-time
+                                type: string
+                            Book:
+                                type: object
+                                properties:
+                                    id:
+                                        format: int32
+                                        type: integer
+                                    title:
+                                        type: string
+                                    author:
+                                        type: string
+                                    description:
+                                        type: string
+                                    releasedate:
+                                        format: date-time
+                                        type: string
+                                    booklength:
+                                        format: int32
+                                        type: integer
+                                    language:
+                                        type: string
+                                    price:
+                                        format: double
+                                        type: number
+                                    createdAt:
+                                        format: date-time
+                                        type: string
+                                    updatedAt:
+                                        format: date-time
+                                        type: string
+            example:
+                id: 1
+                ordernr: ORDER-213337
+                rentaldate: '2023-10-24'
+                returndate: '2023-10-29'
+                UserId: 1
+                createdAt: '2023-10-24T20:26:35.000Z'
+                updatedAt: '2023-10-24T20:26:35.000Z'
+                User:
+                    id: 1
+                    firstname: Jeff1
+                    lastname: Bezos
+                    email: jeffbezos@amazon.com
+                    password: markzuckerbergsux
+                    username: bigbezos420
+                    phonenr: +1 11748794
+                    createdAt: '2023-10-24T11:13:56.000Z'
+                    updatedAt: '2023-10-24T11:13:56.000Z'
+                OrderItems:
+                    -
+                        id: 1
+                        OrderId: 1
+                        BookId: 1
+                        createdAt: '2023-10-24T20:26:35.000Z'
+                        updatedAt: '2023-10-24T20:26:35.000Z'
+                        Book:
+                            id: 1
+                            title: Among Us 1
+                            author: William Shakespeare2
+                            description: >-
+                                Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first
+                                published in an unauthorized quarto in 1597. An authorized quarto appeared in
+                                1599, substantially longer and more reliable.
+                            releasedate: '1597-01-01T00:00:00.000Z'
+                            booklength: 480
+                            language: English
+                            price: 5.99
+                            createdAt: '2023-10-24T18:34:49.000Z'
+                            updatedAt: '2023-10-24T18:34:49.000Z'
+                    -
+                        id: 2
+                        OrderId: 1
+                        BookId: 2
+                        createdAt: '2023-10-24T20:26:35.000Z'
+                        updatedAt: '2023-10-24T20:26:35.000Z'
+                        Book:
+                            id: 2
+                            title: Among Us 2
+                            author: William Shakespeare2
+                            description: >-
+                                Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first
+                                published in an unauthorized quarto in 1597. An authorized quarto appeared in
+                                1599, substantially longer and more reliable.
+                            releasedate: '1597-01-01T00:00:00.000Z'
+                            booklength: 480
+                            language: English
+                            price: 5.99
+                            createdAt: '2023-10-24T18:34:51.000Z'
+                            updatedAt: '2023-10-24T18:34:51.000Z'
+                    -
+                        id: 3
+                        OrderId: 1
+                        BookId: 3
+                        createdAt: '2023-10-24T20:26:35.000Z'
+                        updatedAt: '2023-10-24T20:26:35.000Z'
+                        Book:
+                            id: 3
+                            title: Among Us 3
+                            author: William Shakespeare2
+                            description: >-
+                                Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first
+                                published in an unauthorized quarto in 1597. An authorized quarto appeared in
+                                1599, substantially longer and more reliable.
+                            releasedate: '1597-01-01T00:00:00.000Z'
+                            booklength: 480
+                            language: English
+                            price: 5.99
+                            createdAt: '2023-10-24T18:34:55.000Z'
+                            updatedAt: '2023-10-24T18:34:55.000Z'
