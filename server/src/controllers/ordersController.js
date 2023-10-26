@@ -1,6 +1,19 @@
 const utils = require('../utils/utils')
 const { db } = require("../db")
-const orders = db.orders
+const User = db.users
+const Book = db.books
+const OrderItem = db.orderItems
+const Order = db.orders
+
+const getParsedOrders = async (allOrders) => {
+    return Promise.all(allOrders.map(async order => {
+        const currentOrder = order.dataValues
+        currentOrder.OrderItems = await Promise.all(currentOrder.OrderItems.map(async item => {
+            return { ...item.dataValues, Book: await Book.findByPk(item.dataValues.BookId) }
+        }))
+        return currentOrder
+    }))
+}
 
 //CREATE
 exports.createNew = async (req, res) => {
@@ -16,8 +29,10 @@ exports.createNew = async (req, res) => {
 }
 // READ
 exports.getAll = async (req, res) => {
-    const result = await orders.findAll({ include: [db.books, db.users] })
-    res.json(result)
+    var allOrders = await Order.findAll({ include: [User, OrderItem] })
+    const parsedOrders = await getParsedOrders(allOrders)
+    
+    res.json(parsedOrders)
 }
 exports.getById = async (req, res) => {
     const foundUser = await  users.findByPk(req.params.id)
