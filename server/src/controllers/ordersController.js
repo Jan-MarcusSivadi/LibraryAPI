@@ -17,6 +17,17 @@ const getParsedOrders = async (allOrders) => {
     }))
 }
 
+const getParsedOrder = async (oneOrder) => {
+    const currentOrder = oneOrder.dataValues
+    if (currentOrder.OrderItems) {
+        currentOrder.OrderItems = await Promise.all(currentOrder.OrderItems.map(async item => {
+            return { ...item.dataValues, Book: await Book.findByPk(item.dataValues.BookId) }
+        }))
+    }
+    return currentOrder
+}
+
+
 //CREATE
 exports.createNew = async (req, res) => {
     if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.username || !req.body.phonenr) {
@@ -37,13 +48,15 @@ exports.getAll = async (req, res) => {
     res.json(parsedOrders)
 }
 exports.getById = async (req, res) => {
-    const foundUser = await users.findByPk(req.params.id)
+    const foundOrder = await Order.findByPk(req.params.id, { include: [User, OrderItem] })
     console.log("id", req.params.id)
-    console.log("foundUser:", foundUser)
-    if (foundUser === null) {
-        return res.status(404).send({ error: `User not found` })
+    console.log("foundOrder:", foundOrder)
+    if (!foundOrder) {
+        res.status(404).send({ error: `Order not found` })
+        return
     }
-    res.send(foundUser)
+    const parsedOrders = await getParsedOrder(foundOrder)
+    res.send(parsedOrders)
 }
 // UPDATE
 exports.updateById = async (req, res) => {
