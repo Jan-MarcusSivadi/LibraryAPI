@@ -38,6 +38,9 @@ exports.getById = async (req, res) => {
       if (updatedUser[0] == 0) {
         return res.status(404).send({error: "User not found"})
       }
+      res.status(202)
+            .location(`${utils.getBaseUrl(req)}/users/${createdUser.id}`)
+            .send()
   }
   // DELETE
   exports.deleteById = async (req, res) => {
