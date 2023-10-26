@@ -15,6 +15,17 @@ const getParsedOrders = async (allOrders) => {
     }))
 }
 
+const getParsedOrder = async (oneOrder) => {
+    const currentOrder = oneOrder.dataValues
+    if (currentOrder.OrderItems) {
+        currentOrder.OrderItems = await Promise.all(currentOrder.OrderItems.map(async item => {
+            return { ...item.dataValues, Book: await Book.findByPk(item.dataValues.BookId) }
+        }))
+    }
+    return currentOrder
+}
+
+
 //CREATE
 exports.createNew = async (req, res) => {
     if (!req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password || !req.body.username || !req.body.phonenr) {
@@ -31,30 +42,32 @@ exports.createNew = async (req, res) => {
 exports.getAll = async (req, res) => {
     var allOrders = await Order.findAll({ include: [User, OrderItem] })
     const parsedOrders = await getParsedOrders(allOrders)
-    
+
     res.json(parsedOrders)
 }
 exports.getById = async (req, res) => {
-    const foundUser = await  users.findByPk(req.params.id)
+    const foundOrder = await Order.findByPk(req.params.id, { include: [User, OrderItem] })
     console.log("id", req.params.id)
-    console.log("foundUser:", foundUser)
-    if (foundUser === null) {
-        return res.status(404).send({ error: `User not found` })
+    console.log("foundOrder:", foundOrder)
+    if (!foundOrder) {
+        res.status(404).send({ error: `Order not found` })
+        return
     }
-    res.send(foundUser)
+    const parsedOrders = await getParsedOrder(foundOrder)
+    res.send(parsedOrders)
 }
-  // UPDATE
-  exports.editById = async (req, res) => {
+// UPDATE
+exports.editById = async (req, res) => {
     const updatedUser = await users.update({ ...req.body }, {
-        where: { id: req.params.id},
+        where: { id: req.params.id },
         fields: ["firstname", "lastname", "email", "password", "username", "phonenr"]
     })
-      if (updatedUser[0] == 0) {
-        return res.status(404).send({error: "User not found"})
-      }
-  }
-  // DELETE
-  exports.deleteById = async (req, res) => {
+    if (updatedUser[0] == 0) {
+        return res.status(404).send({ error: "User not found" })
+    }
+}
+// DELETE
+exports.deleteById = async (req, res) => {
     const deletedAmount = await users.destroy({
         where: { id: req.params.id }
     })
@@ -62,6 +75,5 @@ exports.getById = async (req, res) => {
     if (deletedAmount == 0) {
         return res.status(404).send({ error: "User not found." })
     }
-    res.status(204).send() 
+    res.status(204).send()
 }
-  
