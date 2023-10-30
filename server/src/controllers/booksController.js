@@ -64,7 +64,7 @@ exports.getById = async (req, res) => {
             return
         }
 
-        res.send(book)
+        res.json(book)
     } catch (error) {
         console.error(error)
     }
