@@ -409,7 +409,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 field is required:
-                                    value: '{ error: "At least one field is required." }'
+                                    value:
+                                        error: At least one field is required.
                     description: some fields are missing
                 '404':
                     content:
@@ -418,7 +419,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 Not found:
-                                    value: '{ error: "book not found." }'
+                                    value:
+                                        error: book not found.
                     description: book not found
                 '500':
                     content:
@@ -427,7 +429,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 Update failed:
-                                    value: '{ error: "could not update book" }'
+                                    value:
+                                        error: could not update book
                     description: Internal server error
             summary: Update book
             description: Updates book by id
@@ -576,7 +579,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 One or all required parameters are missing:
-                                    value: '{ error: "One or all required parameters are missing" }'
+                                    value:
+                                        error: One or all required parameters are missing
                     description: One or all required parameters are missing
                 '404':
                     content:
@@ -585,13 +589,17 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 User not found.:
-                                    value: '{ error: "User not found." }'
+                                    value:
+                                        error: User not found.
                                 Some books could not be not found.:
-                                    value: '{ error: "Some books could not be not found." }'
+                                    value:
+                                        error: Some books could not be not found.
                                 Book not found.:
-                                    value: '{ error: "Book not found." }'
+                                    value:
+                                        error: Book not found.
                                 Some order items could not be deleted:
-                                    value: '{ error: "Some order items could not be created" }'
+                                    value:
+                                        error: Some order items could not be created
                     description: Not found
                 '409':
                     content:
@@ -600,7 +608,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 Order already exists:
-                                    value: '{ error: "Order already exists for user" })'
+                                    value:
+                                        error: Order already exists for user
                     description: Order already exists
                 '500':
                     content:
@@ -609,7 +618,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 Could not create order:
-                                    value: '{ error: "Could not create order" }'
+                                    value:
+                                        error: Could not create order
                     description: Could not create order
             summary: Add new Order
             description: Returns created Order
@@ -642,48 +652,46 @@ paths:
                                 $ref: '#/components/schemas/order'
                             examples:
                                 example order:
-                                    value: |-
-                                        {
-                                            "id": 1,
-                                            "ordernr": "ORDER-545300",
-                                            "rentaldate": "2023-10-24",
-                                            "returndate": "2023-10-29",
-                                            "UserId": 1,
-                                            "createdAt": "2023-10-24T20:26:46.000Z",
-                                            "updatedAt": "2023-10-26T08:48:54.000Z",
-                                            "User": {
-                                                "id": 1,
-                                                "firstname": "Big",
-                                                "lastname": "Bezos",
-                                                "email": "jeffbezos@amazon.com",
-                                                "password": "markzuckerbergsux",
-                                                "username": "bigbezos420",
-                                                "phonenr": "+1 11748794"
-                                                "createdAt": "2023-10-26T08:48:44.000Z",
-                                                "updatedAt": "2023-10-26T08:48:44.000Z"
-                                            },
-                                            "OrderItems": [
-                                                {
-                                                    "id": 4,
-                                                    "OrderId": 2,
-                                                    "BookId": 6,
-                                                    "createdAt": "2023-10-24T20:26:46.000Z",
-                                                    "updatedAt": "2023-10-24T20:26:46.000Z",
-                                                    "Book": {
-                                                        "id": 6,
-                                                        "title": "Title this",
-                                                        "author": "William Shakespeare2",
-                                                        "description": "Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer and more reliable.",
-                                                        "releasedate": "1597-01-01T00:00:00.000Z",
-                                                        "booklength": 480,
-                                                        "language": "English",
-                                                        "price": 11.99,
-                                                        "createdAt": "2023-10-24T19:33:51.000Z",
-                                                        "updatedAt": "2023-10-24T19:33:51.000Z"
-                                                    }
-                                                }
-                                            ]
-                                        }
+                                    value:
+                                        id: 1
+                                        ordernr: ORDER-545300
+                                        rentaldate: '2023-10-24'
+                                        returndate: '2023-10-29'
+                                        UserId: 1
+                                        createdAt: '2023-10-24T20:26:46.000Z'
+                                        updatedAt: '2023-10-26T08:48:54.000Z'
+                                        User:
+                                            id: 1
+                                            firstname: Big
+                                            lastname: Bezos
+                                            email: jeffbezos@amazon.com
+                                            password: markzuckerbergsux
+                                            username: bigbezos420
+                                            phonenr: +1 11748794
+                                            createdAt: '2023-10-26T08:48:44.000Z'
+                                            updatedAt: '2023-10-26T08:48:44.000Z'
+                                        OrderItems:
+                                            -
+                                                id: 4
+                                                OrderId: 2
+                                                BookId: 6
+                                                createdAt: '2023-10-24T20:26:46.000Z'
+                                                updatedAt: '2023-10-24T20:26:46.000Z'
+                                                Book:
+                                                    id: 6
+                                                    title: Title this
+                                                    author: William Shakespeare2
+                                                    description: >-
+                                                        Romeo and Juliet, play by William Shakespeare, written
+                                                        about 1594–96 and first published in an unauthorized
+                                                        quarto in 1597. An authorized quarto appeared in 1599,
+                                                        substantially longer and more reliable.
+                                                    releasedate: '1597-01-01T00:00:00.000Z'
+                                                    booklength: 480
+                                                    language: English
+                                                    price: 11.99
+                                                    createdAt: '2023-10-24T19:33:51.000Z'
+                                                    updatedAt: '2023-10-24T19:33:51.000Z'
                     description: 'Returns order by id (id, ordernr, rentaldate, returndate, UserId, User, OrderItems)'
                 '404':
                     content:
@@ -706,13 +714,13 @@ paths:
                             $ref: '#/components/schemas/order'
                         examples:
                             example request body:
-                                value: |-
-                                    {
-                                        "ordernr": "ORDER-1234",
-                                        "rentaldate": "1987-05-02",
-                                        "returndate": "1987-05-12"
-                                        "UserId": 2
-                                    }
+                                value:
+                                    ordernr: ORDER-1234
+                                    rentaldate: '1987-05-02'
+                                    returndate: '1987-05-12'
+                                    UserId: 2
+                            example invalid request body:
+                                value: {}
                 required: true
             tags:
                 - orders
@@ -750,7 +758,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 field is required:
-                                    value: '{ error: "At least one field is required." }'
+                                    value:
+                                        error: At least one field is required.
                     description: One or many fields are missing
                 '404':
                     content:
@@ -759,11 +768,14 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 order not found:
-                                    value: '{ error: "order not found." }'
+                                    value:
+                                        error: order not found.
                                 user not found:
-                                    value: '{ error: "user not found." }'
+                                    value:
+                                        error: user not found.
                                 could not update order:
-                                    value: '{ error: "could not update order" }'
+                                    value:
+                                        error: could not update order
                     description: Order does not exist
             summary: Update order
             description: Updates order by id
@@ -790,7 +802,8 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 order does not exist:
-                                    value: '{ error: "Order not found." }'
+                                    value:
+                                        error: Order not found.
                     description: Order not found
             summary: Delete order by id
             description: Deletes order using its id
@@ -874,7 +887,7 @@ components:
                 pdf: '?'
         order:
             title: Root Type for order
-            description: ''
+            description: order entity
             type: object
             properties:
                 id:
