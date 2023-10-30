@@ -31,10 +31,11 @@ exports.createNew = async (req, res) => {
 }
 // READ
 exports.getAll = async (req, res) => {
-    var allOrders = await Order.findAll({ include: [User, OrderItem] })
-    const parsedOrders = await getParsedOrders(allOrders)
+    // var allOrders = await Order.findAll({ include: [User, OrderItem] })
+    var allOrders = await Order.findAll({ include: [OrderItem] })
+    // const parsedOrders = await getParsedOrders(allOrders)
     
-    res.json(parsedOrders)
+    res.json(allOrders)
 }
 exports.getById = async (req, res) => {
     const foundUser = await  users.findByPk(req.params.id)
