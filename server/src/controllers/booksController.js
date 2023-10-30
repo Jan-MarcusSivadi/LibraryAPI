@@ -101,7 +101,7 @@ exports.updateById = async (req, res) => {
         )
 
         if (updatedBook < 1) {
-            res.status(404).send({ error: "could not update book" })
+            res.status(500).send({ error: "could not update book" })
             return
         }
 
@@ -110,7 +110,9 @@ exports.updateById = async (req, res) => {
             return
         }
 
-        res.status(200).send("book updated successfully.")
+        res.status(200)
+            .location(`${utils.getBaseUrl(req)}/books/${id}`)
+            .send("book updated successfully.")
     } catch (error) {
         console.error(error)
     }
