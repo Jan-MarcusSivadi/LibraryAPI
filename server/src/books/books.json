@@ -1,57 +1,32 @@
 [
-    {
-      "id": 1,
-      "title": "Romeo and Juliet",
-      "author": "William Shakespeare",
-      "description": "Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer and more reliable.",
-      "releasedate": "1597",
-      "booklength": 480,
-      "language": "English",
-      "price": 5.99,
-      "pdf": "?"
-    },
-    {
-      "id": 2,
-      "title": "Moby Dick; Or, The Whale",
-      "author": "Herman Melville",
-      "description": "Moby-Dick; or, The Whale is an 1851 novel by American writer Herman Melville. The book is the sailor Ishmael's narrative of the maniacal quest of Ahab, captain of the whaling ship Pequod, for vengeance against Moby Dick, the giant white sperm whale that bit off his leg on the ship's previous voyage.",
-      "releasedate": "1851",
-      "booklength": 378,
-      "language": "English",
-      "price": 4.99,
-      "pdf": "?"
-    },
-    {
-      "id": 3,
-      "title": "A Room with a View",
-      "author": "E. M. Forster",
-      "description": "Romeo and Juliet",
-      "releasedate": "1908",
-      "booklength": 321,
-      "language": "English",
-      "price": 3.99,
-      "pdf": "?"
-    },
-    {
-      "id": 4,
-      "title": "Middlemarch",
-      "author": "?",
-      "description": "?",
-      "releasedate": "?",
-      "booklength": "?",
-      "language": "?",
-      "price": "?",
-      "pdf": "?"
-    },
-    {
-      "id": 5,
-      "title": "The Blue Castle: a novel",
-      "author": "?",
-      "description": "?",
-      "releasedate": "?",
-      "booklength": "?",
-      "language": "?",
-      "price": "?",
-      "pdf": "?"
-    }
-  ]
+  {
+    "id": 1,
+    "title": "Romeo and Juliet",
+    "author": "William Shakespeare",
+    "description": "Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer and more reliable.",
+    "releasedate": "1597",
+    "booklength": 480,
+    "language": "English",
+    "price": 5.99
+  },
+  {
+    "id": 2,
+    "title": "Moby Dick; Or, The Whale",
+    "author": "Herman Melville",
+    "description": "Moby-Dick; or, The Whale is an 1851 novel by American writer Herman Melville. The book is the sailor Ishmael's narrative of the maniacal quest of Ahab, captain of the whaling ship Pequod, for vengeance against Moby Dick, the giant white sperm whale that bit off his leg on the ship's previous voyage.",
+    "releasedate": "1851",
+    "booklength": 378,
+    "language": "English",
+    "price": 4.99
+  },
+  {
+    "id": 3,
+    "title": "A Room with a View",
+    "author": "E. M. Forster",
+    "description": "A Room with a View follows Lucy Honeychurch as she fights against her society in search for both, independence and love. While she first believes these two to be mutually exclusive, she realizes that, in George Emerson, she can have both.",
+    "releasedate": "1908",
+    "booklength": 321,
+    "language": "English",
+    "price": 3.99
+  }
+]
