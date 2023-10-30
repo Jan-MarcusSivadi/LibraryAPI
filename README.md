@@ -25,7 +25,3 @@ If you added a PORT (5000 for example) variable into the `.env` file
 
 If you skipped adding a PORT variable into the `.env` file
  - Go to http://localhost:3000, you should see "Hello world!!" text;
-
-# Next Steps for Backend
-## Implement API routes for orders
-* `/api/orderitem`
