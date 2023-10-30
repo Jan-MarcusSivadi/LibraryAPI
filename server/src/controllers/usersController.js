@@ -17,7 +17,7 @@ exports.createNew = async (req, res) => {
 }
 // READ
 exports.getAll = async (req, res) => {
-    const result = await users.findAll({ attributes: ["id", "firstname", "lastname", "email", "password", "username", "phonenr"] })
+    const result = await users.findAll({ attributes: ["id","username"] })
     res.send(JSON.stringify(result))
 }
 exports.getById = async (req, res) => {
@@ -38,6 +38,9 @@ exports.getById = async (req, res) => {
       if (updatedUser[0] == 0) {
         return res.status(404).send({error: "User not found"})
       }
+      res.status(202)
+            .location(`${utils.getBaseUrl(req)}/users/${req.params.id}`)
+            .send()
   }
   // DELETE
   exports.deleteById = async (req, res) => {

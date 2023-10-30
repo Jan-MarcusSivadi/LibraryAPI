@@ -6,6 +6,6 @@ module.exports = (app) => {
         .post(ordersController.createNew)     // CREATE
     app.route('/orders/:id')
         .get(ordersController.getById)        // READ
-        .put(ordersController.editById)       // UPDATE
+        .put(ordersController.updateById)       // UPDATE
         .delete(ordersController.deleteById)  // DELETE
 }
