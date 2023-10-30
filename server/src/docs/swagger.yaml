@@ -18,15 +18,34 @@ paths:
                                     type: string
                             examples:
                                 List of users:
-                                    value: |-
-                                        [
-                                            {id:1,firstname:"Jeff",lastname:"Bezos",email:"jeffbezos@amazon.com",password:"markzuckerbergsux",username:"bigbezos420",phonenr:"+1 11748794 "},
-                                            {id:2,firstname:"Mark",lastname:"Zuckerberg",email:"markzuckerberg@facebook.com",password:"jeffbezossux",username:"markzuckofficial",phonenr:"+1 82543794 "}
-                                        ]
+                                    value:
+                                        -
+                                            id: 1
+                                            username: bigbezos420
+                                        -
+                                            id: 2
+                                            username: markzuckofficial
                     description: Returns list of users
             summary: Get list of users
             description: Returns list of all users
         post:
+            requestBody:
+                description: ''
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            User:
+                                value:
+                                    id: 1
+                                    firstname: Jeff
+                                    lastname: Bezos
+                                    email: jeffbezos@amazon.com
+                                    password: markzuckerbergsux
+                                    username: bigbezos420
+                                    phonenr: +1 11748794
+                required: true
             tags:
                 - users
             responses:
@@ -79,7 +98,6 @@ paths:
                                             booklength: 480
                                             language: English
                                             price: 5.99
-                                            pdf: '?'
                                         -
                                             id: 2
                                             title: 'Moby Dick; Or, The Whale'
@@ -94,37 +112,19 @@ paths:
                                             booklength: 378
                                             language: English
                                             price: 4.99
-                                            pdf: '?'
                                         -
                                             id: 3
                                             title: A Room with a View
                                             author: E. M. Forster
-                                            description: Romeo and Juliet
+                                            description: >-
+                                                A Room with a View follows Lucy Honeychurch as she fights
+                                                against her society in search for both, independence and love.
+                                                While she first believes these two to be mutually exclusive,
+                                                she realizes that, in George Emerson, she can have both.
                                             releasedate: '1908'
                                             booklength: 321
                                             language: English
                                             price: 3.99
-                                            pdf: '?'
-                                        -
-                                            id: 4
-                                            title: Middlemarch
-                                            author: '?'
-                                            description: '?'
-                                            releasedate: '?'
-                                            booklength: '?'
-                                            language: '?'
-                                            price: '?'
-                                            pdf: '?'
-                                        -
-                                            id: 5
-                                            title: 'The Blue Castle: a novel'
-                                            author: '?'
-                                            description: '?'
-                                            releasedate: '?'
-                                            booklength: '?'
-                                            language: '?'
-                                            price: '?'
-                                            pdf: '?'
                     description: >-
                         Returns an array of Books (id, title, author, description, releasedate, booklength,
                         language, price)
@@ -132,22 +132,40 @@ paths:
             description: Returns an array of Books
         post:
             requestBody:
-                description: |-
-                    {
-                      "title": "Romeo and Juliet",
-                      "author": "William Shakespeare",
-                      "description": "Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer and more reliable.",
-                      "releasedate": "1597",
-                      "booklength": 480,
-                      "language": "English",
-                      "price": 5.99,
-                      "pdf": "?"
-                    }
+                description: example request body data
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/book'
+                        examples:
+                            example request body data:
+                                value:
+                                    title: Middlemarch
+                                    author: George Eliot
+                                    description: >-
+                                        Middlemarch is a novel that explores the dynamics of marriage and
+                                        social class in 19th-century England. A large web of characters,
+                                        including the main stories of Dorothea Brooke and Dr. Lydgate,
+                                        intersect with a number of related plotlines.
+                                    releasedate: '1871'
+                                    booklength: '880'
+                                    language: English
+                                    price: '3.99'
+                            example invalid request body data:
+                                value:
+                                    title: Middlemarch
                 required: true
             tags:
                 - books
             responses:
                 '201':
+                    headers:
+                        Location:
+                            schema:
+                                type: string
+                            examples:
+                                Location of Book:
+                                    value: 'http://localhost:3000/books/4'
                     content:
                         application/json:
                             schema:
@@ -155,22 +173,33 @@ paths:
                             examples:
                                 Create new Book:
                                     value:
-                                        id: 1
-                                        title: Romeo and Juliet
-                                        author: William Shakespeare
+                                        id: 4
+                                        title: Middlemarch
+                                        author: George Eliot
                                         description: >-
-                                            Romeo and Juliet, play by William Shakespeare, written about
-                                            1594–96 and first published in an unauthorized quarto in 1597. An
-                                            authorized quarto appeared in 1599, substantially longer and more
-                                            reliable.
-                                        releasedate: '1597'
-                                        booklength: 480
+                                            Middlemarch is a novel that explores the dynamics of marriage and
+                                            social class in 19th-century England. A large web of characters,
+                                            including the main stories of Dorothea Brooke and Dr. Lydgate,
+                                            intersect with a number of related plotlines.
+                                        releasedate: '1871-01-01T00:00:00.000Z'
+                                        booklength: '880'
                                         language: English
-                                        price: 5.99
+                                        price: '3.99'
+                                        updatedAt: '2023-10-30T15:55:30.397Z'
+                                        createdAt: '2023-10-30T15:55:30.397Z'
                     description: >-
                         Returns created Book (id, title, author, description, releasedate, booklength,
-                        language, price)
-            operationId: /books/create
+                        language, price, updatedAt, createdAt)
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                One or all required parameters are missing:
+                                    value:
+                                        error: One or all required parameters are missing.
+                    description: One or all required parameters are missing
             summary: Add new Book
             description: Returns created Book
     '/users/{id}':
@@ -183,28 +212,66 @@ paths:
                         application/json:
                             schema:
                                 type: string
+                            examples:
+                                User:
+                                    value:
+                                        id: 1
+                                        firstname: Jeff
+                                        lastname: Bezos
+                                        email: jeffbezos@amazon.com
+                                        password: markzuckerbergsux
+                                        username: bigbezos420
+                                        phonenr: +1 11748794
                     description: Returns user
-            operationId: id
-            summary: Get details of a user
-            description: Returns details of user
-        put:
-            requestBody: {}
-            tags:
-                - users
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                    description: Updates details
                 '404':
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/error'
+                    description: User not found
+            operationId: id
+            summary: Get details of a user
+            description: Returns details of user
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            example:
+                                value:
+                                    firstname: updated
+                                    lastname: updated
+                                    email: jeffbezos@amazon.com
+                                    password: markzuckerbergsux
+                                    username: updated
+                                    phonenr: '+1 11748794 '
+            tags:
+                - users
+            responses:
+                '202':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                            examples:
+                                Update:
+                                    value:
+                                        id: 1
+                                        firstname: updated
+                                        lastname: Bezos
+                                        email: jeffbezos@amazon.com
+                                        password: markzuckerbergsux
+                                        username: bigbezos420
+                                        phonenr: '+1 11748794 '
+                    description: Update user details
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                    description: User not found
             summary: Update details of a user
             description: Updates details of user
         delete:
@@ -216,16 +283,39 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/error'
+                    description: User gets deleted
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                    description: User not found
+            summary: Delete user
             description: Deletes user from database
         parameters:
             -
+                examples:
+                    '1':
+                        value: '1'
                 name: id
+                schema:
+                    type: integer
                 in: path
                 required: true
     '/books/{id}':
         get:
             tags:
                 - books
+            parameters:
+                -
+                    examples:
+                        id:
+                            value: '1'
+                    name: id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
             responses:
                 '200':
                     content:
@@ -236,20 +326,22 @@ paths:
                                 Book:
                                     value:
                                         id: 1
-                                        title: Romeo and Juliet
-                                        author: William Shakespeare
+                                        title: Title1
                                         description: >-
                                             Romeo and Juliet, play by William Shakespeare, written about
                                             1594–96 and first published in an unauthorized quarto in 1597. An
                                             authorized quarto appeared in 1599, substantially longer and more
                                             reliable.
-                                        releasedate: '1597'
-                                        booklength: 480
+                                        author: William Shakespeare2
+                                        releasedate: '1597-01-01T00:00:00.000Z'
                                         language: English
+                                        booklength: 480
                                         price: 5.99
+                                        createdAt: '2023-10-24T18:55:57.000Z'
+                                        updatedAt: '2023-10-26T11:46:19.000Z'
                     description: >-
                         Returns book by id (id, title, author, description, releasedate, booklength, language,
-                        price)
+                        price, createdAt, updatedAt)
                 '404':
                     content:
                         application/json:
@@ -264,24 +356,48 @@ paths:
             description: Returns book by id
         put:
             requestBody:
-                description: |-
-                    {
-                      "title": "Romeo and Juliet2",
-                      "author": "William Shakespeare2",
-                      "description": "A play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer.",
-                      "releasedate": "1597",
-                      "booklength": 480,
-                      "language": "English",
-                      "price": 6.95,
-                      "pdf": "?"
-                    },
+                description: example request body data
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/book'
+                        examples:
+                            example request body data:
+                                value:
+                                    title: Middlemarch 2
+                                    author: Eliot
+                                    description: >-
+                                        Middlemarch is a novel that explores the dynamics of marriage and
+                                        social class in 19th-century England.
+                                    price: 3.95
+                            example invalid request body data:
+                                value: {}
                 required: true
             tags:
                 - books
+            parameters:
+                -
+                    examples:
+                        id:
+                            value: '4'
+                    name: id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
             responses:
                 '200':
+                    headers:
+                        Location:
+                            schema:
+                                type: string
+                            examples:
+                                Location of book:
+                                    value: 'http://localhost:3000/books/4'
                     content:
                         text/xml:
+                            schema:
+                                type: string
                             examples:
                                 Success:
                                     value: '"book updated successfully."'
@@ -304,11 +420,30 @@ paths:
                                 Not found:
                                     value: '{ error: "book not found." }'
                     description: book not found
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Update failed:
+                                    value: '{ error: "could not update book" }'
+                    description: Internal server error
             summary: Update book
             description: Updates book by id
         delete:
             tags:
                 - books
+            parameters:
+                -
+                    examples:
+                        id:
+                            value: '4'
+                    name: id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
             responses:
                 '204':
                     description: No content
@@ -348,215 +483,52 @@ paths:
                                     value:
                                         -
                                             id: 1
-                                            ordernr: ORDER-213337
-                                            rentaldate: '2023-10-24'
-                                            returndate: '2023-10-29'
+                                            ordernr: ORDER-472417
+                                            rentaldate: '2023-10-30'
+                                            returndate: '2023-11-04'
                                             UserId: 1
-                                            createdAt: '2023-10-24T20:26:35.000Z'
-                                            updatedAt: '2023-10-24T20:26:35.000Z'
-                                            User:
-                                                id: 1
-                                                firstname: Jeff1
-                                                lastname: Bezos
-                                                email: jeffbezos@amazon.com
-                                                password: markzuckerbergsux
-                                                username: bigbezos420
-                                                phonenr: +1 11748794
-                                                createdAt: '2023-10-24T11:13:56.000Z'
-                                                updatedAt: '2023-10-24T11:13:56.000Z'
+                                            createdAt: '2023-10-30T17:53:13.000Z'
+                                            updatedAt: '2023-10-30T17:53:13.000Z'
                                             OrderItems:
                                                 -
                                                     id: 1
                                                     OrderId: 1
                                                     BookId: 1
-                                                    createdAt: '2023-10-24T20:26:35.000Z'
-                                                    updatedAt: '2023-10-24T20:26:35.000Z'
-                                                    Book:
-                                                        id: 1
-                                                        title: Among Us 1
-                                                        author: William Shakespeare2
-                                                        description: >-
-                                                            Romeo and Juliet, play by William Shakespeare,
-                                                            written about 1594–96 and first published in an
-                                                            unauthorized quarto in 1597. An authorized quarto
-                                                            appeared in 1599, substantially longer and more
-                                                            reliable.
-                                                        releasedate: '1597-01-01T00:00:00.000Z'
-                                                        booklength: 480
-                                                        language: English
-                                                        price: 5.99
-                                                        createdAt: '2023-10-24T18:34:49.000Z'
-                                                        updatedAt: '2023-10-24T18:34:49.000Z'
+                                                    createdAt: '2023-10-30T17:53:13.000Z'
+                                                    updatedAt: '2023-10-30T17:53:13.000Z'
                                                 -
                                                     id: 2
                                                     OrderId: 1
                                                     BookId: 2
-                                                    createdAt: '2023-10-24T20:26:35.000Z'
-                                                    updatedAt: '2023-10-24T20:26:35.000Z'
-                                                    Book:
-                                                        id: 2
-                                                        title: Among Us 2
-                                                        author: William Shakespeare2
-                                                        description: >-
-                                                            Romeo and Juliet, play by William Shakespeare,
-                                                            written about 1594–96 and first published in an
-                                                            unauthorized quarto in 1597. An authorized quarto
-                                                            appeared in 1599, substantially longer and more
-                                                            reliable.
-                                                        releasedate: '1597-01-01T00:00:00.000Z'
-                                                        booklength: 480
-                                                        language: English
-                                                        price: 5.99
-                                                        createdAt: '2023-10-24T18:34:51.000Z'
-                                                        updatedAt: '2023-10-24T18:34:51.000Z'
+                                                    createdAt: '2023-10-30T17:53:13.000Z'
+                                                    updatedAt: '2023-10-30T17:53:13.000Z'
                                                 -
                                                     id: 3
                                                     OrderId: 1
                                                     BookId: 3
-                                                    createdAt: '2023-10-24T20:26:35.000Z'
-                                                    updatedAt: '2023-10-24T20:26:35.000Z'
-                                                    Book:
-                                                        id: 3
-                                                        title: Among Us 3
-                                                        author: William Shakespeare2
-                                                        description: >-
-                                                            Romeo and Juliet, play by William Shakespeare,
-                                                            written about 1594–96 and first published in an
-                                                            unauthorized quarto in 1597. An authorized quarto
-                                                            appeared in 1599, substantially longer and more
-                                                            reliable.
-                                                        releasedate: '1597-01-01T00:00:00.000Z'
-                                                        booklength: 480
-                                                        language: English
-                                                        price: 5.99
-                                                        createdAt: '2023-10-24T18:34:55.000Z'
-                                                        updatedAt: '2023-10-24T18:34:55.000Z'
+                                                    createdAt: '2023-10-30T17:53:13.000Z'
+                                                    updatedAt: '2023-10-30T17:53:13.000Z'
                                         -
                                             id: 2
-                                            ordernr: ORDER-545299
-                                            rentaldate: '2023-10-24'
-                                            returndate: '2023-10-29'
-                                            UserId: 1
-                                            createdAt: '2023-10-24T20:26:46.000Z'
-                                            updatedAt: '2023-10-24T20:26:46.000Z'
-                                            User:
-                                                id: 1
-                                                firstname: Jeff1
-                                                lastname: Bezos
-                                                email: jeffbezos@amazon.com
-                                                password: markzuckerbergsux
-                                                username: bigbezos420
-                                                phonenr: +1 11748794
-                                                createdAt: '2023-10-24T11:13:56.000Z'
-                                                updatedAt: '2023-10-24T11:13:56.000Z'
+                                            ordernr: ORDER-477870
+                                            rentaldate: '2023-10-30'
+                                            returndate: '2023-11-04'
+                                            UserId: 2
+                                            createdAt: '2023-10-30T17:59:41.000Z'
+                                            updatedAt: '2023-10-30T17:59:41.000Z'
                                             OrderItems:
                                                 -
                                                     id: 4
                                                     OrderId: 2
-                                                    BookId: 6
-                                                    createdAt: '2023-10-24T20:26:46.000Z'
-                                                    updatedAt: '2023-10-24T20:26:46.000Z'
-                                                    Book:
-                                                        id: 6
-                                                        title: Title this
-                                                        author: William Shakespeare2
-                                                        description: >-
-                                                            Romeo and Juliet, play by William Shakespeare,
-                                                            written about 1594–96 and first published in an
-                                                            unauthorized quarto in 1597. An authorized quarto
-                                                            appeared in 1599, substantially longer and more
-                                                            reliable.
-                                                        releasedate: '1597-01-01T00:00:00.000Z'
-                                                        booklength: 480
-                                                        language: English
-                                                        price: 11.99
-                                                        createdAt: '2023-10-24T19:33:51.000Z'
-                                                        updatedAt: '2023-10-24T19:33:51.000Z'
-                                        -
-                                            id: 3
-                                            ordernr: ORDER-002970
-                                            rentaldate: '2023-10-26'
-                                            returndate: '2023-10-31'
-                                            UserId: 5
-                                            createdAt: '2023-10-26T05:10:09.000Z'
-                                            updatedAt: '2023-10-26T05:10:09.000Z'
-                                            User:
-                                                id: 5
-                                                firstname: TestUser123
-                                                lastname: Bezos
-                                                email: jeffbezos@amazon.com
-                                                password: markzuckerbergsux
-                                                username: bigbezos420
-                                                phonenr: +1 11748794
-                                                createdAt: '2023-10-26T05:08:56.000Z'
-                                                updatedAt: '2023-10-26T05:08:56.000Z'
-                                            OrderItems:
+                                                    BookId: 2
+                                                    createdAt: '2023-10-30T17:59:41.000Z'
+                                                    updatedAt: '2023-10-30T17:59:41.000Z'
                                                 -
                                                     id: 5
-                                                    OrderId: 3
+                                                    OrderId: 2
                                                     BookId: 1
-                                                    createdAt: '2023-10-26T05:10:09.000Z'
-                                                    updatedAt: '2023-10-26T05:10:09.000Z'
-                                                    Book:
-                                                        id: 1
-                                                        title: Among Us 1
-                                                        author: William Shakespeare2
-                                                        description: >-
-                                                            Romeo and Juliet, play by William Shakespeare,
-                                                            written about 1594–96 and first published in an
-                                                            unauthorized quarto in 1597. An authorized quarto
-                                                            appeared in 1599, substantially longer and more
-                                                            reliable.
-                                                        releasedate: '1597-01-01T00:00:00.000Z'
-                                                        booklength: 480
-                                                        language: English
-                                                        price: 5.99
-                                                        createdAt: '2023-10-24T18:34:49.000Z'
-                                                        updatedAt: '2023-10-24T18:34:49.000Z'
-                                                -
-                                                    id: 6
-                                                    OrderId: 3
-                                                    BookId: 2
-                                                    createdAt: '2023-10-26T05:10:09.000Z'
-                                                    updatedAt: '2023-10-26T05:10:09.000Z'
-                                                    Book:
-                                                        id: 2
-                                                        title: Among Us 2
-                                                        author: William Shakespeare2
-                                                        description: >-
-                                                            Romeo and Juliet, play by William Shakespeare,
-                                                            written about 1594–96 and first published in an
-                                                            unauthorized quarto in 1597. An authorized quarto
-                                                            appeared in 1599, substantially longer and more
-                                                            reliable.
-                                                        releasedate: '1597-01-01T00:00:00.000Z'
-                                                        booklength: 480
-                                                        language: English
-                                                        price: 5.99
-                                                        createdAt: '2023-10-24T18:34:51.000Z'
-                                                        updatedAt: '2023-10-24T18:34:51.000Z'
-                                                -
-                                                    id: 7
-                                                    OrderId: 3
-                                                    BookId: 3
-                                                    createdAt: '2023-10-26T05:10:09.000Z'
-                                                    updatedAt: '2023-10-26T05:10:09.000Z'
-                                                    Book:
-                                                        id: 3
-                                                        title: Among Us 3
-                                                        author: William Shakespeare2
-                                                        description: >-
-                                                            Romeo and Juliet, play by William Shakespeare,
-                                                            written about 1594–96 and first published in an
-                                                            unauthorized quarto in 1597. An authorized quarto
-                                                            appeared in 1599, substantially longer and more
-                                                            reliable.
-                                                        releasedate: '1597-01-01T00:00:00.000Z'
-                                                        booklength: 480
-                                                        language: English
-                                                        price: 5.99
-                                                        createdAt: '2023-10-24T18:34:55.000Z'
-                                                        updatedAt: '2023-10-24T18:34:55.000Z'
+                                                    createdAt: '2023-10-30T17:59:41.000Z'
+                                                    updatedAt: '2023-10-30T17:59:41.000Z'
                     description: >-
                         Returns an array of Orders (id, ordernr, rentaldate, returndate, userId, User,
                         OrderItems)
@@ -564,16 +536,29 @@ paths:
             description: Returns an array of Orders
         post:
             requestBody:
-                description: |-
-                    {
-                        "bookIds": [7,8,9,10],
-                        "userId": 1
-                    }
+                description: example request body
+                content:
+                    application/json:
+                        examples:
+                            example request body:
+                                value:
+                                    bookIds:
+                                        - 1
+                                        - 2
+                                        - 3
+                                    userId: 1
                 required: true
             tags:
                 - orders
             responses:
                 '201':
+                    headers:
+                        Location:
+                            schema:
+                                type: string
+                            examples:
+                                Location of order:
+                                    value: 'http://localhost:3000/orders/1'
                     content:
                         application/json:
                             schema:
@@ -581,68 +566,131 @@ paths:
                             examples:
                                 Create new Order:
                                     value:
-                                        id: 2
-                                        ordernr: ORDER-545300
-                                        rentaldate: '2023-10-24'
-                                        returndate: '2023-10-29'
-                                        UserId: 6
-                                        createdAt: '2023-10-24T20:26:46.000Z'
-                                        updatedAt: '2023-10-26T08:48:54.000Z'
-                    description: 'Returns created Order (id, ordernr, rentaldate, returndate, UserId)'
+                                        id: 1
+                                        ordernr: ORDER-472417
+                                        rentaldate: '2023-10-30'
+                                        returndate: '2023-11-04'
+                                        UserId: 1
+                                        updatedAt: '2023-10-30T17:53:13.008Z'
+                                        createdAt: '2023-10-30T17:53:13.008Z'
+                    description: >-
+                        Returns created Order (id, ordernr, rentaldate, returndate, UserId, updatedAt,
+                        createdAt)
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                One or all required parameters are missing:
+                                    value: '{ error: "One or all required parameters are missing" }'
+                    description: One or all required parameters are missing
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                User not found.:
+                                    value: '{ error: "User not found." }'
+                                Some books could not be not found.:
+                                    value: '{ error: "Some books could not be not found." }'
+                                Book not found.:
+                                    value: '{ error: "Book not found." }'
+                                Some order items could not be deleted:
+                                    value: '{ error: "Some order items could not be created" }'
+                    description: Not found
+                '409':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Order already exists:
+                                    value: '{ error: "Order already exists for user" })'
+                    description: Order already exists
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Could not create order:
+                                    value: '{ error: "Could not create order" }'
+                    description: Could not create order
             summary: Add new Order
             description: Returns created Order
     '/orders/{id}':
         get:
             tags:
                 - orders
+            parameters:
+                -
+                    examples:
+                        id:
+                            value: '1'
+                    name: id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
             responses:
                 '200':
+                    headers:
+                        Location:
+                            schema:
+                                type: string
+                            examples:
+                                Location of order:
+                                    value: 'http://localhost:3000/orders/1'
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/order'
                             examples:
                                 example order:
-                                    value:
-                                        id: 2
-                                        ordernr: ORDER-545300
-                                        rentaldate: '2023-10-24'
-                                        returndate: '2023-10-29'
-                                        UserId: 6
-                                        createdAt: '2023-10-24T20:26:46.000Z'
-                                        updatedAt: '2023-10-26T08:48:54.000Z'
-                                        User:
-                                            id: 6
-                                            firstname: Jan-Marcus
-                                            lastname: Sivadi
-                                            email: jmarcus.sivadi@gmail.com
-                                            password: password123?
-                                            username: JMS
-                                            phonenr: +372 58803477
-                                            createdAt: '2023-10-26T08:48:44.000Z'
-                                            updatedAt: '2023-10-26T08:48:44.000Z'
-                                        OrderItems:
-                                            -
-                                                id: 4
-                                                OrderId: 2
-                                                BookId: 6
-                                                createdAt: '2023-10-24T20:26:46.000Z'
-                                                updatedAt: '2023-10-24T20:26:46.000Z'
-                                                Book:
-                                                    id: 6
-                                                    title: Title this
-                                                    author: William Shakespeare2
-                                                    description: >-
-                                                        Romeo and Juliet, play by William Shakespeare, written
-                                                        about 1594–96 and first published in an unauthorized
-                                                        quarto in 1597. An authorized quarto appeared in 1599,
-                                                        substantially longer and more reliable.
-                                                    releasedate: '1597-01-01T00:00:00.000Z'
-                                                    booklength: 480
-                                                    language: English
-                                                    price: 11.99
-                                                    createdAt: '2023-10-24T19:33:51.000Z'
-                                                    updatedAt: '2023-10-24T19:33:51.000Z'
+                                    value: |-
+                                        {
+                                            "id": 1,
+                                            "ordernr": "ORDER-545300",
+                                            "rentaldate": "2023-10-24",
+                                            "returndate": "2023-10-29",
+                                            "UserId": 1,
+                                            "createdAt": "2023-10-24T20:26:46.000Z",
+                                            "updatedAt": "2023-10-26T08:48:54.000Z",
+                                            "User": {
+                                                "id": 1,
+                                                "firstname": "Big",
+                                                "lastname": "Bezos",
+                                                "email": "jeffbezos@amazon.com",
+                                                "password": "markzuckerbergsux",
+                                                "username": "bigbezos420",
+                                                "phonenr": "+1 11748794"
+                                                "createdAt": "2023-10-26T08:48:44.000Z",
+                                                "updatedAt": "2023-10-26T08:48:44.000Z"
+                                            },
+                                            "OrderItems": [
+                                                {
+                                                    "id": 4,
+                                                    "OrderId": 2,
+                                                    "BookId": 6,
+                                                    "createdAt": "2023-10-24T20:26:46.000Z",
+                                                    "updatedAt": "2023-10-24T20:26:46.000Z",
+                                                    "Book": {
+                                                        "id": 6,
+                                                        "title": "Title this",
+                                                        "author": "William Shakespeare2",
+                                                        "description": "Romeo and Juliet, play by William Shakespeare, written about 1594–96 and first published in an unauthorized quarto in 1597. An authorized quarto appeared in 1599, substantially longer and more reliable.",
+                                                        "releasedate": "1597-01-01T00:00:00.000Z",
+                                                        "booklength": 480,
+                                                        "language": "English",
+                                                        "price": 11.99,
+                                                        "createdAt": "2023-10-24T19:33:51.000Z",
+                                                        "updatedAt": "2023-10-24T19:33:51.000Z"
+                                                    }
+                                                }
+                                            ]
+                                        }
                     description: 'Returns order by id (id, ordernr, rentaldate, returndate, UserId, User, OrderItems)'
                 '404':
                     content:
@@ -658,20 +706,36 @@ paths:
             description: Returns order by id
         put:
             requestBody:
-                description: |-
-                    {
-                        "ordernr": "ORDER-1234",
-                        "rentaldate": "1987-05-02",
-                        "returndate": "1987-05-12"
-                        "UserId": 4
-                    }
+                description: example request body
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/order'
+                        examples:
+                            example request body:
+                                value: |-
+                                    {
+                                        "ordernr": "ORDER-1234",
+                                        "rentaldate": "1987-05-02",
+                                        "returndate": "1987-05-12"
+                                        "UserId": 2
+                                    }
                 required: true
             tags:
                 - orders
             responses:
                 '200':
+                    headers:
+                        Location:
+                            schema:
+                                type: string
+                            examples:
+                                Location of order:
+                                    value: 'http://localhost:3000/orders/1'
                     content:
                         application/json:
+                            schema:
+                                type: string
                             examples:
                                 update success:
                                     value: '"order updated successfully."'
@@ -684,7 +748,7 @@ paths:
                             examples:
                                 field is required:
                                     value: '{ error: "At least one field is required." }'
-                    description: some fields are missing
+                    description: One or many fields are missing
                 '404':
                     content:
                         application/json:
@@ -697,7 +761,7 @@ paths:
                                     value: '{ error: "user not found." }'
                                 could not update order:
                                     value: '{ error: "could not update order" }'
-                    description: not found.
+                    description: Order does not exist
             summary: Update order
             description: Updates order by id
         delete:
