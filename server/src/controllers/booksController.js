@@ -101,7 +101,7 @@ exports.updateById = async (req, res) => {
         )
 
         if (updatedBook < 1) {
-            res.status(404).send({ error: "could not update book" })
+            res.status(500).send({ error: "could not update book" })
             return
         }
 
