@@ -45,3 +45,19 @@ exports.formatDate = (date) => {
 
     return [year, month, day].join('-');
 }
+
+exports.connectFTPS = async (options) => {
+    const FTPSClient = require('./ftps')
+    const client = new FTPSClient();
+    
+    //* Open the connection
+    const connect = async () => {
+        return await client.connect(options);
+    }
+    //* List files
+    const getFiles = async () => {
+        return await client.getFiles();
+    }
+
+    return { connect, getFiles }
+}

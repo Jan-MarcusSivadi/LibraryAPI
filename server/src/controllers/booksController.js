@@ -5,6 +5,13 @@ const path = require('path')
 const fs = require('fs')
 const zlib = require('node:zlib');
 
+const config = {
+    host: 'x',
+    user: 'x',
+    password: 'x',
+}
+
+
 // CREATE
 exports.create = async (req, res) => {
     try {
@@ -21,11 +28,25 @@ exports.create = async (req, res) => {
         var data = [];
         var files = [];
 
+        // // UPLOAD FILE TO ZONE
+        // const config = {
+        //     host: '217.146.68.118',
+        //     port: 21,
+        //     username: 'd118287f550018',
+        //     password: 'Password1234#?.x'
+        // }
+
         if (req.busboy) {
             req.busboy.on('file', async (name, file, info) => {
                 const saveTo = path.join(__dirname + '/../files', `${info.filename}`);
                 // const writeStream = fs.createWriteStream(saveTo)
                 // file.pipe(writeStream)
+
+                file.on('data', (data) => {
+                    console.log(`File [${name}] got ${data.length} bytes`);
+                }).on('close', () => {
+                    console.log(`File [${name}] done`);
+                });
 
                 const buffer = await utils.stream2buffer(file)
                 // const bufferContent = buffer.toString()
@@ -46,17 +67,24 @@ exports.create = async (req, res) => {
                     value: value
                 })
             });
-            req.busboy.on('close', () => {
-                // console.log(data)
-                // console.log(files)
-                // res.writeHead(200, { 'Connection': 'close' });
-                // res.end(`That's all folks!`);
-
+            req.busboy.on('finish', () => {
+                console.log('end!')
+            })
+            req.busboy.on('close', async () => {
                 const formData = utils.toObject(data)
 
                 const { title, author, description, releasedate, booklength, language, price } = formData
-                const pdfRaw = files.find(f => f.name == 'pdf').buffer
-                console.log(pdfRaw)
+                if (!files || files.length <= 0) {
+                    res.status(400).send('no files given')
+                    return
+                }
+                const fileData = files.find(f => f.name == 'pdf')
+                if (!fileData || fileData.length <= 0) {
+                    res.status(400).send('wrong field name! It should be "pdf" instead of ?')
+                    return
+                }
+                const pdfRaw = fileData.buffer
+                console.log('pdfRAW?', pdfRaw)
                 if (
                     !title ||
                     !author ||
@@ -68,32 +96,66 @@ exports.create = async (req, res) => {
                     res.status(400).send({ error: "One or all required parameters are missing." })
                     return
                 }
-                const pdfZipped = zlib.gzipSync(JSON.stringify(pdfRaw)).toString('utf-8');
-                console.log('zipped',pdfZipped)
-                const pdfUnzipped = zlib.gunzipSync(pdfZipped)
-                console.log('unzipped',pdfUnzipped)
-                const bufferContent = pdfUnzipped
-                const buf = new Buffer(JSON.stringify(bufferContent), 'utf-8');
-                console.log('final!',buf)
-                const bookData = {
-                    title: title,
-                    author: author,
-                    description: description,
-                    releasedate: releasedate,
-                    booklength: booklength,
-                    language: language,
-                    price: price,
-                    pdf: pdfZipped
+
+                const ftpsSession = await utils.connectFTPS(config)
+                const connection = await ftpsSession.connect()
+                if (!connection) {
+                    console.log('Could not establish connection to FTPS server')
+                    return
                 }
-                console.log(bookData)
+                const gotFiles = await ftpsSession.getFiles()
+                console.log(gotFiles)
+
+                const buff = Buffer.from(pdfRaw, "utf-8");
+                if (!buff) {
+                    console.log('Got invalid or corrupted file.')
+                    return
+                }
+
+
+                // *UNUSED CODE*
+                // const pdfZipped = zlib.gzipSync(JSON.stringify(pdfRaw)).toString('utf-8');
+                // console.log('zipped', pdfZipped)
+                // const pdfUnzipped = zlib.gunzipSync(pdfZipped)
+                // console.log('unzipped', pdfUnzipped)
+                // const bufferContent = pdfUnzipped
+                // const pdfZipped = pdfRaw
+                // convert buffer to string
+                // const resultStr = buff.toString();
+
+                // const buffReadable = buff.toString()
+                // console.log('buffReadable', buffReadable)
+
+                // let client = new Client();
+
+                // const responseFromFTP = await sftp.connect(config)
+                // const some = await sftp.put(buff, '/data01/virt117904/domeenid/www.jan-marcussivadi21.thkit.ee/data/foobar.txt');
+                // let remotePath = '/data01/virt117904/domeenid/www.jan-marcussivadi21.thkit.ee/data/foobar.txt';
+
+                // const client = new SFTPClient()
+
+                // console.log('----- uploaded??? ----', some)
+
+                // const buf = new Buffer(JSON.stringify(pdfRaw), 'utf-8');
+                // console.log('final!', buff)
+                // const bookData = {
+                //     title: title,
+                //     author: author,
+                //     description: description,
+                //     releasedate: releasedate,
+                //     booklength: booklength,
+                //     language: language,
+                //     price: price,
+                //     pdf: buff
+                // }
+                // console.log(bookData)
 
                 // const createdBook = await Book.create(bookData)
-                // console.log(`${req.body.title}'s auto-generated ID: ${createdBook.id}`);
+                // console.log(`${bookData.title}'s auto-generated ID: ${createdBook.id}`);
 
                 // res.status(201)
                 //     .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
                 //     .send(createdBook)
-
             });
             req.pipe(req.busboy);
         }
