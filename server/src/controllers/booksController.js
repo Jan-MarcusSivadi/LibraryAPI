@@ -105,7 +105,7 @@ exports.create = async (req, res) => {
 exports.getAll = async (req, res) => {
     try {
         const result = await Book.findAll({ attributes: ["id", "title", "description", "author", "releasedate", "language", "booklength", "price"] })
-        res.send(JSON.stringify(result))
+        res.json(result)
     } catch (error) {
         console.error(error)
     }
@@ -120,7 +120,7 @@ exports.getById = async (req, res) => {
             return
         }
 
-        res.send(book)
+        res.json(book)
     } catch (error) {
         console.error(error)
     }
@@ -157,7 +157,7 @@ exports.updateById = async (req, res) => {
         )
 
         if (updatedBook < 1) {
-            res.status(404).send({ error: "could not update book" })
+            res.status(500).send({ error: "could not update book" })
             return
         }
 
@@ -166,7 +166,9 @@ exports.updateById = async (req, res) => {
             return
         }
 
-        res.status(200).send("book updated successfully.")
+        res.status(200)
+            .location(`${utils.getBaseUrl(req)}/books/${id}`)
+            .send()
     } catch (error) {
         console.error(error)
     }

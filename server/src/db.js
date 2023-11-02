@@ -19,14 +19,15 @@ db.sequelize = Sequelize
 db.connection = sequelize
 db.users = require("./models/User")(sequelize, Sequelize)
 db.books = require("./models/Book")(sequelize, Sequelize)
-db.orders = require("./models/Order") (sequelize, Sequelize, db.books, db.users)
+db.orderItems = require("./models/OrderItem") (sequelize, Sequelize, db.orders, db.books)
+db.orders = require("./models/Order") (sequelize, Sequelize, db.orderItems, db.users)
 
-db.books.belongsToMany(db.users, { through: db.orders })
-db.users.belongsToMany(db.books, { through: db.orders })
-db.books.hasMany(db.orders)
 db.users.hasMany(db.orders)
 db.orders.belongsTo(db.users)
-db.orders.belongsTo(db.books)
+db.orders.hasMany(db.orderItems)
+db.orderItems.belongsTo(db.orders)
+db.books.hasMany(db.orderItems)
+db.orderItems.belongsTo(db.books)
 
 sync = async ()=>{
     //await sequelize.sync({force:true}) // Erase all and recreate
