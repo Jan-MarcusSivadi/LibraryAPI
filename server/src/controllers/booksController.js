@@ -112,7 +112,7 @@ exports.updateById = async (req, res) => {
 
         res.status(200)
             .location(`${utils.getBaseUrl(req)}/books/${id}`)
-            .send("book updated successfully.")
+            .send()
     } catch (error) {
         console.error(error)
     }
