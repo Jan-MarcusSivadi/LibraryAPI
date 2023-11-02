@@ -394,13 +394,6 @@ paths:
                             examples:
                                 Location of book:
                                     value: 'http://localhost:3000/books/4'
-                    content:
-                        text/xml:
-                            schema:
-                                type: string
-                            examples:
-                                Success:
-                                    value: '"book updated successfully."'
                     description: OK
                 '400':
                     content:
@@ -743,13 +736,6 @@ paths:
                             examples:
                                 Location of order:
                                     value: 'http://localhost:3000/orders/1'
-                    content:
-                        application/json:
-                            schema:
-                                type: string
-                            examples:
-                                update success:
-                                    value: '"order updated successfully."'
                     description: OK
                 '400':
                     content:
