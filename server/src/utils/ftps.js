@@ -41,15 +41,51 @@ class FTPSClient {
     }
   }
 
-  async getFiles() {
+  async getFiles(dir) {
     try {
-      return await this.client.list()
-      // await this.client.uploadFrom("README.md", "README_FTP.md")
-      // await this.client.downloadTo("README_COPY.md", "README_FTP.md")
+      var result = await this.client.list()
+      if (dir) {
+        result = await this.client.list(dir)
+      }
+      return result
     }
     catch (err) {
       console.log(err)
       this.client.close()
+    }
+  }
+
+  async uploadFile(buff, dir, filename) {
+    const client = this.client
+    try {
+      const hasDir = await client.ensureDir(dir)
+      // if (!hasDir) {
+      //   console.log('Upload directory ERROR!')
+      // }
+
+      // Log progress for any transfer from now on.
+      client.trackProgress(info => {
+        console.log("File", info.name)
+        console.log("Type", info.type)
+        console.log("Transferred", info.bytes)
+        console.log("Transferred Overall", info.bytesOverall)
+      })
+
+      // Transfer some data
+      // await client.uploadFrom(someStream, "test.txt")
+      // await client.uploadFrom("somefile.txt", "test2.txt")
+      return await client.uploadFrom(buff, filename)
+
+      // // Set a new callback function which also resets the overall counter
+      // client.trackProgress(info => console.log(info.bytesOverall))
+      // await client.downloadToDir("local/path", "remote/path")
+
+      // // Stop logging
+      // client.trackProgress()
+
+      // return await this.client.put()
+    } catch (error) {
+
     }
   }
 

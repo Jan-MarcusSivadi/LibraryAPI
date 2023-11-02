@@ -55,9 +55,13 @@ exports.connectFTPS = async (options) => {
         return await client.connect(options);
     }
     //* List files
-    const getFiles = async () => {
-        return await client.getFiles();
+    const getFiles = async (dir) => {
+        return await client.getFiles(dir);
     }
 
-    return { connect, getFiles }
+    const uploadFile = async (buff, dir, filename) => {
+        return await client.uploadFile(buff, dir, filename);
+    }
+
+    return { connect, getFiles, uploadFile }
 }

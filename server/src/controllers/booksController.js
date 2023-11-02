@@ -51,6 +51,11 @@ exports.create = async (req, res) => {
                 const buffer = await utils.stream2buffer(file)
                 // const bufferContent = buffer.toString()
 
+                // const newFile = {
+                //     name: name,
+                //     buffer: buffer,
+                //     info: info
+                // }
                 const newFile = {
                     name: name,
                     buffer: buffer,
@@ -83,35 +88,60 @@ exports.create = async (req, res) => {
                     res.status(400).send('wrong field name! It should be "pdf" instead of ?')
                     return
                 }
-                const pdfRaw = fileData.buffer
-                console.log('pdfRAW?', pdfRaw)
+                // const pdfRaw = fileData.buffer
+                const { Readable } = require('stream');
+
+                const stream = Readable.from(fileData.buffer);
+                console.log('pdfRAW?', stream)
                 if (
                     !title ||
                     !author ||
                     !releasedate ||
                     !booklength ||
                     !price ||
-                    !pdfRaw
+                    !stream
                 ) {
                     res.status(400).send({ error: "One or all required parameters are missing." })
                     return
                 }
 
+                // waaaaaaaaaaaaaa
                 const ftpsSession = await utils.connectFTPS(config)
                 const connection = await ftpsSession.connect()
                 if (!connection) {
                     console.log('Could not establish connection to FTPS server')
                     return
                 }
-                const gotFiles = await ftpsSession.getFiles()
+                const gotFiles = await ftpsSession.getFiles('books/')
                 console.log(gotFiles)
 
-                const buff = Buffer.from(pdfRaw, "utf-8");
-                if (!buff) {
-                    console.log('Got invalid or corrupted file.')
-                    return
-                }
+                const fileName = 'testing123.txt'
+                ftpsSession.uploadFile(stream, "books/", fileName)
 
+                // const buff = Buffer.from(pdfRaw, "utf-8");
+                // if (!buff) {
+                //     console.log('Got invalid or corrupted file.')
+                //     return
+                // }
+                // ftpsSession.uploadFile('test.txt', "books/", "test.txt")
+                // waaaaaaaaaaaaaa
+
+
+                // const ftpsSession = await utils.connectFTPS(config)
+                // const connection = await ftpsSession.connect()
+                // if (!connection) {
+                //     console.log('Could not establish connection to FTPS server')
+                //     return
+                // }
+                // const gotFiles = await ftpsSession.getFiles()
+                // console.log(gotFiles)
+
+                // const buff = Buffer.from(pdfRaw, "utf-8");
+                // if (!buff) {
+                //     console.log('Got invalid or corrupted file.')
+                //     return
+                // }
+                // ftpsSession.uploadFile(fs.createReadStream(pdfRaw), "books")
 
                 // *UNUSED CODE*
                 // const pdfZipped = zlib.gzipSync(JSON.stringify(pdfRaw)).toString('utf-8');
