@@ -89,7 +89,9 @@ exports.updateById = async (req, res) => {
         return
     }
 
-    res.status(200).send("order updated successfully.")
+    res.status(200)
+        .location(`${utils.getBaseUrl(req)}/orders/${id}`)
+        .send()
 }
 // DELETE
 exports.deleteById = async (req, res) => {
