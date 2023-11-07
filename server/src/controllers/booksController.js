@@ -25,79 +25,116 @@ exports.create = async (req, res) => {
         price: NOT NULL
         pdf: NOT NULL
         */
-        var data = [];
+        var fields = [];
         var files = [];
 
-        const doc = new Object()
+        const doc = {}
         var bufs = [];
         doc.size = 0;
 
-        
+
         const busboy = req.busboy;
         if (busboy) {
-            // validate fields
-            // busboy.on('fields')
-            busboy.on('file', (name, file, info) => {
-                file
-                    .on('data', (data) => {
-                        bufs[bufs.length] = data;
-                        doc.size += data.length;
+            busboy
+                .on('field', (name, value, info) => {
+                    console.log('req.busboy: field event')
+                    fields.push({
+                        name: name,
+                        value: value
                     })
-                    .on('end', () => {
-                        const splits = info.mimeType.split('/')
-                        const extension = splits[splits.length - 1]
-                        const fixedFilename = utils.getFixedFileName(`file-${Date.now()}.${extension}`) //info.filename
-                        const fileURL = `http://${config.host}/data/books/${fixedFilename}`
-                        doc.content = Buffer.concat(bufs, doc.size);
-                        doc.url = fileURL
-                        info.filename = fixedFilename
-                        doc.info = info
+                })
+                .on('file', (name, file, info) => {
+                    console.log('req.busboy: file event')
+                    file
+                        .on('data', (data) => {
+                            bufs[bufs.length] = data;
+                            doc.size += data.length;
+                        })
+                        .on('end', () => {
+                            const splits = info.mimeType.split('/')
+                            const extension = splits[splits.length - 1]
+                            const fixedFilename = utils.getFixedFileName(`file-${Date.now()}.${extension}`) //info.filename
+                            const fileURL = `http://${config.host}/data/books/${fixedFilename}`
+                            doc.content = Buffer.concat(bufs, doc.size);
+                            info.url = fileURL
+                            info.filename = fixedFilename
+                            doc.info = info
+                        });
+                })
+                .on('close', async () => {
+                    console.log('req.busboy: finish event')
+                    const formData = utils.toObject(fields)
+                    // console.log('document: ', doc.info)
+
+                    // validate fields
+                    const { title, author, description, releasedate, booklength, language, price } = formData
+                    if (
+                        !title ||
+                        !author ||
+                        !releasedate ||
+                        !booklength ||
+                        !price
+                    ) {
+                        res.status(400).send({ error: "One or all required parameters are missing." })
+                        return
+                    }
+
+                    // upload (buffer => stream) using FTPS
+                    const { Readable } = require('stream');
+                    const stream = Readable.from(doc.content);
+                    // connect to FTPS file server
+                    const ftpsSession = await utils.connectFTPS(config)
+                    const connection = await ftpsSession.connect()
+                    if (!connection) {
+                        console.log('Could not establish connection to FTPS server')
+                        return
+                    }
+                    const gotFiles = await ftpsSession.getFiles('data/books/')
+                    console.log(gotFiles)
+                    // Upload to FTPS file server
+                    const result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
+                        console.log(result)
+                        // close session
+                        ftpsSession.disconnect()
+                        return result
                     });
-            })
-            busboy.on('finish', async () => {
-                console.log('document: ', doc.info)
 
-                // const mimeType = doc.info.mimeType
-                // res.writeHead(200, { 'Content-Type': mimeType });
-                // res.writeHead(200, { 'Content-Type': 'application/json' });
-                // res.write({
-                //     message: 'Upload success.'
-                // });
-                // res.end()
+                    if (result.code !== 226) {
+                        res.status(500).send({
+                            message: 'Some files could not be uploaded.'
+                        })
+                        return
+                    }
 
-                // upload (buffer => stream) using FTPS
-                const { Readable } = require('stream');
-                const stream = Readable.from(doc.content);
-                // connect to FTPS file server
-                const ftpsSession = await utils.connectFTPS(config)
-                const connection = await ftpsSession.connect()
-                if (!connection) {
-                    console.log('Could not establish connection to FTPS server')
-                    return
-                }
-                const gotFiles = await ftpsSession.getFiles('data/books/')
-                console.log(gotFiles)
-                // Upload to FTPS file server
-                const result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
-                    console.log(result)
-                    // close session
-                    ftpsSession.disconnect()
-                    return result
-                });
+                    // create document object
+                    const document = {
+                        filename: doc.info.filename,
+                        mimeType: doc.info.mimeType,
+                        encoding: doc.info.encoding,
+                        url: doc.info.url
+                    }
+                    console.log(document)
 
-                if (result.code !== 226) {
-                    res.status(500).send({
-                        message: 'Some files could not be uploaded.'
-                    })
-                    return
-                }
+                    // create new Book
+                    const bookData = {
+                        title: title,
+                        author: author,
+                        description: description,
+                        releasedate: releasedate,
+                        booklength: booklength,
+                        language: language,
+                        price: price,
+                        pdf: document.url
+                    }
+                    console.log(bookData)
 
-                // create new Book
+                    const createdBook = await Book.create(bookData)
+                    console.log(`${bookData.title}'s auto-generated ID: ${createdBook.id}`);
 
-                res.status(201)
-                    .location(doc.url)
-                    .json({})
-            })
+                    res.status(201)
+                        .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
+                        .json(createdBook)
+                })
             req.pipe(busboy);
         }
     } catch (error) {

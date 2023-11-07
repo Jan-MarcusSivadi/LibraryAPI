@@ -34,7 +34,7 @@ module.exports = (dbConnection, Sequelize) => {
             allowNull: false
         },
         pdf: {
-            type: Sequelize.BLOB('long'),
+            type: Sequelize.STRING,
             allowNull: true
         }
     })
