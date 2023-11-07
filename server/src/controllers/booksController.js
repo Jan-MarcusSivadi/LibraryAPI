@@ -25,13 +25,11 @@ exports.create = async (req, res) => {
         price: NOT NULL
         pdf: NOT NULL
         */
+        // temporary variables
         var fields = [];
-        var files = [];
-
         const doc = {}
         var bufs = [];
         doc.size = 0;
-
 
         const busboy = req.busboy;
         if (busboy) {
@@ -66,18 +64,36 @@ exports.create = async (req, res) => {
                     const formData = utils.toObject(fields)
 
                     // validate fields
-                    const { title, author, description, releasedate, booklength, language, price } = formData
+                    const { title, author, description, booklength, language } = formData
+                    var releasedate = formData.releasedate
+                    var price = formData.price || 0 // default price value is 0, even when unspecified
+                    if (price <= 0) {
+                        price = 0
+                    }
                     if (
                         !title ||
                         !author ||
                         !releasedate ||
-                        !booklength ||
-                        !price
+                        !booklength
                     ) {
                         res.status(400).send({ error: "One or all required parameters are missing." })
                         return
                     }
-                    
+
+                    console.log(releasedate, utils.isValidDate(releasedate));
+                    if (!utils.isValidDate(releasedate)) {
+                        res.status(400).send({ error: "releasedate invalid." })
+                        return
+                    }
+                    // // invalid date given
+                    // if (!utils.isValidDate(releasedate)) {
+                    //     res.status(400).send({ error: "releasedate invalid." })
+                    //     return
+                    // }
+
+                    // fix date day offset bug
+                    // releasedate = utils.formatDate(releasedate)
+
                     var result
                     if (doc.size > 0) {
                         const { Readable } = require('stream');
@@ -99,11 +115,19 @@ exports.create = async (req, res) => {
                             return result
                         });
                         // more catches here for (result.code)
+                    } else {
+                        // when no file given, price cannot be more than 0 
+                        if (price > 0) {
+                            res.status(400).send({
+                                message: 'Book document missing, price cannot be set'
+                            })
+                            return
+                        }
                     }
 
                     // create document object
                     const document = doc.info
-                    const pdf = document?.url
+                    const pdf = document?.url // default value is null
                     console.log(document)
 
                     // create new Book

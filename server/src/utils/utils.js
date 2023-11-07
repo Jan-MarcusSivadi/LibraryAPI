@@ -43,13 +43,28 @@ exports.formatDate = (date) => {
     if (day.length < 2)
         day = '0' + day;
 
-    return [year, month, day].join('-');
+    // return [year, month, day].join('-');
+    return [day, month, year].join('-');
+}
+
+exports.isValidDate = (s) => {
+    // Assumes s is "mm/dd/yyyy"
+    // const prefixWithSlashTest = /^\d\d\/\d\d\/\d\d\d\d$/.test(s)
+    const prefix = '-'
+    const prefixWithDashTest = /^\d\d[-]\d\d[-]\d\d\d\d$/.test(s)
+    if (!prefixWithDashTest ) {
+        return false;
+    }
+    const parts = s.split(prefix).map((p) => parseInt(p, 10));
+    parts[0] -= 1;
+    const d = new Date(parts[2], parts[0], parts[1]);
+    return d.getMonth() === parts[0] && d.getDate() === parts[1] && d.getFullYear() === parts[2];
 }
 
 exports.connectFTPS = async (options) => {
     const FTPSClient = require('./ftps')
     const client = new FTPSClient();
-    
+
     //* Open the connection
     const connect = async () => {
         return await client.connect(options);
@@ -72,21 +87,21 @@ exports.connectFTPS = async (options) => {
 
 exports.getFixedFileName = (str) => {
     return str
-      .replace(' ', '63701')
-      .replace('!', '46063')
-      .replace('~', '33374')
-      .replace('*', '81195')
-      .replace('\'', '42934')
-      .replace('(', '13788')
-      .replace(')', '56140')
-      .replace(';', '56140')
-      .replace('/', '26825')
-      .replace('?', '66074')
-      .replace(':', '29721')
-      .replace('@', '95344')
-      .replace('&', '65979')
-      .replace('+', '04687')
-      .replace('$', '61070')
-      .replace(',', '98832')
-      .replace('#', '85553')
-  }
+        .replace(' ', '63701')
+        .replace('!', '46063')
+        .replace('~', '33374')
+        .replace('*', '81195')
+        .replace('\'', '42934')
+        .replace('(', '13788')
+        .replace(')', '56140')
+        .replace(';', '56140')
+        .replace('/', '26825')
+        .replace('?', '66074')
+        .replace(':', '29721')
+        .replace('@', '95344')
+        .replace('&', '65979')
+        .replace('+', '04687')
+        .replace('$', '61070')
+        .replace(',', '98832')
+        .replace('#', '85553')
+}
