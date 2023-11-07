@@ -6,9 +6,9 @@ const fs = require('fs')
 const zlib = require('node:zlib');
 
 const config = {
-    host: 'x',
-    user: 'x',
-    password: 'x',
+    host: 'jan-marcussivadi21.thkit.ee',
+    user: 'd118287f550018',
+    password: 'secretword12345',
 }
 
 
@@ -28,166 +28,77 @@ exports.create = async (req, res) => {
         var data = [];
         var files = [];
 
-        // // UPLOAD FILE TO ZONE
-        // const config = {
-        //     host: '217.146.68.118',
-        //     port: 21,
-        //     username: 'd118287f550018',
-        //     password: 'Password1234#?.x'
-        // }
+        const doc = new Object()
+        var bufs = [];
+        doc.size = 0;
 
-        if (req.busboy) {
-            req.busboy.on('file', async (name, file, info) => {
-                const saveTo = path.join(__dirname + '/../files', `${info.filename}`);
-                // const writeStream = fs.createWriteStream(saveTo)
-                // file.pipe(writeStream)
-
-                file.on('data', (data) => {
-                    console.log(`File [${name}] got ${data.length} bytes`);
-                }).on('close', () => {
-                    console.log(`File [${name}] done`);
-                });
-
-                const buffer = await utils.stream2buffer(file)
-                // const bufferContent = buffer.toString()
-
-                // const newFile = {
-                //     name: name,
-                //     buffer: buffer,
-                //     info: info
-                // }
-                const newFile = {
-                    name: name,
-                    buffer: buffer,
-                    info: info
-                }
-
-                if (files.find(f => f.name === newFile.name) == undefined) {
-                    files.push(newFile)
-                }
-            });
-            req.busboy.on('field', (name, value, info) => {
-                data.push({
-                    name: name,
-                    value: value
-                })
-            });
-            req.busboy.on('finish', () => {
-                console.log('end!')
+        
+        const busboy = req.busboy;
+        if (busboy) {
+            // validate fields
+            // busboy.on('fields')
+            busboy.on('file', (name, file, info) => {
+                file
+                    .on('data', (data) => {
+                        bufs[bufs.length] = data;
+                        doc.size += data.length;
+                    })
+                    .on('end', () => {
+                        const splits = info.mimeType.split('/')
+                        const extension = splits[splits.length - 1]
+                        const fixedFilename = utils.getFixedFileName(`file-${Date.now()}.${extension}`) //info.filename
+                        const fileURL = `http://${config.host}/data/books/${fixedFilename}`
+                        doc.content = Buffer.concat(bufs, doc.size);
+                        doc.url = fileURL
+                        info.filename = fixedFilename
+                        doc.info = info
+                    });
             })
-            req.busboy.on('close', async () => {
-                const formData = utils.toObject(data)
+            busboy.on('finish', async () => {
+                console.log('document: ', doc.info)
 
-                const { title, author, description, releasedate, booklength, language, price } = formData
-                if (!files || files.length <= 0) {
-                    res.status(400).send('no files given')
-                    return
-                }
-                const fileData = files.find(f => f.name == 'pdf')
-                if (!fileData || fileData.length <= 0) {
-                    res.status(400).send('wrong field name! It should be "pdf" instead of ?')
-                    return
-                }
-                // const pdfRaw = fileData.buffer
+                // const mimeType = doc.info.mimeType
+                // res.writeHead(200, { 'Content-Type': mimeType });
+                // res.writeHead(200, { 'Content-Type': 'application/json' });
+                // res.write({
+                //     message: 'Upload success.'
+                // });
+                // res.end()
+
+                // upload (buffer => stream) using FTPS
                 const { Readable } = require('stream');
-
-                const stream = Readable.from(fileData.buffer);
-                console.log('pdfRAW?', stream)
-                if (
-                    !title ||
-                    !author ||
-                    !releasedate ||
-                    !booklength ||
-                    !price ||
-                    !stream
-                ) {
-                    res.status(400).send({ error: "One or all required parameters are missing." })
-                    return
-                }
-
-                // waaaaaaaaaaaaaa
+                const stream = Readable.from(doc.content);
+                // connect to FTPS file server
                 const ftpsSession = await utils.connectFTPS(config)
                 const connection = await ftpsSession.connect()
                 if (!connection) {
                     console.log('Could not establish connection to FTPS server')
                     return
                 }
-                const gotFiles = await ftpsSession.getFiles('books/')
+                const gotFiles = await ftpsSession.getFiles('data/books/')
                 console.log(gotFiles)
+                // Upload to FTPS file server
+                const result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
+                    console.log(result)
+                    // close session
+                    ftpsSession.disconnect()
+                    return result
+                });
 
-                const fileName = 'testing123.txt'
-                ftpsSession.uploadFile(stream, "books/", fileName)
+                if (result.code !== 226) {
+                    res.status(500).send({
+                        message: 'Some files could not be uploaded.'
+                    })
+                    return
+                }
 
-                // const buff = Buffer.from(pdfRaw, "utf-8");
-                // if (!buff) {
-                //     console.log('Got invalid or corrupted file.')
-                //     return
-                // }
-                // ftpsSession.uploadFile('test.txt', "books/", "test.txt")
-                // waaaaaaaaaaaaaa
+                // create new Book
 
-
-                // const ftpsSession = await utils.connectFTPS(config)
-                // const connection = await ftpsSession.connect()
-                // if (!connection) {
-                //     console.log('Could not establish connection to FTPS server')
-                //     return
-                // }
-                // const gotFiles = await ftpsSession.getFiles()
-                // console.log(gotFiles)
-
-                // const buff = Buffer.from(pdfRaw, "utf-8");
-                // if (!buff) {
-                //     console.log('Got invalid or corrupted file.')
-                //     return
-                // }
-                // ftpsSession.uploadFile(fs.createReadStream(pdfRaw), "books")
-
-                // *UNUSED CODE*
-                // const pdfZipped = zlib.gzipSync(JSON.stringify(pdfRaw)).toString('utf-8');
-                // console.log('zipped', pdfZipped)
-                // const pdfUnzipped = zlib.gunzipSync(pdfZipped)
-                // console.log('unzipped', pdfUnzipped)
-                // const bufferContent = pdfUnzipped
-                // const pdfZipped = pdfRaw
-                // convert buffer to string
-                // const resultStr = buff.toString();
-
-                // const buffReadable = buff.toString()
-                // console.log('buffReadable', buffReadable)
-
-                // let client = new Client();
-
-                // const responseFromFTP = await sftp.connect(config)
-                // const some = await sftp.put(buff, '/data01/virt117904/domeenid/www.jan-marcussivadi21.thkit.ee/data/foobar.txt');
-                // let remotePath = '/data01/virt117904/domeenid/www.jan-marcussivadi21.thkit.ee/data/foobar.txt';
-
-                // const client = new SFTPClient()
-
-                // console.log('----- uploaded??? ----', some)
-
-                // const buf = new Buffer(JSON.stringify(pdfRaw), 'utf-8');
-                // console.log('final!', buff)
-                // const bookData = {
-                //     title: title,
-                //     author: author,
-                //     description: description,
-                //     releasedate: releasedate,
-                //     booklength: booklength,
-                //     language: language,
-                //     price: price,
-                //     pdf: buff
-                // }
-                // console.log(bookData)
-
-                // const createdBook = await Book.create(bookData)
-                // console.log(`${bookData.title}'s auto-generated ID: ${createdBook.id}`);
-
-                // res.status(201)
-                //     .location(`${utils.getBaseUrl(req)}/books/${createdBook.id}`)
-                //     .send(createdBook)
-            });
-            req.pipe(req.busboy);
+                res.status(201)
+                    .location(doc.url)
+                    .json({})
+            })
+            req.pipe(busboy);
         }
     } catch (error) {
         console.error(error)

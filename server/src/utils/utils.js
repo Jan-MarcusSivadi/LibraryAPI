@@ -59,9 +59,34 @@ exports.connectFTPS = async (options) => {
         return await client.getFiles(dir);
     }
 
-    const uploadFile = async (buff, dir, filename) => {
-        return await client.uploadFile(buff, dir, filename);
+    const uploadFile = async (buff, dir, fileData) => {
+        return await client.uploadFile(buff, dir, fileData);
     }
 
-    return { connect, getFiles, uploadFile }
+    const disconnect = async () => {
+        return await client.disconnect();
+    }
+
+    return { connect, getFiles, uploadFile, disconnect }
 }
+
+exports.getFixedFileName = (str) => {
+    return str
+      .replace(' ', '63701')
+      .replace('!', '46063')
+      .replace('~', '33374')
+      .replace('*', '81195')
+      .replace('\'', '42934')
+      .replace('(', '13788')
+      .replace(')', '56140')
+      .replace(';', '56140')
+      .replace('/', '26825')
+      .replace('?', '66074')
+      .replace(':', '29721')
+      .replace('@', '95344')
+      .replace('&', '65979')
+      .replace('+', '04687')
+      .replace('$', '61070')
+      .replace(',', '98832')
+      .replace('#', '85553')
+  }

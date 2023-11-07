@@ -51,17 +51,17 @@ class FTPSClient {
     }
     catch (err) {
       console.log(err)
-      this.client.close()
+      // this.client.close()
     }
   }
 
-  async uploadFile(buff, dir, filename) {
+  async uploadFile(buff, dir, fileData) {
     const client = this.client
     try {
       const hasDir = await client.ensureDir(dir)
-      // if (!hasDir) {
-      //   console.log('Upload directory ERROR!')
-      // }
+      if (!hasDir) {
+        console.log('Upload directory ERROR!')
+      }
 
       // Log progress for any transfer from now on.
       client.trackProgress(info => {
@@ -74,6 +74,7 @@ class FTPSClient {
       // Transfer some data
       // await client.uploadFrom(someStream, "test.txt")
       // await client.uploadFrom("somefile.txt", "test2.txt")
+      const { filename } = fileData
       return await client.uploadFrom(buff, filename)
 
       // // Set a new callback function which also resets the overall counter
