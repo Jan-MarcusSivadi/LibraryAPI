@@ -64,7 +64,6 @@ exports.create = async (req, res) => {
                 .on('close', async () => {
                     console.log('req.busboy: finish event')
                     const formData = utils.toObject(fields)
-                    // console.log('document: ', doc.info)
 
                     // validate fields
                     const { title, author, description, releasedate, booklength, language, price } = formData
@@ -78,41 +77,33 @@ exports.create = async (req, res) => {
                         res.status(400).send({ error: "One or all required parameters are missing." })
                         return
                     }
-
-                    // upload (buffer => stream) using FTPS
-                    const { Readable } = require('stream');
-                    const stream = Readable.from(doc.content);
-                    // connect to FTPS file server
-                    const ftpsSession = await utils.connectFTPS(config)
-                    const connection = await ftpsSession.connect()
-                    if (!connection) {
-                        console.log('Could not establish connection to FTPS server')
-                        return
-                    }
-                    const gotFiles = await ftpsSession.getFiles('data/books/')
-                    console.log(gotFiles)
-                    // Upload to FTPS file server
-                    const result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
-                        console.log(result)
-                        // close session
-                        ftpsSession.disconnect()
-                        return result
-                    });
-
-                    if (result.code !== 226) {
-                        res.status(500).send({
-                            message: 'Some files could not be uploaded.'
-                        })
-                        return
+                    
+                    var result
+                    if (doc.size > 0) {
+                        const { Readable } = require('stream');
+                        const stream = Readable.from(doc.content);
+                        // connect to FTPS file server
+                        const ftpsSession = await utils.connectFTPS(config)
+                        const connection = await ftpsSession.connect()
+                        if (!connection) {
+                            console.log('Could not establish connection to FTPS server')
+                            return
+                        }
+                        const gotFiles = await ftpsSession.getFiles('data/books/')
+                        console.log(gotFiles)
+                        // Upload to FTPS file server
+                        result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
+                            console.log(result)
+                            // close session
+                            ftpsSession.disconnect()
+                            return result
+                        });
+                        // more catches here for (result.code)
                     }
 
                     // create document object
-                    const document = {
-                        filename: doc.info.filename,
-                        mimeType: doc.info.mimeType,
-                        encoding: doc.info.encoding,
-                        url: doc.info.url
-                    }
+                    const document = doc.info
+                    const pdf = document?.url
                     console.log(document)
 
                     // create new Book
@@ -124,7 +115,7 @@ exports.create = async (req, res) => {
                         booklength: booklength,
                         language: language,
                         price: price,
-                        pdf: document.url
+                        pdf: pdf
                     }
                     console.log(bookData)
 
