@@ -9,6 +9,7 @@ const swaggerDocument = yamljs.load(__dirname + '/docs/swagger.yaml');
 const express = require('express');
 const app = express();
 
+app.use("/client", express.static("frontend"))
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use('/pub', express.static(path.join(__dirname, 'public')))
 app.use(cors())

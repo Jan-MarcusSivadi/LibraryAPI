@@ -1,8 +1,16 @@
-const vue = Vue.createApp({
+import { createApp } from 'vue'
+import ChildComp from './ChildComp.js'
+import vue from './components/App.js'
+const vue = createApp(App)
+createApp({
+    components: {
+        ChildComp
+    },
     data() {
       return{
         bookInModal: {id: null, title: null, author: null, price: null},
-        books: []
+        books: [],
+        childMsg: 'No child msg yet'
     }
   },
   async created() {
