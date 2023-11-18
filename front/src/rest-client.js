@@ -1,12 +1,11 @@
 import { createApp } from 'vue'
 import ChildComp from './ChildComp.js'
 import vue from './components/App.js'
-const vue = createApp(App)
-createApp({
+const app = createApp({
     components: {
         ChildComp
     },
-    data() {
+    data: function() {
       return{
         bookInModal: {id: null, title: null, author: null, price: null},
         books: [],
@@ -24,4 +23,5 @@ createApp({
       bookInfoModal.show()
     }
   }
-}).mount('#app')
+})
+app.mount('#app')
