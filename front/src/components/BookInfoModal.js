@@ -21,9 +21,24 @@ export default {
                       <td v-else>{{bookInModal.title}}</td>
                   </tr>
                   <tr>
+                      <th>Description</th>
+                      <td v-if="isEditing"><input v-model="modifiedBook.description"></td>
+                      <td v-else>{{bookInModal.description}}</td>
+                  </tr>
+                  <tr>
                       <th>Author</th>
                       <td v-if="isEditing"><input v-model="modifiedBook.author"></td>
                       <td v-else>{{bookInModal.author}}</td>
+                  </tr>
+                  <tr>
+                  <th>Language</th>
+                    <td v-if="isEditing"><input v-model="modifiedBook.language"></td>
+                    <td v-else>{{bookInModal.language}}</td>
+                  </tr>
+                  <tr>
+                  <th>Book Length</th>
+                    <td v-if="isEditing"><input v-model="modifiedBook.booklength"></td>
+                    <td v-else>{{bookInModal.booklength}}</td>
                   </tr>
                   <tr>
                       <th>Price</th>
