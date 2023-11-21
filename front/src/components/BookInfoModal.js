@@ -1,6 +1,8 @@
+import confirmationModal from "./ConfirmationModal.js"
 export default {
-  /*html*/
-  template: `
+    /*html*/
+    template: `
+<!-- Book Info Modal -->
 <div id="bookInfoModal" class="modal" tabindex="-1">
   <div class="modal-dialog">
       <div class="modal-content">
@@ -31,50 +33,68 @@ export default {
               </table>
           </div>
           <div class="modal-footer">
-              <template v-if="isEditing">
-                  <button type="button" class="btn btn-success" @click="saveModifiedBook">Save</button>
-                  <button type="button" class="btn btn-secondary" @click="cancelEditing">Cancel</button>
-              </template>
-              <template v-else>
-                  <button type="button" class="btn btn-warning" @click="startEditing">Edit</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              </template>
+            <div class="row">
+                <template v-if="isEditing">
+                    <div class="col me-auto">
+                        <button type="button" class="btn btn-danger" data-bs-target="#confirmationModal" data-bs-toggle="modal">Delete</button>
+                    </div>
+                    <div class="col auto">
+                        <button type="button" class="btn btn-success" @click="saveModifiedBook">Save</button>
+                        <button type="button" class="btn btn-secondary" @click="cancelEditing">Cancel</button>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="col me-auto"></div>
+                    <div class="col auto">
+                        <button type="button" class="btn btn-warning" @click="startEditing">Edit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </template>
+            </div>
           </div>
       </div>
   </div>
 </div>
+<!-- Confirmation Modal -->
+<confirmation-modal :target="'#bookInfoModal'" @confirmed="deleteBook"></confirmation-modal>
   `,
-  emits: ["bookUpdated"],
-  props: {
-      bookInModal: {}
-  },
-  data() {
-      return {
-          isEditing: false,
-          modifiedBook: {}
-      }
-  },
-  methods: {
-      startEditing() {
-          this.modifiedBook = { ...this.bookInModal }
-          this.isEditing = true
-      },
-      cancelEditing() {
-          this.isEditing = false
-      },
-      async saveModifiedBook() {
-          console.log("Saving:", this.modifiedBook)
-          const rawResponse = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
-              method: 'PUT',
-              headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(this.modifiedBook)
-          });
-          console.log(rawResponse);
-          this.$emit("bookUpdated", this.modifiedBook)
-          this.isEditing = false
-      }
-  }
+    components: {
+        confirmationModal
+    },
+    emits: ["bookUpdated"],
+    props: {
+        bookInModal: {}
+    },
+    data() {
+        return {
+            isEditing: false,
+            modifiedBook: {}
+        }
+    },
+    methods: {
+        startEditing() {
+            this.modifiedBook = { ...this.bookInModal }
+            this.isEditing = true
+        },
+        cancelEditing() {
+            this.isEditing = false
+        },
+        async saveModifiedBook() {
+            console.log("Saving:", this.modifiedBook)
+            const rawResponse = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.modifiedBook)
+            });
+            console.log(rawResponse);
+            this.$emit("bookUpdated", this.modifiedBook)
+            this.isEditing = false
+        },
+        deleteBook() {
+            console.log("DELETE confirmed");
+        }
+    }
 }

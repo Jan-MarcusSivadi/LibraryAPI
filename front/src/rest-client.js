@@ -3,7 +3,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import App from './App.js'
 
 import BooksView from './views/BooksView.js'
-// import PlayersView from './views/PlayersView.js'
 
 const routes = [
     { path: "/books", component: BooksView },
