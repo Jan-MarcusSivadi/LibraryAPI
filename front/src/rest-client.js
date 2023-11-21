@@ -1,27 +1,23 @@
 import { createApp } from 'vue'
-import ChildComp from './ChildComp.js'
-import vue from './components/App.js'
-const app = createApp({
-    components: {
-        ChildComp
-    },
-    data: function() {
-      return{
-        bookInModal: {id: null, title: null, author: null, price: null},
-        books: [],
-        childMsg: 'No child msg yet'
-    }
-  },
-  async created() {
-    this.books = await (await fetch("http://localhost:3000/books")).json()
-    console.log(this.books)
-  },
-  methods: {
-    getBook: async function (id) {
-      this.bookInModal = await (await fetch("http://localhost:3000/books/"+id)).json()
-      let bookInfoModal = new bootstrap.Modal(document.getElementById("bookInfoModal"))
-      bookInfoModal.show()
-    }
-  }
+import { createRouter, createWebHashHistory } from 'vue-router'
+import App from './App.js'
+
+import BooksView from './views/BooksView.js'
+// import PlayersView from './views/PlayersView.js'
+
+const routes = [
+    { path: "/books", component: BooksView },
+    // { path: "/users", component: UsersView }
+]
+
+const router = createRouter({
+    history: createWebHashHistory(),
+    routes
 })
+
+const app = createApp(App)
+
+app.use(router)
+
+app.config.globalProperties.API_URL = 'http://localhost:3000'
 app.mount('#app')

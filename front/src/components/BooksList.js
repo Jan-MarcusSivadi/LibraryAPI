@@ -2,36 +2,34 @@ export default {
     /*html*/
     template: `
     <table id="booksTable" class="table table-striped table-bordered">
-      <tr> 
-        <th>Title</th>
-        <th>Author</th>
-        <th>Price</th>
-      </tr>
-      <tr v-for="book in books">
-         <td @click="getBook(book.id)">{{ book.title}}</td>
-         <td>{{ book.author}}</td>
-         <td>{{ book.price}}</td>
-      </tr>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="book in books">
+                <td @click="getBook(book.id)">{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.price }}</td>
+            </tr>
+        </tbody>
     </table>
     `,
-    emits: {
-        showModal: (book) => {
-            console.log("Validation", book)
-            return book.id && book.title && book.author && book.price
-        }
-    },
+    emits: ["showModal"],
     data() {
         return {
             books: []
         }
     },
     async created() {
-        this.books = await (await fetch("http://localhost:8080/books")).json()
+        this.books = await (await fetch(this.API_URL + "/books")).json()
     },
     methods: {
         getBook: async function (id) {
-            const bookInModal = await (await fetch("http://localhost:8080/books/" + id)).json()
-            console.log("BooksList: ", bookInModal)
+            const bookInModal = await (await fetch(this.API_URL + "/books/" + id)).json()
             this.$emit("showModal", bookInModal)
         }
     }
