@@ -4,6 +4,7 @@ const Book = db.books
 
 // CREATE
 exports.create = async (req, res) => {
+    console.log('MY BOOOKKK!!!!',req.body)
     try {
         /* 
             title: NOT NULL
