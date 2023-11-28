@@ -78,7 +78,7 @@ export default {
     },
     emits: ["bookUpdated"],
     props: {
-        bookInModal: {}
+        bookInModal: {},
     },
     data() {
         return {
@@ -108,8 +108,13 @@ export default {
             this.$emit("bookUpdated", this.modifiedBook)
             this.isEditing = false
         },
-        deleteBook() {
-            console.log("DELETE confirmed");
+        async deleteBook() {
+            console.log("DELETE confirmed", this.modifiedBook.id);
+            const res = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
+                method: 'DELETE'
+            })
+            console.log(res.status)
+            this.$emit('bookDeleted', { id: this.modifiedBook.id, status: res.status })
         }
     }
 }

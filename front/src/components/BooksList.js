@@ -31,6 +31,6 @@ export default {
         getBook: async function (id) {
             const bookInModal = await (await fetch(this.API_URL + "/books/" + id)).json()
             this.$emit("showModal", bookInModal)
-        }
-    }
+        },
+    },
 }
