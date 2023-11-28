@@ -12,6 +12,9 @@ export default {
               <li class="nav-item">
                 <router-link class="nav-link" to="/books">Books</router-link>
               </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/users">Users</router-link>
+              </li>
               
               <li class="nav-item">
                 <a class="nav-link disabled" aria-disabled="true">Disabled</a>

@@ -2,8 +2,8 @@ import confirmationModal from "./ConfirmationModal.js"
 export default {
     /*html*/
     template: `
-<!-- Book Info Modal -->
-<div id="bookInfoModal" class="modal" tabindex="-1">
+<!-- User Info Modal -->
+<div id="userInfoModal" class="modal" tabindex="-1">
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
@@ -13,37 +13,32 @@ export default {
               <table class="table table-striped">
                   <tr>
                       <th>Id</th>
-                      <td>{{bookInModal.id}}</td>
+                      <td>{{userInModal.id}}</td>
                   </tr>
                   <tr>
-                      <th>Title</th>
-                      <td v-if="isEditing"><input v-model="modifiedBook.title"></td>
-                      <td v-else>{{bookInModal.title}}</td>
+                      <th>First Name</th>
+                      <td v-if="isEditing"><input v-model="modifiedUser.firstname"></td>
+                      <td v-else>{{userInModal.firstname}}</td>
                   </tr>
                   <tr>
-                      <th>Description</th>
-                      <td v-if="isEditing"><input v-model="modifiedBook.description"></td>
-                      <td v-else>{{bookInModal.description}}</td>
+                      <th>Last Name</th>
+                      <td v-if="isEditing"><input v-model="modifiedUser.lastname"></td>
+                      <td v-else>{{userInModal.lastname}}</td>
                   </tr>
                   <tr>
-                      <th>Author</th>
-                      <td v-if="isEditing"><input v-model="modifiedBook.author"></td>
-                      <td v-else>{{bookInModal.author}}</td>
+                      <th>Email</th>
+                      <td v-if="isEditing"><input v-model="modifiedUser.email"></td>
+                      <td v-else>{{userInModal.email}}</td>
                   </tr>
                   <tr>
-                    <th>Language</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.language"></td>
-                    <td v-else>{{bookInModal.language}}</td>
+                    <th>Username</th>
+                    <td v-if="isEditing"><input v-model="modifiedUser.username"></td>
+                    <td v-else>{{userInModal.username}}</td>
                   </tr>
                   <tr>
-                    <th>Book Length</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.booklength"></td>
-                    <td v-else>{{bookInModal.booklength}}</td>
-                  </tr>
-                  <tr>
-                      <th>Price</th>
-                      <td v-if="isEditing"><input v-model="modifiedBook.price"></td>
-                      <td v-else>{{bookInModal.price}}</td>
+                    <th>Phone nr.</th>
+                    <td v-if="isEditing"><input v-model="modifiedUser.phonenr"></td>
+                    <td v-else>{{userInModal.phonenr}}</td>
                   </tr>
               </table>
           </div>
@@ -54,7 +49,7 @@ export default {
                         <button type="button" class="btn btn-danger" data-bs-target="#confirmationModal" data-bs-toggle="modal">Delete</button>
                     </div>
                     <div class="col auto">
-                        <button type="button" class="btn btn-success" @click="saveModifiedBook">Save</button>
+                        <button type="button" class="btn btn-success" @click="saveModifiedUser">Save</button>
                         <button type="button" class="btn btn-secondary" @click="cancelEditing">Cancel</button>
                     </div>
                 </template>
@@ -71,50 +66,50 @@ export default {
   </div>
 </div>
 <!-- Confirmation Modal -->
-<confirmation-modal :target="'#bookInfoModal'" @confirmed="deleteBook"></confirmation-modal>
+<confirmation-modal :target="'#userInfoModal'" @confirmed="deleteUser"></confirmation-modal>
   `,
     components: {
         confirmationModal
     },
-    emits: ["bookUpdated", "bookDeleted"],
+    emits: ["userUpdated", "userDeleted"],
     props: {
-        bookInModal: {},
+        userInModal: {},
     },
     data() {
         return {
             isEditing: false,
-            modifiedBook: {}
+            modifiedUser: {}
         }
     },
     methods: {
         startEditing() {
-            this.modifiedBook = { ...this.bookInModal }
+            this.modifiedUser = { ...this.userInModal }
             this.isEditing = true
         },
         cancelEditing() {
             this.isEditing = false
         },
-        async saveModifiedBook() {
-            console.log("Saving:", this.modifiedBook)
-            const rawResponse = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
+        async saveModifiedUser() {
+            console.log("Saving:", this.modifiedUser)
+            const rawResponse = await fetch(this.API_URL + "/users/" + this.modifiedUser.id, {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(this.modifiedBook)
+                body: JSON.stringify(this.modifiedUser)
             });
             console.log(rawResponse);
-            this.$emit("bookUpdated", this.modifiedBook)
+            this.$emit("userUpdated", this.modifiedUser)
             this.isEditing = false
         },
-        async deleteBook() {
-            console.log("DELETE confirmed", this.modifiedBook.id);
-            const res = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
+        async deleteUser() {
+            console.log("DELETE confirmed", this.modifiedUser.id);
+            const res = await fetch(this.API_URL + "/users/" + this.modifiedUser.id, {
                 method: 'DELETE'
             })
             console.log(res.status)
-            this.$emit('bookDeleted', { id: this.modifiedBook.id, status: res.status })
+            this.$emit('userDeleted', { id: this.modifiedUser.id, status: res.status })
             this.cancelEditing()
         }
     }

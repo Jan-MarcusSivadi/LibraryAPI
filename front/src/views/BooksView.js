@@ -10,7 +10,6 @@ export default {
         booksList,
         bookInfoModal
     },
-    emits: ["myEvent"],
     data() {
         return {
             update: 0,
