@@ -1,19 +1,17 @@
-import confirmationModal from "./ConfirmationModal.js"
 export default {
     /*html*/
     template: `
-<!-- Book Info Modal -->
-<div id="bookInfoModal" class="modal" tabindex="-1">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 v-if="isEditing" class="modal-title">Edit {{bookInModal.title}}</h5>
-              <h5 v-else class="modal-title">{{bookInModal.title}}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
+        <!-- Book Info Modal -->
+<div id="bookCreateModal" class="modal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">New Book</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form class="submit-button">
+            <div class="modal-body" >
 
-            <div v-if="isEditing">
                 <div class="form-group">
                     <div class="container">
                         <div class="row justify-content-md-center">
@@ -68,7 +66,7 @@ export default {
 
                 <div class="form-group">
                     <div class="container">
-                                <div class="row justify-content-md-center">
+                        <div class="row justify-content-md-center">
                             <div class="col-md-10">
                                 <label for="booklength" class="row-sm-10 col-form-label">Book Length</label>
                                 <div class="row-sm-10">
@@ -103,106 +101,37 @@ export default {
                             </div>
                         </div>
                     </div>
-                </div>  
+                </div>
+                
             </div>
-          
-            <table v-else class="table table-striped">
-                <tr>
-                    <th>Id</th>
-                    <td>{{bookInModal.id}}</td>
-                </tr>
-                <tr>
-                    <th>Title</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.title"></td>
-                    <td v-else>{{bookInModal.title}}</td>
-                </tr>
-                <tr>
-                    <th>Description</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.description"></td>
-                    <td v-else>{{bookInModal.description}}</td>
-                </tr>
-                <tr>
-                    <th>Author</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.author"></td>
-                    <td v-else>{{bookInModal.author}}</td>
-                </tr>
-                <tr>
-                <th>Language</th>
-                <td v-if="isEditing"><input v-model="modifiedBook.language"></td>
-                <td v-else>{{bookInModal.language}}</td>
-                </tr>
-                <tr>
-                <th>Book Length</th>
-                <td v-if="isEditing"><input v-model="modifiedBook.booklength"></td>
-                <td v-else>{{bookInModal.booklength}}</td>
-                </tr>
-                <tr>
-                    <th>Price</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.price"></td>
-                    <td v-else>{{bookInModal.price}}</td>
-                </tr>
-            </table>
-          </div>
-          <div class="modal-footer">
-            <div class="row container-fluid">
-                <template v-if="isEditing" class="d-flex p-2">
-                    
-                    <div class="col me-auto text-end gx-2 ">
-                        <button type="button" class="btn btn-danger container-fluid" data-bs-target="#confirmationModal" data-bs-toggle="modal">Delete</button>
-                    </div>
-                    <div class="col auto text-start"></div>
-                    <div class="col me-auto text-end gx-2">
-                        <button type="button" class="btn btn-secondary container-fluid" @click="cancelEditing">Cancel</button>
-                    </div>
-                    <div class="col me-auto text-end gx-2">
-                        <button type="button" class="btn btn-success container-fluid" @click="saveModifiedBook">Save</button>
-                    </div>
-
-                </template>
-                <template v-else>
+            <div class="modal-footer">
+                <div class="row container-fluid">
 
                     <div class="col auto text-start"></div>
                     <div class="col me-auto text-end gx-2">
-                        <button type="button" class="btn btn-secondary container-fluid" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary container-fluid" data-bs-dismiss="modal">Cancel</button>
                     </div>
                     <div class="col me-auto text-end gx-2">
-                        <button type="button" class="btn btn-warning container-fluid" @click="startEditing">Edit</button>
+                    <button type="button" class="btn btn-success container-fluid" @click="saveCreatedBook">Create</button>
                     </div>
 
-                </template>
+                </div>
             </div>
-          </div>
-      </div>
-  </div>
+        </form>
+    </div>
 </div>
-<!-- Confirmation Modal -->
-<confirmation-modal :target="'#bookInfoModal'" @confirmed="deleteBook"></confirmation-modal>
-  `,
-    components: {
-        confirmationModal
-    },
-    emits: ["bookUpdated", "bookDeleted"],
-    props: {
-        bookInModal: {},
-    },
+</div>
+    `,
+    emits: ["bookCreated"],
     data() {
         return {
-            isEditing: false,
             modifiedBook: {}
         }
     },
     methods: {
-        startEditing() {
-            this.modifiedBook = { ...this.bookInModal }
-            this.isEditing = true
-        },
-        cancelEditing() {
-            this.isEditing = false
-        },
-        async saveModifiedBook() {
+        async saveCreatedBook() {
             // client form validation
             const { title, description, author, releasedate, language, booklength, price } = this.modifiedBook
-            console.log("Saving:", this.modifiedBook)
 
             // document.querySelector('.submit-form').addEventListener('submit', (e) => {
             //     e.preventDefault()
@@ -250,9 +179,10 @@ export default {
             if (num2 < 0) {
                 return alert("Price cannot be negative")
             }
+            console.log("Creating:", this.modifiedBook)
 
-            const rawResponse = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
-                method: 'PUT',
+            const rawResponse = await fetch(this.API_URL + "/books", {
+                method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -260,17 +190,7 @@ export default {
                 body: JSON.stringify(this.modifiedBook)
             });
             console.log(rawResponse);
-            this.$emit("bookUpdated", this.modifiedBook)
-            this.isEditing = false
+            this.$emit("bookCreated")
         },
-        async deleteBook() {
-            console.log("DELETE confirmed", this.modifiedBook.id);
-            const res = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
-                method: 'DELETE'
-            })
-            console.log(res.status)
-            this.$emit('bookDeleted', { id: this.modifiedBook.id, status: res.status })
-            this.cancelEditing()
-        }
     }
 }
