@@ -20,7 +20,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="title" class="row-sm-10 col-form-label">Title</label>
                                 <div class="row-sm-auto">
-                                    <input id="title" name="title" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter title" v-model="bookInModal.title">
+                                    <input id="title" name="title" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter title" v-model="modifiedBook.title">
                                 </div>
                             </div>
                         </div>
@@ -33,7 +33,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="description" class="row-sm-10 col-form-label">Description</label>
                                 <div class="row-sm-10">
-                                    <input id="description" name="description" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter description" v-model="bookInModal.description">
+                                    <input id="description" name="description" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter description" v-model="modifiedBook.description">
                                 </div>
                             </div>
                         </div>
@@ -46,7 +46,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="author" class="row-sm-10 col-form-label">Author</label>
                                 <div class="row-sm-10">
-                                    <input id="author" name="author" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter author" v-model="bookInModal.author">
+                                    <input id="author" name="author" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter author" v-model="modifiedBook.author">
                                 </div>
                             </div>
                         </div>
@@ -59,7 +59,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="language" class="row-sm-10 col-form-label">Language</label>
                                 <div class="row-sm-10">
-                                    <input id="language" name="language" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter language" v-model="bookInModal.language">
+                                    <input id="language" name="language" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter language" v-model="modifiedBook.language">
                                 </div>
                             </div>
                         </div>
@@ -72,7 +72,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="booklength" class="row-sm-10 col-form-label">Book Length</label>
                                 <div class="row-sm-10">
-                                    <input id="booklength" name="booklength" type="number" min="0" class="form-control" aria-describedby="emailHelp" placeholder="Enter booklength" v-model="bookInModal.booklength">
+                                    <input id="booklength" name="booklength" type="number" min="0" class="form-control" aria-describedby="emailHelp" placeholder="Enter booklength" v-model="modifiedBook.booklength">
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="releasedate" class="row-sm-10 col-form-label">Release Date</label>
                                 <div class="row-sm-10">
-                                    <input id="releasedate" name="releasedate" type="date" class="form-control" aria-describedby="emailHelp" placeholder="Enter releasedate" v-model="bookInModal.releasedate">
+                                    <input id="releasedate" name="releasedate" type="date" class="form-control" aria-describedby="emailHelp" placeholder="Enter releasedate" v-model="modifiedBook.releasedate">
                                 </div>
                             </div>
                         </div>
@@ -98,7 +98,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="price" class="row-sm-10 col-form-label">Price</label>
                                 <div class="row-sm-10">
-                                    <input id="price" name="price" type="number" min="0" class="form-control" aria-describedby="emailHelp" placeholder="Enter price" v-model="bookInModal.price">
+                                    <input id="price" name="price" type="number" min="0" class="form-control" aria-describedby="emailHelp" placeholder="Enter price" v-model="modifiedBook.price">
                                 </div>
                             </div>
                         </div>

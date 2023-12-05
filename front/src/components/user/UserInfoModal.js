@@ -20,7 +20,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="firstname" class="row-sm-10 col-form-label">First Name</label>
                                 <div class="row-sm-10">
-                                    <input id="firstname" name="firstname" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter firstname" v-model="userInModal.firstname">
+                                    <input id="firstname" name="firstname" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter firstname" v-model="modifiedUser.firstname">
                                 </div>
                             </div>
                         </div>
@@ -33,7 +33,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="lastname" class="row-sm-10 col-form-label">Last Name</label>
                                 <div class="row-sm-10">
-                                    <input id="lastname" name="lastname" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter lastname" v-model="userInModal.lastname">
+                                    <input id="lastname" name="lastname" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter lastname" v-model="modifiedUser.lastname">
                                 </div>
                             </div>
                         </div>
@@ -46,7 +46,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="email" class="row-sm-10 col-form-label">Email</label>
                                 <div class="row-sm-10">
-                                    <input id="email" name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" v-model="userInModal.email">
+                                    <input id="email" name="email" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" v-model="modifiedUser.email">
                                 </div>
                             </div>
                         </div>
@@ -59,7 +59,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="password" class="row-sm-10 col-form-label">Password</label>
                                 <div class="row-sm-10">
-                                    <input id="password" name="password" type="password" class="form-control" aria-describedby="emailHelp" placeholder="Enter password" v-model="userInModal.password">
+                                    <input id="password" name="password" type="password" class="form-control" aria-describedby="emailHelp" placeholder="Enter password" v-model="modifiedUser.password">
                                 </div>
                             </div>
                         </div>
@@ -72,7 +72,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="username" class="row-sm-10 col-form-label">Username</label>
                                 <div class="row-sm-auto">
-                                    <input id="username" name="username" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter username" v-model="userInModal.username">
+                                    <input id="username" name="username" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter username" v-model="modifiedUser.username">
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="phonenr" class="row-sm-10 col-form-label">Phone Number</label>
                                 <div class="row-sm-10">
-                                    <input id="phonenr" name="phonenr" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter phonenr" v-model="userInModal.phonenr">
+                                    <input id="phonenr" name="phonenr" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter phonenr" v-model="modifiedUser.phonenr">
                                 </div>
                             </div>
                         </div>
