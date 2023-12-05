@@ -40,6 +40,7 @@ export default {
     methods: {
         openModal(book) {
             this.bookInModal = book
+            console.log('MY BOOK: ', book)
             if (this.myModal === null) {
                 this.myModal = new bootstrap.Modal(document.getElementById("bookInfoModal"))
             }

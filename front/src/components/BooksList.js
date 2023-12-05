@@ -30,6 +30,19 @@ export default {
     methods: {
         getBook: async function (id) {
             const bookInModal = await (await fetch(this.API_URL + "/books/" + id)).json()
+            
+            if (bookInModal.releasedate) {
+                // parse data
+                const dt = new Date(bookInModal.releasedate)
+
+                // format date for input value
+                const day = ("0" + dt.getDate()).slice(-2)
+                const month = ("0" + (dt.getMonth() + 1)).slice(-2)
+                const date = dt.getFullYear() + "-" + month + "-" + day
+    
+                bookInModal.releasedate = date
+            }
+
             this.$emit("showModal", bookInModal)
         },
     },
