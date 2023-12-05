@@ -72,7 +72,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="booklength" class="row-sm-10 col-form-label">Book Length</label>
                                 <div class="row-sm-10">
-                                    <input id="booklength" name="booklength" type="number" class="form-control" aria-describedby="emailHelp" placeholder="Enter booklength" v-model="modifiedBook.booklength">
+                                    <input id="booklength" name="booklength" type="number" min="0" class="form-control" aria-describedby="emailHelp" placeholder="Enter booklength" v-model="modifiedBook.booklength">
                                 </div>
                             </div>
                         </div>
@@ -98,7 +98,7 @@ export default {
                             <div class="col-md-10">
                                 <label for="price" class="row-sm-10 col-form-label">Price</label>
                                 <div class="row-sm-10">
-                                    <input id="price" name="price" type="number" class="form-control" aria-describedby="emailHelp" placeholder="Enter price" v-model="modifiedBook.price">
+                                    <input id="price" name="price" type="number" min="0" class="form-control" aria-describedby="emailHelp" placeholder="Enter price" v-model="modifiedBook.price">
                                 </div>
                             </div>
                         </div>
@@ -144,22 +144,31 @@ export default {
             </table>
           </div>
           <div class="modal-footer">
-            <div class="row">
-                <template v-if="isEditing">
-                    <div class="col me-auto">
-                        <button type="button" class="btn btn-danger" data-bs-target="#confirmationModal" data-bs-toggle="modal">Delete</button>
+            <div class="row container-fluid">
+                <template v-if="isEditing" class="d-flex p-2">
+                    
+                    <div class="col me-auto text-end gx-2 ">
+                        <button type="button" class="btn btn-danger container-fluid" data-bs-target="#confirmationModal" data-bs-toggle="modal">Delete</button>
                     </div>
-                    <div class="col auto">
-                        <button type="button" class="btn btn-success" @click="saveModifiedBook">Save</button>
-                        <button type="button" class="btn btn-secondary" @click="cancelEditing">Cancel</button>
+                    <div class="col auto text-start"></div>
+                    <div class="col me-auto text-end gx-2">
+                        <button type="button" class="btn btn-secondary container-fluid" @click="cancelEditing">Cancel</button>
                     </div>
+                    <div class="col me-auto text-end gx-2">
+                        <button type="button" class="btn btn-success container-fluid" @click="saveModifiedBook">Save</button>
+                    </div>
+
                 </template>
                 <template v-else>
-                    <div class="col me-auto"></div>
-                    <div class="col auto">
-                        <button type="button" class="btn btn-warning" @click="startEditing">Edit</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                    <div class="col auto text-start"></div>
+                    <div class="col me-auto text-end gx-2">
+                        <button type="button" class="btn btn-secondary container-fluid" data-bs-dismiss="modal">Close</button>
                     </div>
+                    <div class="col me-auto text-end gx-2">
+                        <button type="button" class="btn btn-warning container-fluid" @click="startEditing">Edit</button>
+                    </div>
+
                 </template>
             </div>
           </div>

@@ -105,11 +105,16 @@ export default {
                 
             </div>
             <div class="modal-footer">
-                <div class="row">
-                    <div class="col auto">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-success" @click="saveCreatedBook">Create</button>
+                <div class="row container-fluid">
+
+                    <div class="col auto text-start"></div>
+                    <div class="col me-auto text-end gx-2">
+                        <button type="button" class="btn btn-secondary container-fluid" data-bs-dismiss="modal">Cancel</button>
                     </div>
+                    <div class="col me-auto text-end gx-2">
+                    <button type="button" class="btn btn-success container-fluid" @click="saveCreatedBook">Create</button>
+                    </div>
+
                 </div>
             </div>
         </form>
