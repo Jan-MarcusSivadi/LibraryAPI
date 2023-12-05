@@ -105,11 +105,16 @@ export default {
                 
             </div>
             <div class="modal-footer">
-                <div class="row">
-                    <div class="col auto">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-success" @click="saveCreatedBook">Create</button>
+                <div class="row container-fluid">
+
+                    <div class="col auto text-start"></div>
+                    <div class="col me-auto text-end gx-2">
+                        <button type="button" class="btn btn-secondary container-fluid" data-bs-dismiss="modal">Cancel</button>
                     </div>
+                    <div class="col me-auto text-end gx-2">
+                    <button type="button" class="btn btn-success container-fluid" @click="saveCreatedBook">Create</button>
+                    </div>
+
                 </div>
             </div>
         </form>
@@ -127,7 +132,6 @@ export default {
         async saveCreatedBook() {
             // client form validation
             const { title, description, author, releasedate, language, booklength, price } = this.modifiedBook
-            console.log("Creating:", this.modifiedBook)
 
             // document.querySelector('.submit-form').addEventListener('submit', (e) => {
             //     e.preventDefault()
@@ -175,6 +179,7 @@ export default {
             if (num2 < 0) {
                 return alert("Price cannot be negative")
             }
+            console.log("Creating:", this.modifiedBook)
 
             const rawResponse = await fetch(this.API_URL + "/books", {
                 method: 'POST',

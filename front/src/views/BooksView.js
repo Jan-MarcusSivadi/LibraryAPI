@@ -1,6 +1,6 @@
-import booksList from "../components/BooksList.js"
-import bookInfoModal from "../components/BookInfoModal.js"
-import bookCreateModal from "../components/BookCreateModal.js"
+import booksList from "../components/book/BooksList.js"
+import bookInfoModal from "../components/book/BookInfoModal.js"
+import bookCreateModal from "../components/book/BookCreateModal.js"
 
 export default {
     /*html*/
@@ -40,13 +40,13 @@ export default {
     methods: {
         openModal(book) {
             this.bookInModal = book
-            console.log('MY BOOK: ', book)
             if (this.myModal === null) {
                 this.myModal = new bootstrap.Modal(document.getElementById("bookInfoModal"))
             }
             this.myModal.show()
         },
         openCreateModal() {
+            // this.bookInModal = book
             if (this.myModalCreate === null) {
                 this.myModalCreate = new bootstrap.Modal(document.getElementById("bookCreateModal"))
             }
