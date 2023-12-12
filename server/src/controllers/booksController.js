@@ -51,7 +51,10 @@ exports.create = async (req, res) => {
                             doc.size += data.length;
                         })
                         .on('end', () => {
-                            const splits = info.mimeType.split('/')
+                            // const splits = info.mimeType.split('/')
+                            const splits = info.filename.split('.')
+                            // console.log("splits?", splits)
+                            // const extension = splits[splits.length - 1]
                             const extension = splits[splits.length - 1]
                             const fixedFilename = utils.getFixedFileName(`file-${Date.now()}.${extension}`) //info.filename
                             const fileURL = `http://${config.host}/data/books/${fixedFilename}`
@@ -77,7 +80,7 @@ exports.create = async (req, res) => {
                         res.status(400).send({ error: "One or all required parameters are missing." })
                         return
                     }
-                    
+
                     var result
                     if (doc.size > 0) {
                         const { Readable } = require('stream');
@@ -105,6 +108,11 @@ exports.create = async (req, res) => {
                     const document = doc.info
                     const pdf = document?.url
                     console.log(document)
+
+                    if (!pdf) {
+                        res.status(400).send({ error: "One or all required parameters are missing." })
+                        return
+                    }
 
                     // create new Book
                     const bookData = {
@@ -135,7 +143,7 @@ exports.create = async (req, res) => {
 // READ
 exports.getAll = async (req, res) => {
     try {
-        const result = await Book.findAll({ attributes: ["id", "title", "description", "author", "releasedate", "language", "booklength", "price"] })
+        const result = await Book.findAll({ attributes: ["id", "title", "description", "author", "releasedate", "language", "booklength", "price", "pdf"] })
         res.json(result)
     } catch (error) {
         console.error(error)
