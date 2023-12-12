@@ -194,10 +194,10 @@ exports.createNew = async (req, res) => {
 // READ
 exports.getAll = async (req, res) => {
     // var allOrders = await Order.findAll({ include: [User, OrderItem] })
-    var allOrders = await Order.findAll({ include: [OrderItem] })
-    // const parsedOrders = await getParsedOrders(allOrders)
+    var allOrders = await Order.findAll({ include: [OrderItem, User] })
+    const parsedOrders = await getParsedOrders(allOrders)
     
-    res.json(allOrders)
+    res.json(parsedOrders)
 }
 exports.getById = async (req, res) => {
     const foundOrder = await Order.findByPk(req.params.id, { include: [User, OrderItem] })
