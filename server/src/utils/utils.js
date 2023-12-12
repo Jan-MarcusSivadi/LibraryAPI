@@ -63,11 +63,15 @@ exports.connectFTPS = async (options) => {
         return await client.uploadFile(buff, dir, fileData);
     }
 
+    const deleteFile = async (remoteFile) => {
+        return await client.deleteFile(remoteFile);
+    }
+
     const disconnect = async () => {
         return await client.disconnect();
     }
 
-    return { connect, getFiles, uploadFile, disconnect }
+    return { connect, getFiles, uploadFile, deleteFile, disconnect }
 }
 
 exports.getFixedFileName = (str) => {

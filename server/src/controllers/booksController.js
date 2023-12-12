@@ -93,7 +93,7 @@ exports.create = async (req, res) => {
                             return
                         }
                         const gotFiles = await ftpsSession.getFiles('data/books/')
-                        console.log(gotFiles)
+                        console.log("gotFiles result: ", gotFiles)
                         // Upload to FTPS file server
                         result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
                             console.log(result)
@@ -217,6 +217,27 @@ exports.updateById = async (req, res) => {
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params
+
+        const ftpsSession = await utils.connectFTPS(config)
+        const connection = await ftpsSession.connect()
+        if (!connection) {
+            console.log('Could not establish connection to FTPS server')
+            return
+        }
+        const gotFiles = await ftpsSession.getFiles('data/books/')
+        console.log("gotFiles result: ", gotFiles)
+
+        var result
+        if (gotFiles.length > 0) {
+            // Delete file from FTPS file server
+            result = await ftpsSession.deleteFile(`data/books/${"file-1702389858042.pdf"}`).then((result) => {
+                console.log("deleteFile result: ", result)
+                // close session
+                ftpsSession.disconnect()
+                return result
+            });
+            
+        }
 
         const book = await Book.destroy({
             where: {

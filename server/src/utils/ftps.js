@@ -90,6 +90,19 @@ class FTPSClient {
     }
   }
 
+  async deleteFile(remoteFile) {
+    const client = this.client
+    console.log(`Deleting ${remoteFile}`);
+    try {
+      var result = await client.remove(remoteFile)
+      return result
+    }
+    catch (err) {
+      console.error('Deleting failed:', err);
+      // this.client.close()
+    }
+  }
+
   async disconnect() {
     this.client.close()
   }
@@ -110,15 +123,6 @@ class FTPSClient {
   //   } catch (err) {
   //     console.error('Downloading failed:', err);
   //   }
-  // }
-
-  // async deleteFile(remoteFile) {
-  //   console.log(`Deleting ${remoteFile}`);
-  //   try {
-  //     await this.client.delete(remoteFile);
-  //   } catch (err) {
-  //     console.error('Deleting failed:', err);
-  //   }
-  // }
+  // }  
 }
 module.exports = FTPSClient
