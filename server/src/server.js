@@ -43,7 +43,7 @@ app.listen(port, () => {
   require("./db").sync()
     .then(console.log("Synchronized"))
     .catch((error) => {
-      // console.log("Error:", error)
+      console.log("Error:", error)
     })
   console.log(`listening on port http://localhost:${port}`);
 })
