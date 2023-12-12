@@ -61,6 +61,38 @@ const createOrderItems = async (bookIds, createdOrderId) => {
     })
 }
 
+const updateOrderItems = async (itemsToUpdate, createdOrderId) => {
+    return new Promise(async (resolve, reject) => {
+        var updatedOrderItems = []
+        for (var i = 0; i < itemsToUpdate.length - 1; i++) {
+            const orderItem = await OrderItem.findBy(itemsToUpdate[i].id)
+            if (!orderItem) {
+                return reject(404)
+            }
+            updatedOrderItems.push(itemsToUpdate[i])
+
+            if (i === itemsToUpdate.length - 1) {
+                updatedOrderItems.forEach(async (orderItem) => {
+                    const itemId = orderItem.id
+                    delete orderItem.id
+                    const updatedOrderItem = await OrderItem.update({ ...orderItem }, {
+                        where: {
+                            id: itemId,
+                            OrderId: createdOrderId,
+                        }
+                    })
+                    // const createdOrderItem = await OrderItem.deleteById(orderItem.BookId)
+                    if (!updatedOrderItem) {
+                        return reject(500)
+                    }
+                })
+                resolve(200)
+            }
+        }
+    })
+}
+
+
 const deleteOrderItems = async (bookIds, createdOrderId) => {
     return new Promise(async (resolve, reject) => {
         var deletedOrderItems = []
@@ -166,7 +198,7 @@ exports.createNew = async (req, res) => {
             res.status(createOrderItems_resultCode).send({ error: "Book not found." })
             return
         }
-        
+
         if (createOrderItems_resultCode === 500) {
             // delete created order items
             const deleteOrderItems_resultCode = await deleteOrderItems(bookIds, createdOrder.id)
@@ -196,7 +228,7 @@ exports.getAll = async (req, res) => {
     // var allOrders = await Order.findAll({ include: [User, OrderItem] })
     var allOrders = await Order.findAll({ include: [OrderItem, User] })
     const parsedOrders = await getParsedOrders(allOrders)
-    
+
     res.json(parsedOrders)
 }
 exports.getById = async (req, res) => {
@@ -233,6 +265,8 @@ exports.updateById = async (req, res) => {
         res.status(400).send({ error: "At least one field is required." })
         return
     }
+
+    // todo: update order items
 
     const updatedOrder = await Order.update(
         {
