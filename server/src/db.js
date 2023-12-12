@@ -5,7 +5,8 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USER, proce
   define: {
     timestamps: true
   },
-  logging: console.log
+  logging: false
+  // logging: console.log
 })
 try {
   sequelize.authenticate().then(() => {

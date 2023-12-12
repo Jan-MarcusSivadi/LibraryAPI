@@ -10,6 +10,19 @@ const express = require('express');
 const app = express();
 
 app.use("/client", express.static(path.join(__dirname, '../../front/src')))
+const busboy = require('connect-busboy');
+// Default options, immediately start reading from the request stream and
+// parsing
+app.use(busboy({
+  highWaterMark: 2 * 1024 * 1024,
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  immediate: true
+}))
+// const bb = require('busboy');
+// app.use(bb)
+// app.use(express.urlencoded({ extended: true, limit: 10000, parameterLimit: 10 }))
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use('/pub', express.static(path.join(__dirname, 'public')))
 app.use(cors())
@@ -29,6 +42,8 @@ app.get('/', async (req, res) => {
 app.listen(port, () => {
   require("./db").sync()
     .then(console.log("Synchronized"))
-    .catch((error) => console.log("Error:", error))
+    .catch((error) => {
+      // console.log("Error:", error)
+    })
   console.log(`listening on port http://localhost:${port}`);
 })
