@@ -7,8 +7,8 @@ export default {
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 v-if="isEditing" class="modal-title">Edit {{userInModal.username}}</h5>
-              <h5 v-else class="modal-title">{{userInModal.username}}</h5>
+              <h5 v-if="isEditing" class="modal-title">Edit {{modifiedUser.username}}</h5>
+              <h5 v-else class="modal-title">{{modifiedUser.username}}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -184,7 +184,8 @@ export default {
         },
         async saveModifiedUser() {
             // client form validation
-            const { firstname, lastname, email, password, username, phonenr } = this.modifiedUser
+            const updatedUser = this.userInModal
+            const { firstname, lastname, email, password, username, phonenr } = updatedUser
 
             // document.querySelector('.submit-form').addEventListener('submit', (e) => {
             //     e.preventDefault()
@@ -210,17 +211,17 @@ export default {
             if (!phonenr) {
                 return alert("Phone Number field is required")
             }
-            console.log("Saving:", this.modifiedUser)
-            const rawResponse = await fetch(this.API_URL + "/users/" + this.modifiedUser.id, {
+            console.log("Saving:", updatedUser)
+            const rawResponse = await fetch(this.API_URL + "/users/" + updatedUser.id, {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(this.modifiedUser)
+                body: JSON.stringify(updatedUser)
             });
             console.log(rawResponse);
-            this.$emit("userUpdated", this.modifiedUser)
+            this.$emit("userUpdated", updatedUser)
             this.isEditing = false
         },
         async deleteUser() {

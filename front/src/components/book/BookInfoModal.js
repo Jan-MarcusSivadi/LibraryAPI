@@ -7,8 +7,8 @@ export default {
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 v-if="isEditing" class="modal-title">Edit {{bookInModal.title}}</h5>
-              <h5 v-else class="modal-title">{{bookInModal.title}}</h5>
+              <h5 v-if="isEditing" class="modal-title">Edit {{modifiedBook.title}}</h5>
+              <h5 v-else class="modal-title">{{modifiedBook.title}}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -188,7 +188,7 @@ export default {
     data() {
         return {
             isEditing: false,
-            modifiedBook: {}
+            modifiedBook: {},
         }
     },
     methods: {
@@ -201,8 +201,9 @@ export default {
         },
         async saveModifiedBook() {
             // client form validation
-            const { title, description, author, releasedate, language, booklength, price } = this.modifiedBook
-            console.log("Saving:", this.modifiedBook)
+            const updatedBook = this.bookInModal
+            const { title, description, author, releasedate, language, booklength, price } = updatedBook
+            console.log("Saving:", updatedBook)
 
             // document.querySelector('.submit-form').addEventListener('submit', (e) => {
             //     e.preventDefault()
@@ -251,25 +252,25 @@ export default {
                 return alert("Price cannot be negative")
             }
 
-            const rawResponse = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
+            const rawResponse = await fetch(this.API_URL + "/books/" + updatedBook.id, {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(this.modifiedBook)
+                body: JSON.stringify(updatedBook)
             });
-            console.log(rawResponse);
-            this.$emit("bookUpdated", this.modifiedBook)
+            console.log("updateBook", rawResponse);
+            this.$emit("bookUpdated", updatedBook)
             this.isEditing = false
         },
         async deleteBook() {
-            console.log("DELETE confirmed", this.modifiedBook.id);
-            const res = await fetch(this.API_URL + "/books/" + this.modifiedBook.id, {
+            console.log("DELETE confirmed", this.bookInModal.id);
+            const res = await fetch(this.API_URL + "/books/" + this.bookInModal.id, {
                 method: 'DELETE'
             })
             console.log(res.status)
-            this.$emit('bookDeleted', { id: this.modifiedBook.id, status: res.status })
+            this.$emit('bookDeleted', { id: this.bookInModal.id, status: res.status })
             this.cancelEditing()
         }
     }

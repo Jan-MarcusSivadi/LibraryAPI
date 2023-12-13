@@ -13,7 +13,7 @@ export default {
     </div>
     <orders-list :key="update" @showModal="openModal"></orders-list>
     <order-info-modal @orderUpdated="updateView" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-info-modal>
-    <order-create-modal @getFiltered="getFiltered"@orderCreated="orderCreated" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-create-modal>
+    <order-create-modal @orderCreated="orderCreated" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-create-modal>
     `,
     components: {
         ordersList,
@@ -31,30 +31,13 @@ export default {
                 UserId: "",
                 OrderItems: "",
                 User: "",
-                existingOrders: []
+                existingOrders: ""
             },
             myModal: null,
             myModalCreate: null,
         }
     },
-    created() {
-        // this.orderInModal.hello = "?"
-    },
     methods: {
-        // async getFiltered(books) {
-        //     console.log("getFiltered books", books)
-        //     const orders = await (await fetch(this.API_URL + "/orders")).json()
-        //     console.log("allOrders", orders)
-        //     const existingOrders = orders.map(order => {
-        //         return {
-        //             itemIds: order.OrderItems.map(item => item.BookId),
-        //             userId: order.UserId
-        //         }
-        //     })
-        //     // console.log("all ids", existingOrders)
-        //     this.orderInModal.existingOrders = existingOrders
-        //     return existingOrders
-        // },
         openModal(order) {
             this.orderInModal = order
 
@@ -71,7 +54,6 @@ export default {
         },
         orderCreated() {
             this.myModalCreate.hide()
-            // const modal = bootstrap.Modal(document.getElementById("orderCreateModal"))
             this.update++
         },
         updateView(order) {
