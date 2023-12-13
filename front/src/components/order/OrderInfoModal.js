@@ -7,8 +7,8 @@ export default {
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 v-if="isEditing" class="modal-title">Edit {{modifiedOrder.ordernr}}</h5>
-              <h5 v-else class="modal-title">{{modifiedOrder.ordernr}}</h5>
+              <h5 v-if="isEditing" class="modal-title">Edit {{staticObj.ordernr}}</h5>
+              <h5 v-else class="modal-title">{{staticObj.ordernr}}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           
@@ -43,29 +43,25 @@ export default {
             <table v-else class="table table-striped">
                 <tr>
                     <th>Id</th>
-                    <td>{{modifiedOrder.id}}</td>
+                    <td>{{staticObj.id}}</td>
                 </tr>
                 <tr>
                     <th>Order number</th>
-                    <td v-if="isEditing"><input v-model="orderInModal.ordernr"></td>
-                    <td v-else>{{modifiedOrder.ordernr}}</td>
+                    <td>{{staticObj.ordernr}}</td>
                 </tr>
                 <tr>
                     <th>Rental date</th>
-                    <td v-if="isEditing"><input v-model="modifiedOrder.rentaldate"></td>
-                    <td v-else>{{orderInModal.rentaldate}}</td>
+                    <td>{{staticObj.rentaldate}}</td>
                 </tr>
                 <tr>
                     <th>Return date</th>
-                    <td v-if="isEditing"><input v-model="modifiedOrder.returndate"></td>
-                    <td v-else>{{orderInModal.returndate}}</td>
+                    <td>{{staticObj.returndate}}</td>
                 </tr>
                 <tr>
                     <th>Made by</th>
-                    <td v-if="isEditing"><input v-model="modifiedOrder.User.email"></td>
-                    <td v-else>{{orderInModal.User.email}}</td>
+                    <td>{{staticObj.User?.email}}</td>
                 </tr>                
-                <div :key="updateItems" v-for="item in modifiedOrder.OrderItems" class="container-fluid" style="display: flex; width: 100%; justify-content: space-between;">
+                <div :key="updateItems" v-for="item in staticObj.OrderItems" class="container-fluid" style="display: flex; width: 100%; justify-content: space-between;">
                     <div class="card" style="width: 100%;">
                         <div class="card-body">
                             <div>{{ item.Book.title }}</div>
@@ -116,6 +112,7 @@ export default {
     emits: ["orderUpdated", "orderDeleted"],
     props: {
         orderInModal: {},
+        staticObj: {}
     },
     data() {
         return {
@@ -127,6 +124,7 @@ export default {
     methods: {
         startEditing() {
             this.modifiedOrder = { ...this.orderInModal }
+            // console.log("staticOrder",this.staticObj)
             this.isEditing = true
         },
         cancelEditing() {
@@ -200,7 +198,7 @@ export default {
                 },
                 body: JSON.stringify(updatedOrder)
             });
-            console.log(rawResponse);
+            console.log("updateOrder", rawResponse);
             this.$emit("orderUpdated", updatedOrder)
             this.isEditing = false
         },

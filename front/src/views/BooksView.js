@@ -12,7 +12,7 @@ export default {
         </div>
     </div>
     <books-list :key="update" @showModal="openModal"></books-list>
-    <book-info-modal @bookUpdated="updateView" :bookInModal="bookInModal" @bookDeleted="bookDeleted"></book-info-modal>
+    <book-info-modal @bookUpdated="updateView" :staticObj="staticObj" :bookInModal="bookInModal" @bookDeleted="bookDeleted"></book-info-modal>
     <book-create-modal @bookCreated="bookCreated" :bookInModal="bookInModal" @bookDeleted="bookDeleted"></book-create-modal>
     `,
     components: {
@@ -31,14 +31,17 @@ export default {
                 releasedate: "",
                 booklength: "",
                 language: "",
-                price: "" 
+                price: ""
             },
+            staticObj: {},
             myModal: null,
             myModalCreate: null,
         }
     },
     methods: {
         openModal(book) {
+            this.staticObj = { ...book }
+
             this.bookInModal = book
             if (this.myModal === null) {
                 this.myModal = new bootstrap.Modal(document.getElementById("bookInfoModal"))
@@ -46,7 +49,6 @@ export default {
             this.myModal.show()
         },
         openCreateModal() {
-            // this.bookInModal = book
             if (this.myModalCreate === null) {
                 this.myModalCreate = new bootstrap.Modal(document.getElementById("bookCreateModal"))
             }
@@ -58,6 +60,8 @@ export default {
         },
         updateView(book) {
             this.update++
+            this.staticObj = { ...book }
+
             this.bookInModal = book
         },
         bookDeleted(res) {

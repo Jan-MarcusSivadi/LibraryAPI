@@ -7,8 +7,8 @@ export default {
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 v-if="isEditing" class="modal-title">Edit {{modifiedBook.title}}</h5>
-              <h5 v-else class="modal-title">{{modifiedBook.title}}</h5>
+              <h5 v-if="isEditing" class="modal-title">Edit {{staticObj.title}}</h5>
+              <h5 v-else class="modal-title">{{staticObj.title}}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -109,37 +109,31 @@ export default {
             <table v-else class="table table-striped">
                 <tr>
                     <th>Id</th>
-                    <td>{{bookInModal.id}}</td>
+                    <td>{{staticObj.id}}</td>
                 </tr>
                 <tr>
                     <th>Title</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.title"></td>
-                    <td v-else>{{bookInModal.title}}</td>
+                    <td>{{staticObj.title}}</td>
                 </tr>
                 <tr>
                     <th>Description</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.description"></td>
-                    <td v-else>{{bookInModal.description}}</td>
+                    <td>{{staticObj.description}}</td>
                 </tr>
                 <tr>
                     <th>Author</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.author"></td>
-                    <td v-else>{{bookInModal.author}}</td>
+                    <td>{{staticObj.author}}</td>
                 </tr>
                 <tr>
-                <th>Language</th>
-                <td v-if="isEditing"><input v-model="modifiedBook.language"></td>
-                <td v-else>{{bookInModal.language}}</td>
+                    <th>Language</th>
+                    <td>{{staticObj.language}}</td>
                 </tr>
                 <tr>
-                <th>Book Length</th>
-                <td v-if="isEditing"><input v-model="modifiedBook.booklength"></td>
-                <td v-else>{{bookInModal.booklength}}</td>
+                    <th>Book Length</th>
+                    <td>{{staticObj.booklength}}</td>
                 </tr>
                 <tr>
                     <th>Price</th>
-                    <td v-if="isEditing"><input v-model="modifiedBook.price"></td>
-                    <td v-else>{{bookInModal.price}}</td>
+                    <td>{{staticObj.price}}</td>
                 </tr>
             </table>
           </div>
@@ -184,6 +178,7 @@ export default {
     emits: ["bookUpdated", "bookDeleted"],
     props: {
         bookInModal: {},
+        staticObj: {}
     },
     data() {
         return {
@@ -260,6 +255,7 @@ export default {
                 },
                 body: JSON.stringify(updatedBook)
             });
+            
             console.log("updateBook", rawResponse);
             this.$emit("bookUpdated", updatedBook)
             this.isEditing = false

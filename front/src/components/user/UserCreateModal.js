@@ -154,6 +154,11 @@ export default {
                 },
                 body: JSON.stringify(this.modifiedUser)
             });
+
+            if (rawResponse.status !== 201) {
+                return alert("User could not be created!")
+            }
+
             console.log(rawResponse);
             this.$emit("userCreated")
         },

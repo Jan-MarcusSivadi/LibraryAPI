@@ -242,7 +242,7 @@ export default {
             console.log(rawResponse);
 
             if (rawResponse.status !== 201) {
-                alert("Order could not be added!")
+                return alert("Order could not be created!")
             }
 
             // reset values

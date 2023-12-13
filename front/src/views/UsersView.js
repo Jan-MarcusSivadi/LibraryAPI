@@ -12,7 +12,7 @@ export default {
         </div>
     </div>
     <users-list :key="update" @showModal="openModal"></users-list>
-    <user-info-modal @userUpdated="updateView" :userInModal="userInModal" @userDeleted="userDeleted"></user-info-modal>
+    <user-info-modal @userUpdated="updateView" :staticObj="staticObj" :userInModal="userInModal" @userDeleted="userDeleted"></user-info-modal>
     <user-create-modal @userCreated="userCreated" :userInModal="userInModal" @userDeleted="userDeleted"></user-create-modal>
     `,
     components: {
@@ -31,12 +31,15 @@ export default {
                 email: "", 
                 phonenr: "", 
             },
+            staticObj: {},
             myModal: null,
             myModalCreate: null,
         }
     },
     methods: {
         openModal(user) {
+            this.staticObj = { ...user }
+
             this.userInModal = user
             let userInfoModal = new bootstrap.Modal(document.getElementById("userInfoModal"))
             userInfoModal.show()
@@ -54,6 +57,8 @@ export default {
         },
         updateView(user) {
             this.update++
+            this.staticObj = { ...user }
+
             this.userInModal = user
         },  
         userDeleted(res) {

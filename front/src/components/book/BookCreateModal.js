@@ -1,3 +1,5 @@
+import FormData from 'form-data'
+
 export default {
     /*html*/
     template: `
@@ -163,7 +165,7 @@ export default {
             if (!releasedate) {
                 return alert("Release Date field is required")
             }
-            
+
             if (price == undefined) {
                 return alert("Price field is required")
             }
@@ -181,6 +183,9 @@ export default {
             }
             console.log("Creating:", this.modifiedBook)
 
+            // const form = new FormData()
+            // form.append('Files', img)
+
             const rawResponse = await fetch(this.API_URL + "/books", {
                 method: 'POST',
                 headers: {
@@ -189,6 +194,11 @@ export default {
                 },
                 body: JSON.stringify(this.modifiedBook)
             });
+
+            if (rawResponse.status !== 201) {
+                return alert("Book could not be created!")
+            }
+
             console.log(rawResponse);
             this.$emit("bookCreated")
         },

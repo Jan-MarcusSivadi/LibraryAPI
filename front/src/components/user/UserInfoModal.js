@@ -7,8 +7,8 @@ export default {
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 v-if="isEditing" class="modal-title">Edit {{modifiedUser.username}}</h5>
-              <h5 v-else class="modal-title">{{modifiedUser.username}}</h5>
+              <h5 v-if="isEditing" class="modal-title">Edit {{staticObj.email}}</h5>
+              <h5 v-else class="modal-title">{{staticObj.email}}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -97,32 +97,27 @@ export default {
             <table v-else class="table table-striped">
                 <tr>
                     <th>Id</th>
-                    <td>{{userInModal.id}}</td>
+                    <td>{{staticObj.id}}</td>
                 </tr>
                 <tr>
                     <th>First Name</th>
-                    <td v-if="isEditing"><input v-model="modifiedUser.firstname"></td>
-                    <td v-else>{{userInModal.firstname}}</td>
+                    <td>{{staticObj.firstname}}</td>
                 </tr>
                 <tr>
                     <th>Last Name</th>
-                    <td v-if="isEditing"><input v-model="modifiedUser.lastname"></td>
-                    <td v-else>{{userInModal.lastname}}</td>
+                    <td>{{staticObj.lastname}}</td>
                 </tr>
                 <tr>
                     <th>Email</th>
-                    <td v-if="isEditing"><input v-model="modifiedUser.email"></td>
-                    <td v-else>{{userInModal.email}}</td>
+                    <td>{{staticObj.email}}</td>
                 </tr>
                 <tr>
                     <th>Username</th>
-                    <td v-if="isEditing"><input v-model="modifiedUser.username"></td>
-                    <td v-else>{{userInModal.username}}</td>
+                    <td>{{staticObj.username}}</td>
                 </tr>
                 <tr>
                     <th>Phone Number</th>
-                    <td v-if="isEditing"><input v-model="modifiedUser.phonenr"></td>
-                    <td v-else>{{userInModal.phonenr}}</td>
+                    <td>{{staticObj.phonenr}}</td>
                 </tr>
             </table>
           </div>
@@ -167,6 +162,7 @@ export default {
     emits: ["userUpdated", "userDeleted"],
     props: {
         userInModal: {},
+        staticObj: {}
     },
     data() {
         return {
@@ -220,7 +216,7 @@ export default {
                 },
                 body: JSON.stringify(updatedUser)
             });
-            console.log(rawResponse);
+            console.log("updateUser", rawResponse);
             this.$emit("userUpdated", updatedUser)
             this.isEditing = false
         },

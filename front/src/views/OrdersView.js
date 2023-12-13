@@ -12,7 +12,7 @@ export default {
         </div>
     </div>
     <orders-list :key="update" @showModal="openModal"></orders-list>
-    <order-info-modal @orderUpdated="updateView" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-info-modal>
+    <order-info-modal @orderUpdated="updateView" :staticObj="staticObj" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-info-modal>
     <order-create-modal @orderCreated="orderCreated" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-create-modal>
     `,
     components: {
@@ -33,14 +33,17 @@ export default {
                 User: "",
                 existingOrders: ""
             },
+            staticObj: {},
             myModal: null,
             myModalCreate: null,
         }
     },
     methods: {
         openModal(order) {
-            this.orderInModal = order
+            this.staticObj = { ...order }
+            console.log("open order modal", this.staticObj)
 
+            this.orderInModal = order
             if (this.myModal === null) {
                 this.myModal = new bootstrap.Modal(document.getElementById("orderInfoModal"))
             }
@@ -58,6 +61,8 @@ export default {
         },
         updateView(order) {
             this.update++
+            this.staticObj = { ...order }
+
             this.orderInModal = order
         },
         orderDeleted(res) {
