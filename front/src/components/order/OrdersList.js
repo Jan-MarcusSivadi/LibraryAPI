@@ -23,7 +23,7 @@ export default {
     emits: ["showModal"],
     data() {
         return {
-            orders: []
+            orders: [],
         }
     },
     async created() {

@@ -149,14 +149,33 @@ exports.createNew = async (req, res) => {
             return
         }
 
-        const allOrders = await Order.findAll({ where: { UserId: userId }, include: [OrderItem] })
-        if (allOrders && allOrders.length > 0) {
+        // const allOrders = await Order.findAll({ where: { UserId: user.id }, include: [OrderItem] })
+        var allOrders = await Order.findAll({ where: { UserId: user.id }, include: [OrderItem, User] })
+        const parsedOrders = await getParsedOrders(allOrders)
+        console.log("hello", parsedOrders)
+        // const allOrders = await Order.findAll({ where: { UserId: user.id }, include: [OrderItem] })
+        if (parsedOrders && parsedOrders.length > 0) {
             // CRITERIA: no orderitem can have already ordered books per user
-            const orderItems = await OrderItem.findAll({ where: { BookId: books.map(b => b.dataValues.id) } })
-            const existingOrder = orderItems.length > 0
-            console.log(existingOrder)
+            const bookIdsOut = books.map(b => b.dataValues.id)
+            console.log("bookIds input", bookIds)
+            console.log("bookIds output", bookIdsOut)
+            let isOrderExist = false
+            parsedOrders.forEach(parsedOrder => {
+                parsedOrder.OrderItems.forEach(item => {
+                    // has book (OrderItem) included in current order
+                    if (bookIdsOut.includes(item.BookId)){
+                        isOrderExist = true
+                    }
+                })
+            })
+            // const orderItems = await OrderItem.findAll({ where: { BookId: bookIds } })
+            // console.log(orderItems.map(oi => {
+            //     return { id: oi.BookId }
+            // }))
+            // const existingOrder = orderItems.length > 0
+            // console.log(existingOrder)
 
-            if (existingOrder) {
+            if (isOrderExist) {
                 res.status(409).send({ error: "Order already exists for user" })
                 return
             }
@@ -234,7 +253,7 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
     const foundOrder = await Order.findByPk(req.params.id, { include: [User, OrderItem] })
     console.log("id", req.params.id)
-    console.log("foundOrder:", foundOrder)
+    // console.log("foundOrder:", foundOrder)
     if (!foundOrder) {
         res.status(404).send({ error: `Order not found` })
         return

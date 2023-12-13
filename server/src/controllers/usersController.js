@@ -23,7 +23,6 @@ exports.getAll = async (req, res) => {
 exports.getById = async (req, res) => {
     const foundUser = await  users.findByPk(req.params.id)
     console.log("id", req.params.id)
-    console.log("foundUser:", foundUser)
     if (foundUser === null) {
         return res.status(404).send({ error: `User not found` })
     }

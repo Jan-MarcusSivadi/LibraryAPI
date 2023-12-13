@@ -23,7 +23,7 @@ export default {
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                         <div :key="updateUsers" v-for="user in users">
-                                            <li><button @click="addItemUser(user)" class="dropdown-item">{{user.username}}</button></li>
+                                            <li><button @click.prevent="addItemUser(user)" class="dropdown-item">{{user.username}}</button></li>
                                         </div>
                                     </ul>
                                 </div>
@@ -38,13 +38,14 @@ export default {
                             <div class="col-md-10">
                                 <label for="OrderItems.bookId" class="row-sm-10 col-form-label">Order Items</label>
                                 <div class="row-sm-10">
+                                    
                                     <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                                             Choose items
                                         </button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
                                             <div :key="updateBooks" v-for="book in books">
-                                                <li><button @click="addItemBook(book)" class="dropdown-item">{{book.title}} {{book.price}}</button></li>
+                                                <li><button @click.prevent="addItemBook(book)" class="dropdown-item">{{book.title}} {{book.price}}</button></li>
                                             </div>
                                         </ul>
                                     </div>
@@ -55,7 +56,7 @@ export default {
                                 <table id="ordersTable" class="table table-striped table-bordered">
                                     <tbody>
                                         <tr :key="updateBookItems" v-for="item in shoppingCart">
-                                            <td @click="removeItemBook(item.id)">
+                                            <td @click.prevent="removeItemBook(item.id)">
                                                 <div class="container-fluid" style="display: flex; justify-content: space-between;">
                                                     <div>{{ item.title }}</div>
                                                     <div>{{ item.price }}</div>
@@ -78,7 +79,7 @@ export default {
                         <button type="button" class="btn btn-secondary container-fluid" data-bs-dismiss="modal">Cancel</button>
                     </div>
                     <div class="col me-auto text-end gx-2">
-                    <button type="button" class="btn btn-success container-fluid" @click="saveCreatedOrder">Create</button>
+                    <button type="button" class="btn btn-success container-fluid" @click.prevent="saveCreatedOrder">Create</button>
                     </div>
 
                 </div>
@@ -89,6 +90,9 @@ export default {
 </div>
     `,
     emits: ["orderCreated"],
+    props: {
+        orderInModal: {},
+    },
     data() {
         return {
             modifiedOrder: {},
@@ -100,46 +104,128 @@ export default {
             updateUsers: 1,
             updateBookItems: 1,
             updateUserItems: 1,
+            existings: "",
+            canUserBeChanged: true,
         }
     },
     async created() {
-        this.books = await (await fetch(this.API_URL + "/books")).json()
+        this.fetchAllBooks() 
         this.users = await (await fetch(this.API_URL + "/users")).json()
-        console.log(this.users)
+        // console.log(this.users)
+    },
+    mounted() {
+        // listen for open event
+        // document.getElementById("orderCreateModal").addEventListener("show", () => console.log("hello"))
     },
     methods: {
+        async fetchAllBooks() {
+            this.books = await (await fetch(this.API_URL + "/books")).json()
+        },
         getSelectedUser(user) {
             return user.username ? user.username : "Choose user"
         },
-        addItemBook(item) {
+        async addItemBook(item) {
             const foundItem = this.shoppingCart.find(i => i.id === item.id)
             const isExist = foundItem !== undefined
             if (isExist) return
-            this.shoppingCart.push(item)
+            
+            const orderUserSelected = this.user
+            if (!orderUserSelected) {
+                return alert("User is required!")
+            }
+            
+            const orders = await this.getOrders(this.books)
+            const itemsWithUserIds = this.shoppingCart
+            
+            console.log("existing orders", orders)
+            console.log("itemsWithUserIds", itemsWithUserIds)
+            
+            const selectedUser = this.user;
+            const itemId = item.id;
+            const userId = selectedUser.id
+
+            // console.log(userId)
+
+            console.log("all users", this.users)
+            var canAddOrder = true
+            orders.forEach(order => {
+                const foundUser = this.users.find(u => u.id === userId)
+                const isUserOrder = order.userId === userId
+                // found order for user
+                if (foundUser && isUserOrder) {
+                    console.log("user email", foundUser.username)
+                    const ids = order.itemIds
+                    console.log(ids)
+                    
+                    // user already ordered item
+                    if (ids.includes(itemId)) {
+                        canAddOrder = false
+                    }
+                }
+            });
+            
+            if (!canAddOrder) {
+                return alert("order already exists!")
+            }
+
+            this.shoppingCart.push({...item, userId: userId})
             this.books = this.books.filter(i => i.id !== item.id)
+
+            this.canUserBeChanged = false;
+            document.getElementById("dropdownMenuButton1").setAttribute("disabled", "")
         },
         removeItemBook(id) {
             const foundItem = this.shoppingCart.find(i => i.id === id)
             this.shoppingCart = this.shoppingCart.filter(item => item !== foundItem)
+            if (this.shoppingCart.length <= 0) {
+                this.canUserBeChanged = true;
+                document.getElementById("dropdownMenuButton1").removeAttribute("disabled")
+            }
+
             this.books.push(foundItem)
         },
         addItemUser(item) {
             if (!item) return
-            this.user = item
+
+            if (this.canUserBeChanged) {
+                this.user = item
+            }
             // this.users = this.users.filter(u => u.id !== item.id)
-            console.log(this.user)
+            // console.log(this.user)
         },
         removeItemUser(id) {
             const foundItem = this.user.id == id
             this.user = ""
             // this.users.push(foundItem)
         },
+        async getOrders(books) {
+            // console.log("getFiltered books", books)
+            const orders = await (await fetch(this.API_URL + "/orders")).json()
+            // console.log("allOrders", orders)
+            const existingOrders = orders.map(order => {
+                return {
+                    itemIds: order.OrderItems.map(item => item.BookId),
+                    userId: order.UserId
+                }
+            })
+            // this.orderInModal.existingOrders = existingOrders
+            return existingOrders
+        },
         async saveCreatedOrder() {
             // client form validation
 
+        //    const orders = await this.getOrders(this.books)
+        //    console.log("filterd", orders)
+        //     // console.log(this.orderInModal.existingOrders)
+
+            // const existingOrders = this.orderInModal.existingOrders
+            // const error = existingOrders.map(ex => ex.map(e => e.itemIds.map(id => id == this.shoppingCart.map(item => item.id))))
+            // if (error) {
+            //     return alert("this user cannot have duplicate order items!")
+            // }
+
             const orderItemsSelected = [ ...this.shoppingCart]
             const orderUserSelected = this.user
-
             if (!orderUserSelected) {
                 return alert("User is required!")
             }
@@ -160,6 +246,18 @@ export default {
                 body: JSON.stringify(this.modifiedOrder)
             });
             console.log(rawResponse);
+
+            if (rawResponse.status !== 201) {
+                alert("Order could not be added!")
+            }
+
+            // reset values
+            document.getElementById("dropdownMenuButton1").removeAttribute("disabled")
+            this.shoppingCart = []
+            this.canUserBeChanged = true
+            this.user = ""
+            this.fetchAllBooks() 
+
             this.$emit("orderCreated")
         },
     }

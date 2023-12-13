@@ -8,12 +8,12 @@ export default {
     <div style="display: flex; padding: 10px 20px">
         <h2>Orders</h2>
         <div style="display: flex; justify-content: end; width: 100%;">
-            <button style="margin: 0 15px;" type="button" class="btn btn-secondary" @click="openCreateModal">Create New</button>
+            <button style="margin: 0 15px;" type="button" class="btn btn-secondary" @click.prevent="openCreateModal">Create New</button>
         </div>
     </div>
     <orders-list :key="update" @showModal="openModal"></orders-list>
     <order-info-modal @orderUpdated="updateView" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-info-modal>
-    <order-create-modal @orderCreated="orderCreated" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-create-modal>
+    <order-create-modal @getFiltered="getFiltered"@orderCreated="orderCreated" :orderInModal="orderInModal" @orderDeleted="orderDeleted"></order-create-modal>
     `,
     components: {
         ordersList,
@@ -30,15 +30,34 @@ export default {
                 returndate: "",
                 UserId: "",
                 OrderItems: "",
-                User: ""
+                User: "",
+                existingOrders: []
             },
             myModal: null,
             myModalCreate: null,
         }
     },
+    created() {
+        // this.orderInModal.hello = "?"
+    },
     methods: {
+        // async getFiltered(books) {
+        //     console.log("getFiltered books", books)
+        //     const orders = await (await fetch(this.API_URL + "/orders")).json()
+        //     console.log("allOrders", orders)
+        //     const existingOrders = orders.map(order => {
+        //         return {
+        //             itemIds: order.OrderItems.map(item => item.BookId),
+        //             userId: order.UserId
+        //         }
+        //     })
+        //     // console.log("all ids", existingOrders)
+        //     this.orderInModal.existingOrders = existingOrders
+        //     return existingOrders
+        // },
         openModal(order) {
             this.orderInModal = order
+
             if (this.myModal === null) {
                 this.myModal = new bootstrap.Modal(document.getElementById("orderInfoModal"))
             }
@@ -52,6 +71,7 @@ export default {
         },
         orderCreated() {
             this.myModalCreate.hide()
+            // const modal = bootstrap.Modal(document.getElementById("orderCreateModal"))
             this.update++
         },
         updateView(order) {
