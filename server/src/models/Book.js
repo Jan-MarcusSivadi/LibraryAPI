@@ -36,6 +36,14 @@ module.exports = (dbConnection, Sequelize) => {
         pdf: {
             type: Sequelize.STRING,
             allowNull: true
+        },
+        pdfFilename: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        pdfId: {
+            type: Sequelize.STRING,
+            allowNull: true
         }
     })
     return Book

@@ -27,7 +27,6 @@ exports.create = async (req, res) => {
         pdf: NOT NULL
         */
         var fields = [];
-        var files = [];
 
         const doc = {}
         var bufs = [];
@@ -61,7 +60,9 @@ exports.create = async (req, res) => {
                             const fileURL = `http://${config.host}/data/books/${fixedFilename}`
                             doc.content = Buffer.concat(bufs, doc.size);
                             info.url = fileURL
+                            info.originalFilename = info.filename
                             info.filename = fixedFilename
+                            info.size = doc.size
                             doc.info = info
                         });
                 })
@@ -92,27 +93,8 @@ exports.create = async (req, res) => {
                         return
                     }
 
-                    var result
-                    if (doc.size > 0) {
-                        const { Readable } = require('stream');
-                        const stream = Readable.from(doc.content);
-                        // connect to FTPS file server
-                        const ftpsSession = await utils.connectFTPS(config)
-                        const connection = await ftpsSession.connect()
-                        if (!connection) {
-                            console.log('Could not establish connection to FTPS server')
-                            return
-                        }
-                        const gotFiles = await ftpsSession.getFiles('data/books/')
-                        console.log("gotFiles result: ", gotFiles)
-                        // Upload to FTPS file server
-                        result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
-                            console.log(result)
-                            // close session
-                            ftpsSession.disconnect()
-                            return result
-                        });
-                        // more catches here for (result.code)
+                    if (!utils.isValidDate(releasedate)) {
+                        return res.status(400).send({ error: "releasedate invalid." })
                     }
 
                     // create document object
@@ -125,13 +107,29 @@ exports.create = async (req, res) => {
                         return
                     }
 
-                    function isValidDate(dateString) {
-                        const regex = /^(19|20)\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])$/i
-                        return regex.test(dateString);
+                    var result
+                    if (doc.size > 0) {
+                        const { Readable } = require('stream');
+                        const stream = Readable.from(doc.content);
+                        // connect to FTPS file server
+                        const ftpsSession = await utils.connectFTPS(config)
+                        const connection = await ftpsSession.connect()
+                        if (!connection) {
+                            console.log('Could not establish connection to FTPS server')
+                            return
+                        }
+                        // const gotFiles = await ftpsSession.getFiles('data/books/')
+                        // console.log("gotFiles result: ", gotFiles)
+                        // Upload to FTPS file server
+                        result = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
+                            console.log(result)
+                            // close session
+                            ftpsSession.disconnect()
+                            return result
+                        });
+                        // more catches here for (result.code)
                     }
-                    if (!isValidDate(releasedate)) {
-                        return res.status(400).send({ error: "releasedate invalid." })
-                    }
+
                     // create new Book
                     const bookData = {
                         title: title,
@@ -141,7 +139,9 @@ exports.create = async (req, res) => {
                         booklength: booklength,
                         language: language,
                         price: price,
-                        pdf: pdf
+                        pdf: pdf,
+                        pdfFilename: document.originalFilename,
+                        pdfId: document.filename,
                     }
                     console.log(bookData)
 
@@ -185,47 +185,203 @@ exports.getById = async (req, res) => {
 // UPDATE
 exports.updateById = async (req, res) => {
     try {
-        const { title, author, description, releasedate, booklength, language, price } = req.body
+        // const { title, author, description, releasedate, booklength, language, price } = req.body
         const { id } = req.params
 
-        if (!title && !author && !description && !releasedate && !booklength && !language && !price) {
-            res.status(400).send({ error: "At least one field is required." })
-            return
+        var fields = [];
+
+        const doc = {}
+        var bufs = [];
+        doc.size = 0;
+
+
+        const busboy = req.busboy;
+        if (busboy) {
+            busboy
+                .on('field', (name, value, info) => {
+                    console.log('req.busboy: field event')
+                    fields.push({
+                        name: name,
+                        value: value
+                    })
+                })
+                .on('file', (name, file, info) => {
+                    console.log('req.busboy: file event')
+                    file
+                        .on('data', (data) => {
+                            bufs[bufs.length] = data;
+                            doc.size += data.length;
+                        })
+                        .on('end', () => {
+                            // const splits = info.mimeType.split('/')
+                            const splits = info.filename.split('.')
+                            // console.log("splits?", splits)
+                            // const extension = splits[splits.length - 1]
+                            const extension = splits[splits.length - 1]
+                            const fixedFilename = utils.getFixedFileName(`file-${Date.now()}.${extension}`) //info.filename
+                            const fileURL = `http://${config.host}/data/books/${fixedFilename}`
+                            doc.content = Buffer.concat(bufs, doc.size);
+                            info.url = fileURL
+                            info.originalFilename = info.filename
+                            info.filename = fixedFilename
+                            info.size = doc.size
+                            doc.info = info
+                        });
+                })
+                .on('close', async () => {
+                    console.log('req.busboy: finish event')
+                    fields.forEach(field => {
+                        if (field.name == "description") {
+                            field.value = field.value ? field.value : ""
+                        }
+                        if (field.name == "language") {
+                            field.value = field.value ? field.value : ""
+                        }
+                    });
+                    const formData = utils.toObject(fields)
+                    console.log(formData)
+                    // TODO: finish frontend/backend field parding with busboy
+
+                    // validate fields
+                    const { title, author, description, releasedate, booklength, language, price } = formData
+                    if (
+                        !title && !author && !description && !releasedate && !booklength && !language && !price
+                    ) {
+                        res.status(400).send({ error: "At least one field is required." })
+                        return
+                    }
+
+                    if (!utils.isValidDate(releasedate)) {
+                        return res.status(400).send({ error: "releasedate invalid." })
+                    }
+
+                    // create document object
+                    const document = doc.info
+                    const pdf = document?.url
+                    console.log(document)
+
+                    if (!pdf) {
+                        res.status(400).send({ error: "One or all required parameters are missing." })
+                        return
+                    }
+
+                    const book = await Book.findByPk(id)
+
+                    if (!book) {
+                        res.status(404).send({ error: "book not found." })
+                        return
+                    }
+
+                    const ftpsSession = await utils.connectFTPS(config)
+                    const connection = await ftpsSession.connect()
+                    if (!connection) {
+                        console.log('Could not establish connection to FTPS server')
+                        return
+                    }
+                    const gotFiles = await ftpsSession.getFiles('data/books/')
+                    // await ftpsSession.disconnect()
+
+                    // delete old pdf
+                    var deleteResult
+                    if (gotFiles.length > 0) {
+                        const bookPdf = book.pdf
+                        const split = bookPdf.split("/")
+                        const pdfFileName = split[split.length - 1]
+                        console.log("pdfFileName", pdfFileName)
+
+                        const uploadedPdf = doc.info.url
+                        console.log("pdfFile", doc.info)
+                        const split2 = uploadedPdf.split("/")
+                        const pdfFileName2 = split2[split2.length - 1]
+                        console.log("pdfFileName2", pdfFileName2)
+
+                        const parsedFiles = gotFiles.map(f => {
+                            return {
+                                id: f.name,
+                                size: f.size,
+                                ...f
+                            }
+                        })
+                        const foundMatchFile = parsedFiles.find(f => f.id === book.pdfId)
+                        console.log("foundMatchFile", foundMatchFile)
+                        const isDeleteFileUpload = book.pdfFilename === document.originalFilename && (foundMatchFile !== undefined && foundMatchFile.size === document.size)
+                        if (isDeleteFileUpload) {
+                            return res.status(400).send({ error: "nothing to upload." })
+                        }
+
+                        // if (pdfFileName) {
+                        // const ftpsSession = await utils.connectFTPS(config)
+                        // const connection = await ftpsSession.connect()
+                        
+                        // if ()
+                        deleteResult = await ftpsSession.deleteFile(`data/books/${pdfFileName}`).then((result) => {
+                            return result
+                        });
+                        // }
+                    }
+                    console.log("deleteFile result: ", deleteResult)
+
+                    // if (deleteResult && deleteResult.code !== 226) {
+                    //     return res.status({ error: deleteResult.message })
+                    // }
+
+                    var uploadResult
+                    if (doc.size > 0) {
+                        const { Readable } = require('stream');
+                        const stream = Readable.from(doc.content);
+                        // connect to FTPS file server
+                        // const ftpsSession = await utils.connectFTPS(config)
+                        // const connection = await ftpsSession.connect()
+                        
+                        // const gotFiles = await ftpsSession.getFiles('data/books/')
+                        // console.log("gotFiles result: ", gotFiles)
+                        // Upload to FTPS file server
+                        uploadResult = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
+                            return result
+                        });
+                        // more catches here for (result.code)
+                    }
+                    console.log("uploadFile result: ", uploadResult)
+                    
+                    // close session
+                    await ftpsSession.disconnect()
+
+                    // if (uploadResult && uploadResult.code !== 226) {
+                    //     return res.status({ error: uploadResult.message })
+                    // }
+
+                    const updatedBook = await Book.update(
+                        {
+                            title: title,
+                            author: author,
+                            description: description,
+                            releasedate: releasedate,
+                            booklength: booklength,
+                            language: language,
+                            price: price,
+                            pdf: pdf,
+                            pdfFilename: document.originalFilename,
+                            pdfId: document.filename
+                        },
+                        { where: { id: book.id } }
+                    )
+
+                    if (updatedBook < 1) {
+                        res.status(500).send({ error: "could not update book" })
+                        return
+                    }
+
+                    if (!updatedBook) {
+                        res.status(404).send({ error: "book not found." })
+                        return
+                    }
+
+                    res.status(200)
+                        .location(`${utils.getBaseUrl(req)}/books/${id}`)
+                        .send()
+                })
+            req.pipe(busboy);
         }
-
-        const book = await Book.findByPk(id)
-
-        if (!book) {
-            res.status(404).send({ error: "book not found." })
-            return
-        }
-
-        const updatedBook = await Book.update(
-            {
-                title: title,
-                author: author,
-                description: description,
-                releasedate: releasedate,
-                booklength: booklength,
-                language: language,
-                price: price
-            },
-            { where: { id: book.id } }
-        )
-
-        if (updatedBook < 1) {
-            res.status(500).send({ error: "could not update book" })
-            return
-        }
-
-        if (!updatedBook) {
-            res.status(404).send({ error: "book not found." })
-            return
-        }
-
-        res.status(200)
-            .location(`${utils.getBaseUrl(req)}/books/${id}`)
-            .send()
     } catch (error) {
         console.error(error)
     }
@@ -243,7 +399,7 @@ exports.deleteOne = async (req, res) => {
             return
         }
         const gotFiles = await ftpsSession.getFiles('data/books/')
-        console.log("gotFiles result: ", gotFiles)
+        // console.log("gotFiles result: ", gotFiles)
 
         var result
         if (gotFiles.length > 0) {

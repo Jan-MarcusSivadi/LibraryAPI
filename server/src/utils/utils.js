@@ -46,6 +46,11 @@ exports.formatDate = (date) => {
     return [year, month, day].join('-');
 }
 
+exports.isValidDate = (dateString) => {
+    const regex = /^(19|20)\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])$/i
+    return regex.test(dateString);
+}
+
 exports.connectFTPS = async (options) => {
     const FTPSClient = require('./ftps')
     const client = new FTPSClient();
