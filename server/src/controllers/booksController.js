@@ -70,10 +70,10 @@ exports.create = async (req, res) => {
                     fields.forEach(field => {
                         if (field.name == "description") {
                             field.value = field.value ? field.value : ""
-                        } 
+                        }
                         if (field.name == "language") {
                             field.value = field.value ? field.value : ""
-                        } 
+                        }
                     });
                     const formData = utils.toObject(fields)
                     console.log(formData)
@@ -125,6 +125,13 @@ exports.create = async (req, res) => {
                         return
                     }
 
+                    function isValidDate(dateString) {
+                        const regex = /^(19|20)\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])$/i
+                        return regex.test(dateString);
+                    }
+                    if (!isValidDate(releasedate)) {
+                        return res.status(400).send({ error: "releasedate invalid." })
+                    }
                     // create new Book
                     const bookData = {
                         title: title,
