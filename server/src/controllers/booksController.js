@@ -14,7 +14,7 @@ const config = {
 
 // CREATE
 exports.create = async (req, res) => {
-    console.log('MY BOOOKKK!!!!',req.body)
+    console.log('MY BOOOKKK!!!!', req.body)
     try {
         /* 
         title: NOT NULL
@@ -233,13 +233,23 @@ exports.deleteOne = async (req, res) => {
         var result
         if (gotFiles.length > 0) {
             // Delete file from FTPS file server
-            result = await ftpsSession.deleteFile(`data/books/${"file-1702389858042.pdf"}`).then((result) => {
-                console.log("deleteFile result: ", result)
-                // close session
-                ftpsSession.disconnect()
-                return result
-            });
-            
+            const book = await Book.findByPk(id)
+
+            if (!book) {
+                console.log({ error: "book not found." })
+            } else {
+                const bookPdf = book.pdf
+                const split = bookPdf.split("/")
+                const pdfFileName = split[split.length - 1]
+                if (pdfFileName) {
+                    result = await ftpsSession.deleteFile(`data/books/${pdfFileName}`).then((result) => {
+                        console.log("deleteFile result: ", result)
+                        // close session
+                        ftpsSession.disconnect()
+                        return result
+                    });
+                }
+            }
         }
 
         const book = await Book.destroy({
