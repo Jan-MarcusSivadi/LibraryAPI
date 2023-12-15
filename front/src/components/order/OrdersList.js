@@ -55,26 +55,9 @@ export default {
 
                 orderInModal.returndate = date
             }
-            // console.log("got order", {...orderInModal})
-            // if (orderInModal.OrderItems) {
-            //     orderInModal.OrderItems = orderInModal.OrderItems.map(item => {
-            //         return {
-            //             id: item.id,
-            //             OrderId: item.OrderId,
-            //             BookId: item.BookId,
-
-            //             // bookId: item.Book.id,
-            //             bookTitle: item.Book.title,
-            //             bookAuthor: item.Book.author,
-            //             bookPrice: item.Book.price
-            //         }
-            //     })
-            // }
-            // if (orderInModal.User) {
-            //     orderInModal.User = {
-            //         email: orderInModal.User.email
-            //     }
-            // }
+            orderInModal.OrderItems = orderInModal.OrderItems.map(item => {
+                return item.Book
+            })
 
             this.$emit("showModal", orderInModal)
         },

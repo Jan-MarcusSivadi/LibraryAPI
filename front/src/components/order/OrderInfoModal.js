@@ -61,15 +61,24 @@ export default {
                     <th>Made by</th>
                     <td>{{staticObj.User?.email}}</td>
                 </tr>                
-                </table>
-                <div :key="updateItems" v-for="item in staticObj.OrderItems" class="container-fluid" style="display: flex; width: 100%; justify-content: space-between;">
-                    <div class="card" style="width: 100%;">
-                        <div class="card-body">
-                            <div>{{ item.Book.title }}</div>
-                            <div>{{ item.Book.price }}</div>
-                        </div>
-                    </div>
-                </div>
+            </table>
+            <div class="col-md-10">
+            <label class="row-sm-10 col-form-label">Ordered items</label>
+            <table class="table table-striped table-bordered">
+                <tbody>
+                    <tr :key="updateItems"  v-for="item in staticObj.OrderItems">
+                        <td>
+                            <div class="container-fluid" style="display: flex; justify-content: space-between;">
+                                <div>{{ item.title }}</div>
+                                <div>{{ item.price }}</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+                
           </div>
           <div class="modal-footer">
             <div class="row container-fluid">
