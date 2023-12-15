@@ -29,8 +29,8 @@ export default {
     },
     methods: {
         getBook: async function (id) {
-            const bookInModal = await (await fetch(this.API_URL + "/books/" + id)).json()
-            
+            const bookInModal = await (await fetch(this.API_URL + "/books/" + id)).json()            
+
             if (bookInModal.releasedate) {
                 // parse data
                 const dt = new Date(bookInModal.releasedate)

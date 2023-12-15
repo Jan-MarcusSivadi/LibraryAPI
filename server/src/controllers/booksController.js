@@ -67,6 +67,14 @@ exports.create = async (req, res) => {
                 })
                 .on('close', async () => {
                     console.log('req.busboy: finish event')
+                    fields.forEach(field => {
+                        if (field.name == "description") {
+                            field.value = field.value ? field.value : ""
+                        } 
+                        if (field.name == "language") {
+                            field.value = field.value ? field.value : ""
+                        } 
+                    });
                     const formData = utils.toObject(fields)
                     console.log(formData)
                     // TODO: finish frontend/backend field parding with busboy

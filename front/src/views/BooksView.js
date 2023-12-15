@@ -31,7 +31,8 @@ export default {
                 releasedate: "",
                 booklength: "",
                 language: "",
-                price: ""
+                price: "",
+                pdf: "",
             },
             staticObj: {},
             myModal: null,

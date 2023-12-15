@@ -103,7 +103,21 @@ export default {
                             </div>
                         </div>
                     </div>
-                </div>  
+                </div>
+
+                <div class="form-group">
+                    <div class="container">
+                        <div class="row justify-content-md-center">
+                            <div class="col-md-10">
+                                <label for="price" class="row-sm-10 col-form-label">Book PDF</label>
+                                <div class="row-sm-10">
+                                    <button type="button" class="btn btn-primary container-fluid" @click="selectFile">Select File</button>
+                                </div>
+                                <p>{{modifiedBook.selectedFile?.name ? modifiedBook.selectedFile?.name : getPdf(modifiedBook)}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
           
             <table v-else class="table table-striped">
@@ -134,6 +148,10 @@ export default {
                 <tr>
                     <th>Price</th>
                     <td>{{staticObj.price}}</td>
+                </tr>
+                <tr>
+                    <th>File</th>
+                    <a :href="staticObj.pdf" target="_blank">{{staticObj.title}}</a>
                 </tr>
             </table>
           </div>
@@ -187,6 +205,37 @@ export default {
         }
     },
     methods: {
+        getPdf(book) {
+            const pdf = book.pdf
+            const split = pdf.split("/")
+            const pdfName = split[split.length - 1]
+            return pdfName
+        },
+        selectFile() {
+            var input = document.createElement('input');
+
+            input.onchange = (e) => {
+                e.preventDefault();
+                // getting a hold of the file reference
+                var file = e.target.files[0];
+                console.log(file)
+
+                // TODO: filter file types
+                const fileType = file.type
+                const fileTypeSplit = fileType.split("/")
+                const fileExt = fileTypeSplit[fileTypeSplit.length - 1]
+                if (fileExt !== "pdf") {
+                    return alert("File must be of type .pdf")
+                }
+
+                // set modified book file
+                this.modifiedBook.selectedFile = file
+            }
+
+            input.type = 'file';
+            input.click();
+
+        },
         startEditing() {
             this.modifiedBook = { ...this.bookInModal }
             this.isEditing = true
@@ -230,7 +279,7 @@ export default {
             if (!releasedate) {
                 return alert("Release Date field is required")
             }
-            
+
             if (price == undefined) {
                 return alert("Price field is required")
             }
@@ -255,7 +304,7 @@ export default {
                 },
                 body: JSON.stringify(updatedBook)
             });
-            
+
             console.log("updateBook", rawResponse);
             this.$emit("bookUpdated", updatedBook)
             this.isEditing = false

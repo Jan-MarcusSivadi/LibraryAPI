@@ -152,7 +152,7 @@ export default {
                 var file = e.target.files[0];
                 console.log(file)
 
-                // TDOD: filter file types
+                // TODO: filter file types
                 const fileType = file.type
                 const fileTypeSplit = fileType.split("/")
                 const fileExt = fileTypeSplit[fileTypeSplit.length - 1]
