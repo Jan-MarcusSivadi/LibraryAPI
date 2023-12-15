@@ -59,9 +59,13 @@ export default {
             this.myModalCreate.hide()
             this.update++
         },
-        updateView(book) {
+        async updateView(book) {
             this.update++
+            const updated = await this.getBook(book.id)
+            console.log("updated!", updated)
+            book.pdf = updated.pdf
             this.staticObj = { ...book }
+            
 
             this.bookInModal = book
         },
@@ -71,6 +75,22 @@ export default {
                 return alert("Book could not be deleted")
             }
             this.update++
-        }
+        },
+        getBook: async function (id) {
+            const bookInModal = await (await fetch(this.API_URL + "/books/" + id)).json()            
+
+            if (bookInModal.releasedate) {
+                // parse data
+                const dt = new Date(bookInModal.releasedate)
+
+                // format date for input value
+                const day = ("0" + dt.getDate()).slice(-2)
+                const month = ("0" + (dt.getMonth() + 1)).slice(-2)
+                const date = dt.getFullYear() + "-" + month + "-" + day
+    
+                bookInModal.releasedate = date
+            }
+            return bookInModal
+        },
     }
 }

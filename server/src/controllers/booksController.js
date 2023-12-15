@@ -251,26 +251,32 @@ exports.updateById = async (req, res) => {
                         return
                     }
 
-                    if (!utils.isValidDate(releasedate)) {
-                        return res.status(400).send({ error: "releasedate invalid." })
-                    }
-
-                    // create document object
-                    const document = doc.info
-                    const pdf = document?.url
-                    console.log(document)
-
-                    if (!pdf) {
-                        res.status(400).send({ error: "One or all required parameters are missing." })
-                        return
-                    }
+                    // if (!pdf) {
+                    //     res.status(400).send({ error: "One or all required parameters are missing." })
+                    //     return
+                    // }
 
                     const book = await Book.findByPk(id)
 
+                    // create document object
+                    const document = doc.info
+                    var pdf = book.pdf
+                    
                     if (!book) {
                         res.status(404).send({ error: "book not found." })
                         return
                     }
+                    
+                    var pdfUpdatedFilename = book.pdfFilename //book.pdfFilename === document?.originalFilename ? book.pdfFilename : document?.originalFilename
+                    var pdfUpdatedId = book.pdfId //book.pdfId === document?.filename ? book.pdfId : document?.filename
+                    // if (doc.size > 0) {
+                    // }
+                    if (document) {
+                        pdf = document.url
+                        pdfUpdatedFilename = document.originalFilename
+                        pdfUpdatedId = document.filename
+                    }
+                    console.log("DOC TEST - ", doc)
 
                     const ftpsSession = await utils.connectFTPS(config)
                     const connection = await ftpsSession.connect()
@@ -281,73 +287,85 @@ exports.updateById = async (req, res) => {
                     const gotFiles = await ftpsSession.getFiles('data/books/')
                     // await ftpsSession.disconnect()
 
-                    // delete old pdf
-                    var deleteResult
-                    if (gotFiles.length > 0) {
-                        const bookPdf = book.pdf
-                        const split = bookPdf.split("/")
-                        const pdfFileName = split[split.length - 1]
-                        console.log("pdfFileName", pdfFileName)
+                    if (doc.size > 0) {
+                        // delete old pdf
+                        var deleteResult
+                        if (gotFiles.length > 0) {
+                            const bookPdf = book.pdf
+                            const split = bookPdf.split("/")
+                            const pdfFileName = split[split.length - 1]
+                            console.log("pdfFileName", pdfFileName)
 
-                        const uploadedPdf = doc.info.url
-                        console.log("pdfFile", doc.info)
-                        const split2 = uploadedPdf.split("/")
-                        const pdfFileName2 = split2[split2.length - 1]
-                        console.log("pdfFileName2", pdfFileName2)
+                            const uploadedPdf = document.url
+                            console.log("pdfFile", document)
+                            const split2 = uploadedPdf.split("/")
+                            const pdfFileName2 = split2[split2.length - 1]
+                            console.log("pdfFileName2", pdfFileName2)
 
-                        const parsedFiles = gotFiles.map(f => {
-                            return {
-                                id: f.name,
-                                size: f.size,
-                                ...f
+                            const parsedFiles = gotFiles.map(f => {
+                                return {
+                                    id: f.name,
+                                    size: f.size,
+                                    ...f
+                                }
+                            })
+                            const foundMatchFile = parsedFiles.find(f => f.id === book.pdfId)
+                            console.log("foundMatchFile", foundMatchFile)
+                            const isDeleteFileUpload = book.pdfFilename === document.originalFilename && (foundMatchFile !== undefined && foundMatchFile.size === document.size)
+                            if (isDeleteFileUpload) {
+                                return res.status(400).send({ error: "nothing to upload." })
                             }
-                        })
-                        const foundMatchFile = parsedFiles.find(f => f.id === book.pdfId)
-                        console.log("foundMatchFile", foundMatchFile)
-                        const isDeleteFileUpload = book.pdfFilename === document.originalFilename && (foundMatchFile !== undefined && foundMatchFile.size === document.size)
-                        if (isDeleteFileUpload) {
-                            return res.status(400).send({ error: "nothing to upload." })
-                        }
 
-                        // if (pdfFileName) {
-                        // const ftpsSession = await utils.connectFTPS(config)
-                        // const connection = await ftpsSession.connect()
-                        
-                        // if ()
-                        deleteResult = await ftpsSession.deleteFile(`data/books/${pdfFileName}`).then((result) => {
-                            return result
-                        });
-                        // }
+                            // if (pdfFileName) {
+                            // const ftpsSession = await utils.connectFTPS(config)
+                            // const connection = await ftpsSession.connect()
+
+                            // if ()
+                            deleteResult = await ftpsSession.deleteFile(`data/books/${pdfFileName}`).then((result) => {
+                                return result
+                            });
+                            // }
+                        }
+                        console.log("deleteFile result: ", deleteResult)
+
+                        // update pdf
+                        var uploadResult
+                        if (doc.size > 0) {
+                            const { Readable } = require('stream');
+                            const stream = Readable.from(doc.content);
+                            // connect to FTPS file server
+                            // const ftpsSession = await utils.connectFTPS(config)
+                            // const connection = await ftpsSession.connect()
+
+                            // const gotFiles = await ftpsSession.getFiles('data/books/')
+                            // console.log("gotFiles result: ", gotFiles)
+                            // Upload to FTPS file server
+                            uploadResult = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
+                                return result
+                            });
+                            // more catches here for (result.code)
+                        }
+                        console.log("uploadFile result: ", uploadResult)
                     }
-                    console.log("deleteFile result: ", deleteResult)
 
                     // if (deleteResult && deleteResult.code !== 226) {
                     //     return res.status({ error: deleteResult.message })
                     // }
 
-                    var uploadResult
-                    if (doc.size > 0) {
-                        const { Readable } = require('stream');
-                        const stream = Readable.from(doc.content);
-                        // connect to FTPS file server
-                        // const ftpsSession = await utils.connectFTPS(config)
-                        // const connection = await ftpsSession.connect()
-                        
-                        // const gotFiles = await ftpsSession.getFiles('data/books/')
-                        // console.log("gotFiles result: ", gotFiles)
-                        // Upload to FTPS file server
-                        uploadResult = await ftpsSession.uploadFile(stream, "data/books/", doc.info).then((result) => {
-                            return result
-                        });
-                        // more catches here for (result.code)
-                    }
-                    console.log("uploadFile result: ", uploadResult)
-                    
                     // close session
                     await ftpsSession.disconnect()
 
                     // if (uploadResult && uploadResult.code !== 226) {
                     //     return res.status({ error: uploadResult.message })
+                    // }
+                    if (!utils.isValidDate(releasedate)) {
+                        return res.status(400).send({ error: "releasedate invalid." })
+                    }
+
+
+                    // try {
+                    // } catch (error) {
+                    //     console.log("could not update pdf data")
                     // }
 
                     const updatedBook = await Book.update(
@@ -360,8 +378,8 @@ exports.updateById = async (req, res) => {
                             language: language,
                             price: price,
                             pdf: pdf,
-                            pdfFilename: document.originalFilename,
-                            pdfId: document.filename
+                            pdfFilename: pdfUpdatedFilename,
+                            pdfId: pdfUpdatedId,
                         },
                         { where: { id: book.id } }
                     )

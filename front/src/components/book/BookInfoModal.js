@@ -146,6 +146,10 @@ export default {
                     <td>{{staticObj.booklength}}</td>
                 </tr>
                 <tr>
+                    <th>Release date</th>   
+                    <td>{{staticObj.releasedate}}</td>
+                </tr>
+                <tr>
                     <th>Price</th>
                     <td>{{staticObj.price}}</td>
                 </tr>
@@ -246,7 +250,8 @@ export default {
         async saveModifiedBook() {
             // client form validation
             const updatedBook = this.bookInModal
-            const { title, description, author, releasedate, language, booklength, price } = updatedBook
+            const { title, description, author, releasedate, language, booklength, price, pdf } = updatedBook
+            const { selectedFile } = this.modifiedBook
             console.log("Saving:", updatedBook)
 
             // document.querySelector('.submit-form').addEventListener('submit', (e) => {
@@ -296,17 +301,36 @@ export default {
                 return alert("Price cannot be negative")
             }
 
+            const form = new FormData()
+            form.append('title', title)
+            form.append('description', description)
+            form.append('author', author)
+            form.append('language', language)
+            form.append('booklength', booklength)
+            form.append('releasedate', releasedate)
+            form.append('price', price)
+
+            console.log(selectedFile)
+            if (selectedFile) {
+                form.append('file', selectedFile)
+            }
+
             const rawResponse = await fetch(this.API_URL + "/books/" + updatedBook.id, {
                 method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedBook)
+                // headers: {
+                //     'Accept': 'application/json',
+                //     'Content-Type': 'application/json'
+                // },
+                body: form, //JSON.stringify(updatedBook)
             });
 
-            console.log("updateBook", rawResponse);
+            if (rawResponse.status !== 200) {
+                // this.modifiedBook = this.staticObj
+                this.$emit("bookUpdated", this.staticObj)
+                return alert("Book could not be updated!")
+            }
             this.$emit("bookUpdated", updatedBook)
+            console.log("updateBook", rawResponse);
             this.isEditing = false
         },
         async deleteBook() {

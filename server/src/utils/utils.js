@@ -47,7 +47,7 @@ exports.formatDate = (date) => {
 }
 
 exports.isValidDate = (dateString) => {
-    const regex = /^(19|20)\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])$/i
+    const regex = /^(15|16|17|18|19|20)\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])$/i
     return regex.test(dateString);
 }
 

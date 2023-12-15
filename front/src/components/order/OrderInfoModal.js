@@ -61,6 +61,7 @@ export default {
                     <th>Made by</th>
                     <td>{{staticObj.User?.email}}</td>
                 </tr>                
+                </table>
                 <div :key="updateItems" v-for="item in staticObj.OrderItems" class="container-fluid" style="display: flex; width: 100%; justify-content: space-between;">
                     <div class="card" style="width: 100%;">
                         <div class="card-body">
@@ -69,7 +70,6 @@ export default {
                         </div>
                     </div>
                 </div>
-            </table>
           </div>
           <div class="modal-footer">
             <div class="row container-fluid">
