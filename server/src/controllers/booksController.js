@@ -68,6 +68,8 @@ exports.create = async (req, res) => {
                 .on('close', async () => {
                     console.log('req.busboy: finish event')
                     const formData = utils.toObject(fields)
+                    console.log(formData)
+                    // TODO: finish frontend/backend field parding with busboy
 
                     // validate fields
                     const { title, author, description, releasedate, booklength, language, price } = formData

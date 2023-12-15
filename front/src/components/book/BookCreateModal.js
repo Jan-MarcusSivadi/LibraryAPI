@@ -1,5 +1,3 @@
-import FormData from 'form-data'
-
 export default {
     /*html*/
     template: `
@@ -104,6 +102,20 @@ export default {
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <div class="container">
+                        <div class="row justify-content-md-center">
+                            <div class="col-md-10">
+                                <label for="price" class="row-sm-10 col-form-label">Book PDF</label>
+                                <div class="row-sm-10">
+                                    <button type="button" class="btn btn-primary container-fluid" @click="selectFile">Select File</button>
+                                </div>
+                                <p>{{modifiedBook.selectedFile?.name}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
             </div>
             <div class="modal-footer">
@@ -127,13 +139,39 @@ export default {
     emits: ["bookCreated"],
     data() {
         return {
-            modifiedBook: {}
+            modifiedBook: {},
         }
     },
     methods: {
+        selectFile() {
+            var input = document.createElement('input');
+
+            input.onchange = (e) => {
+                e.preventDefault();
+                // getting a hold of the file reference
+                var file = e.target.files[0];
+                console.log(file)
+
+                // TDOD: filter file types
+                const fileType = file.type
+                const fileTypeSplit = fileType.split("/")
+                const fileExt = fileTypeSplit[fileTypeSplit.length - 1]
+                if (fileExt !== "pdf") {
+                    return alert("File must be of type .pdf")
+                }
+
+                // set modified book file
+                this.modifiedBook.selectedFile = file
+            }
+
+            input.type = 'file';
+            input.click();
+
+        },
         async saveCreatedBook() {
             // client form validation
-            const { title, description, author, releasedate, language, booklength, price } = this.modifiedBook
+            const { title, description, author, releasedate, language, booklength, price, selectedFile } = this.modifiedBook
+            console.log("this.modifiedBook", this.modifiedBook)
 
             // document.querySelector('.submit-form').addEventListener('submit', (e) => {
             //     e.preventDefault()
@@ -183,16 +221,30 @@ export default {
             }
             console.log("Creating:", this.modifiedBook)
 
-            // const form = new FormData()
-            // form.append('Files', img)
+            const form = new FormData()
+            form.append('title', title)
+            form.append('description', description)
+            form.append('author', author)
+            form.append('language', language)
+            form.append('booklength', booklength)
+            form.append('releasedate', releasedate)
+            form.append('price', price)
+
+            if (selectedFile) {
+                form.append('file', selectedFile)
+            } else {
+                return alert('File for book is required')
+            }
+
+            console.log(form)
 
             const rawResponse = await fetch(this.API_URL + "/books", {
                 method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.modifiedBook)
+                // headers: {
+                //     'Accept': 'application/json',
+                //     'Content-Type': 'application/json'
+                // },
+                body: form
             });
 
             if (rawResponse.status !== 201) {

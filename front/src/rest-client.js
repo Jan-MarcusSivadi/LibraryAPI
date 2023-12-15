@@ -1,3 +1,4 @@
+// import FormData from 'form-data'
 import { createApp } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import App from './App.js'
@@ -21,5 +22,6 @@ const app = createApp(App)
 
 app.use(router)
 
+// app.config.globalProperties.FORM_DATA = FormData
 app.config.globalProperties.API_URL = 'http://localhost:3000'
 app.mount('#app')
