@@ -6,8 +6,10 @@ import App from './App.js'
 import BooksView from './views/BooksView.js'
 import UsersView from './views/UsersView.js'
 import OrdersView from './views/OrdersView.js'
+import HomeView from './views/HomeView.js'
 
 const routes = [
+    { path: "/", component: HomeView },
     { path: "/books", component: BooksView },
     { path: "/users", component: UsersView },
     { path: "/orders", component: OrdersView }

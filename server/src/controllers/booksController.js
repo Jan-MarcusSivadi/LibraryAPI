@@ -437,16 +437,26 @@ exports.deleteOne = async (req, res) => {
         
         // get only values from array, so that id comparison would succeed
         const allIds = datas.map(data => {
+            console.log("id?: ", data)
             const values = data.bookIds
+            return values.filter(theId => theId == id) //.find(theId => theId == id)
+            // var finalValue = -1
+            // values.forEach(value => {
+            //     finalValue = value
+            // });
+            // return finalValue
+        })
+        const results = allIds.map(ids => {
             var finalValue = -1
-            values.forEach(value => {
+            ids.forEach(value => {
                 finalValue = value
             });
             return finalValue
-        })
+        }).filter(result => result !== -1);
+        console.log("allIds: ", results)
         
         // do not delete book, if any order has book with id
-        const orderExists = allIds.find(theId => theId == id) == id
+        const orderExists = results.length > 0
         if (orderExists) {
             res.status(409).send({ error: "book could not be deleted due to an existing order" })
             return

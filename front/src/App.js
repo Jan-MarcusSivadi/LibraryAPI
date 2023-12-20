@@ -18,10 +18,11 @@ export default {
               <li class="nav-item">
                 <router-link class="nav-link" to="/orders">Orders</router-link>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/docs" target="_blank">Docs</a>
+              </li>
             </ul>
-            <div class="help-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <p><a href="/docs">API Documentation</a></p>
-            </div>
+            
             
           </div>
         </div>
