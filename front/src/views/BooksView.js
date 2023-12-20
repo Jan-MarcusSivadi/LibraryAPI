@@ -71,6 +71,9 @@ export default {
         },
         bookDeleted(res) {
             console.log(res)
+            if (res.status === 409) {
+                return alert(res.json.error)
+            }
             if (res.status !== 204) {
                 return alert("Book could not be deleted")
             }

@@ -19,10 +19,10 @@ export default {
                 <router-link class="nav-link" to="/orders">Orders</router-link>
               </li>
             </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+            <div class="help-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <p><a href="/docs">API Documentation</a></p>
+            </div>
+            
           </div>
         </div>
       </nav> 

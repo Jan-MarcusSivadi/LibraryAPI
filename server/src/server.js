@@ -36,7 +36,8 @@ require("../src/routes/orderRoutes")(app)
 
 // GET http://localhost:3000/
 app.get('/', async (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  // res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.redirect(`http://localhost:${port}/client`);
 })
 
 app.listen(port, () => {

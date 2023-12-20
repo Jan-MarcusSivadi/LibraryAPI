@@ -199,6 +199,9 @@ paths:
                                 One or all required parameters are missing:
                                     value:
                                         error: One or all required parameters are missing.
+                                Release Date is invalid:
+                                    value:
+                                        error: releasedate invalid.
                     description: One or all required parameters are missing
             summary: Add new Book
             description: Returns created Book
@@ -404,6 +407,9 @@ paths:
                                 field is required:
                                     value:
                                         error: At least one field is required.
+                                Release Date is invalid:
+                                    value:
+                                        error: releasedate invalid.
                     description: some fields are missing
                 '404':
                     content:
@@ -453,6 +459,16 @@ paths:
                                     value:
                                         error: book not found.
                     description: Book not found
+                '409':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                'Could not delete book, Order exists':
+                                    value:
+                                        error: book could not be deleted due to an existing order
+                    description: book could not be deleted due to an existing order
             summary: Delete book by id
             description: Deletes book using its id
     /orders:

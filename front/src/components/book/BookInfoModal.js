@@ -155,7 +155,7 @@ export default {
                 </tr>
                 <tr>
                     <th>File</th>
-                    <a :href="staticObj.pdf" target="_blank">{{staticObj.title}}</a>
+                    <a :href="staticObj.pdf" target="_blank">Click here</a>
                 </tr>
             </table>
           </div>
@@ -339,7 +339,11 @@ export default {
                 method: 'DELETE'
             })
             console.log(res.status)
-            this.$emit('bookDeleted', { id: this.bookInModal.id, status: res.status })
+            var json = ""
+            try {
+                json = await res.json()
+            } catch (error) { }
+            this.$emit('bookDeleted', { id: this.bookInModal.id, status: res.status, json: json })
             this.cancelEditing()
         }
     }

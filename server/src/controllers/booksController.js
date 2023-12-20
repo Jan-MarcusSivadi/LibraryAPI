@@ -1,9 +1,13 @@
 const utils = require('../utils/utils')
 const { db } = require('../db')
 const Book = db.books
+const Order = db.orders
+const OrderItem = db.orderItems
 const path = require('path')
 const fs = require('fs')
 const zlib = require('node:zlib');
+
+const { Sequelize } = require("sequelize")
 
 const config = {
     host: 'jan-marcussivadi21.thkit.ee',
@@ -16,7 +20,7 @@ const config = {
 exports.create = async (req, res) => {
     console.log('MY BOOOKKK!!!!', req.body)
     try {
-        /* 
+        /*
         title: NOT NULL
         author: NOT NULL
         description: NULL
@@ -70,10 +74,18 @@ exports.create = async (req, res) => {
                     console.log('req.busboy: finish event')
                     fields.forEach(field => {
                         if (field.name == "description") {
-                            field.value = field.value ? field.value : ""
+                            if (!field.value || field.value == undefined || field.value == "undefined") {
+                                field.value = ""
+                            }
+                            console.log("field: ", `${field.name} - ${field.value}`)
+                            // field.value = field.value ? field.value : ""
                         }
                         if (field.name == "language") {
-                            field.value = field.value ? field.value : ""
+                            if (!field.value || field.value == undefined || field.value == "undefined") {
+                                field.value = ""
+                            }
+                            console.log("field: ", `${field.name} - ${field.value}`)
+                            // field.value = field.value ? field.value : ""
                         }
                     });
                     const formData = utils.toObject(fields)
@@ -194,6 +206,11 @@ exports.updateById = async (req, res) => {
         var bufs = [];
         doc.size = 0;
 
+        const book = await Book.findByPk(id)
+        if (!book) {
+            res.status(404).send({ error: "book not found." })
+            return
+        }
 
         const busboy = req.busboy;
         if (busboy) {
@@ -218,7 +235,8 @@ exports.updateById = async (req, res) => {
                             // console.log("splits?", splits)
                             // const extension = splits[splits.length - 1]
                             const extension = splits[splits.length - 1]
-                            const fixedFilename = utils.getFixedFileName(`file-${Date.now()}.${extension}`) //info.filename
+                            const fName = book.pdfId //`file-${Date.now()}.${extension}`
+                            const fixedFilename = utils.getFixedFileName(fName) //info.filename
                             const fileURL = `http://${config.host}/data/books/${fixedFilename}`
                             doc.content = Buffer.concat(bufs, doc.size);
                             info.url = fileURL
@@ -232,11 +250,16 @@ exports.updateById = async (req, res) => {
                     console.log('req.busboy: finish event')
                     fields.forEach(field => {
                         if (field.name == "description") {
-                            field.value = field.value ? field.value : ""
+                            if (!field.value || field.value == undefined || field.value == "undefined") {
+                                field.value = ""
+                            }
                         }
                         if (field.name == "language") {
-                            field.value = field.value ? field.value : ""
+                            if (!field.value || field.value == undefined || field.value == "undefined") {
+                                field.value = ""
+                            }
                         }
+                        console.log("field: ", `${field.name} - ${field.value}`)
                     });
                     const formData = utils.toObject(fields)
                     console.log(formData)
@@ -256,17 +279,12 @@ exports.updateById = async (req, res) => {
                     //     return
                     // }
 
-                    const book = await Book.findByPk(id)
 
                     // create document object
                     const document = doc.info
                     var pdf = book.pdf
-                    
-                    if (!book) {
-                        res.status(404).send({ error: "book not found." })
-                        return
-                    }
-                    
+
+
                     var pdfUpdatedFilename = book.pdfFilename //book.pdfFilename === document?.originalFilename ? book.pdfFilename : document?.originalFilename
                     var pdfUpdatedId = book.pdfId //book.pdfId === document?.filename ? book.pdfId : document?.filename
                     // if (doc.size > 0) {
@@ -409,6 +427,30 @@ exports.updateById = async (req, res) => {
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params
+
+        var allOrders = await Order.findAll({ include: [OrderItem] })
+        
+        // convert data to readable format, get needed data (OrderItems.BookId)
+        const datas = allOrders.map(order => {
+            return { orderId: order.id, bookIds: order.dataValues.OrderItems.map(i => i.dataValues.BookId) }
+        })
+        
+        // get only values from array, so that id comparison would succeed
+        const allIds = datas.map(data => {
+            const values = data.bookIds
+            var finalValue = -1
+            values.forEach(value => {
+                finalValue = value
+            });
+            return finalValue
+        })
+        
+        // do not delete book, if any order has book with id
+        const orderExists = allIds.find(theId => theId == id) == id
+        if (orderExists) {
+            res.status(409).send({ error: "book could not be deleted due to an existing order" })
+            return
+        }
 
         const ftpsSession = await utils.connectFTPS(config)
         const connection = await ftpsSession.connect()
