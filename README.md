@@ -15,6 +15,7 @@ Create a new `.env` file that has the following text inside (don't forget to rep
 * DB_USER=`{yourdatabase_username}`
 * DB_PASS=`{yourdatabase_password}`
 * DB_HOST=`{yourdatabase_host}`
+* FILESERVER_URL=`{yourfileserver_url}`
 
 ### Step 4 - Start server
 Run command `npm start` from your terminal to start the api server.
