@@ -10,9 +10,9 @@ const zlib = require('node:zlib');
 const { Sequelize } = require("sequelize")
 
 const config = {
-    host: 'jan-marcussivadi21.thkit.ee',
-    user: 'd118287f550018',
-    password: 'secretword12345',
+    host: process.env.FTP_HOST,
+    user: process.env.FTP_USER,
+    password: process.env.FTP_PASS,
 }
 
 
@@ -429,12 +429,12 @@ exports.deleteOne = async (req, res) => {
         const { id } = req.params
 
         var allOrders = await Order.findAll({ include: [OrderItem] })
-        
+
         // convert data to readable format, get needed data (OrderItems.BookId)
         const datas = allOrders.map(order => {
             return { orderId: order.id, bookIds: order.dataValues.OrderItems.map(i => i.dataValues.BookId) }
         })
-        
+
         // get only values from array, so that id comparison would succeed
         const allIds = datas.map(data => {
             console.log("id?: ", data)
@@ -454,7 +454,7 @@ exports.deleteOne = async (req, res) => {
             return finalValue
         }).filter(result => result !== -1);
         console.log("allIds: ", results)
-        
+
         // do not delete book, if any order has book with id
         const orderExists = results.length > 0
         if (orderExists) {

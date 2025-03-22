@@ -1,6 +1,6 @@
 const path = require('path')
 const cors = require('cors')
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env.local') });
 const port = process.env.PORT || 3000
 const swaggerUI = require('swagger-ui-express')
 const yamljs = require('yamljs')
