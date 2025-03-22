@@ -15,13 +15,15 @@ Create a new `.env` file that has the following text inside (don't forget to rep
 * DB_USER=`{yourdatabase_username}`
 * DB_PASS=`{yourdatabase_password}`
 * DB_HOST=`{yourdatabase_host}`
+* FILESERVER_URL=`{yourfileserver_url}`
+* DROP_DB=`{true/false}`
 
 ### Step 4 - Start server
 Run command `npm start` from your terminal to start the api server.
 
 ### Step 5 - Result
 If you added a PORT (5000 for example) variable into the `.env` file
- - Go to http://localhost:5000, you should see "Hello world!!" text;
+ - Go to http://localhost:5000, you should see LibraryAPI dashboard
 
 If you skipped adding a PORT variable into the `.env` file
- - Go to http://localhost:3000, you should see "Hello world!!" text;
+ - Go to http://localhost:3000, you should see LibraryAPI dashboard
