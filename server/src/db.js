@@ -5,8 +5,7 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USER, proce
   define: {
     timestamps: true
   },
-  logging: false
-  // logging: console.log
+  logging: false //console.log/false
 })
 try {
   sequelize.authenticate().then(() => {
@@ -39,9 +38,12 @@ sync = async () => {
     console.log('Database synchronised.')
     await db.connection.query('SET FOREIGN_KEY_CHECKS = 1')
     console.log("Checks enabled")
-
-    // create 3 books
-    const books = await db.books.bulkCreate([
+    
+    let books;
+    const t = await sequelize.transaction();
+    try {
+      // create 3 books
+      books = await db.books.bulkCreate([
       {
         "title": "Romeo and Juliet",
         "author": "William Shakespeare",
@@ -50,7 +52,7 @@ sync = async () => {
         "booklength": 480,
         "language": "English",
         "price": 5.99,
-        "pdf": `${process.env.FILESERVER_URL}/Romeo%20and%20Juliet.pdf`
+        "pdf": `${process.env.FILESERVER_URL}/data/books/Romeo%20and%20Juliet.pdf`
       },
       {
         "title": "Moby Dick; Or, The Whale",
@@ -60,7 +62,7 @@ sync = async () => {
         "booklength": 378,
         "language": "English",
         "price": 4.99,
-        "pdf": `${process.env.FILESERVER_URL}/Moby%20Dick;%20Or,%20The%20Whale.pdf`
+        "pdf": `${process.env.FILESERVER_URL}/data/books/Moby%20Dick%20Or%20The%20Whale.pdf`
       },
       {
         "title": "A Room with a View",
@@ -70,9 +72,16 @@ sync = async () => {
         "booklength": 321,
         "language": "English",
         "price": 3.99,
-        "pdf": `${process.env.FILESERVER_URL}/A%20Room%20with%20a%20View.pdf`
+        "pdf": `${process.env.FILESERVER_URL}/data/books/A%20Room%20with%20a%20View.pdf`
       }
-    ])
+    ], { transaction: t });
+      await t.commit();  // <- Must commit!
+    } catch (e) {
+      await t.rollback();
+      console.error('Transaction failed!', e);
+      // throw e;
+    }
+    
     console.log("bulkCreate result: ", books.length); // 2
     console.log("bulkCreate result: ", books[0] instanceof db.books); // true
     console.log("bulkCreate result: ", books[0].title); // 'Jack Sparrow'

@@ -12,7 +12,7 @@ const { Sequelize } = require("sequelize")
 const config = {
     host: process.env.FTP_HOST,
     user: process.env.FTP_USER,
-    password: process.env.FTP_PASS,
+    password: process.env.FTP_PASS
 }
 
 
@@ -234,8 +234,12 @@ exports.updateById = async (req, res) => {
                             const splits = info.filename.split('.')
                             // console.log("splits?", splits)
                             // const extension = splits[splits.length - 1]
+                            console.log('book', book);
                             const extension = splits[splits.length - 1]
                             const fName = book.pdfId //`file-${Date.now()}.${extension}`
+                            console.log('splits', splits);
+                            console.log('extension', extension);
+                            console.log('fName', fName);
                             const fixedFilename = utils.getFixedFileName(fName) //info.filename
                             const fileURL = `http://${config.host}/data/books/${fixedFilename}`
                             doc.content = Buffer.concat(bufs, doc.size);

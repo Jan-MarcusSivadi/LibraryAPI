@@ -27,3 +27,8 @@ If you added a PORT (5000 for example) variable into the `.env` file
 
 If you skipped adding a PORT variable into the `.env` file
  - Go to http://localhost:3000, you should see LibraryAPI dashboard
+
+## Project Dependencies
+* MariaDB Server 10.6
+* File Server
+* HTTP Server

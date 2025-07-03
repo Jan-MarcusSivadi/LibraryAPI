@@ -28,7 +28,7 @@ class FTPSClient {
         host: options.host,
         user: options.user,
         password: options.password,
-        secure: true,
+        secure: false,
         secureOptions: {
           // fix certificate altnames error
           checkServerIdentity: () => undefined

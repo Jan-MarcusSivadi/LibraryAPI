@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:10.6-jammy
+    container_name: mariadb-10.6
+    env_file:
+      - .env
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      DATABASE: ${DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./scripts/setup-mariadb.sh:/docker-entrypoint-initdb.d/setup-mariadb.sh:ro
+  ftp:
+    image: fauria/vsftpd
+    container_name: my-ftp
+    env_file:
+      - .env
+    environment:
+      FTP_USER: ${FTP_USER}
+      FTP_PASS: ${FTP_PASS}
+      PASV_ADDRESS: 127.0.0.1
+      PASV_MIN_PORT: 21100
+      PASV_MAX_PORT: 21110
+      FILE_OPEN_MODE: 0777
+      LOCAL_UMASK: 000
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    volumes:
+      - shared-data:/home/vsftpd
+
+  web:
+    image: nginx:alpine
+    container_name: my-web
+    env_file:
+      - .env
+    environment:
+      FTP_USER: ${FTP_USER}
+    depends_on:
+      - ftp
+    command: [/bin/sh -c "rm -f /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'", "/ftp-entrypoint.sh"]
+    ports:
+      - "80:80"
+    volumes:
+      - shared-data:/home/vsftpd:ro
+      - ./scripts/docker-entrypoint.sh:/docker-entrypoint.sh:ro
+      - ./scripts/ftp-entrypoint.sh:/ftp-entrypoint.sh:ro
+    entrypoint: ["/docker-entrypoint.sh"]
+
+volumes:
+  shared-data:
